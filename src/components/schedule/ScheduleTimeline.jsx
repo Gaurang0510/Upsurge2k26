@@ -17,7 +17,7 @@ export default function ScheduleTimeline({ day }) {
         );
 
         return (
-          // eslint-disable-next-line react/no-array-index-key
+           
           <div key={`${day.day}-${index}`} className="relative mb-6 last:mb-0">
             <span className="absolute -left-[38px] top-4 h-3 w-3 rounded-full border-2 border-evidence bg-case-black" />
             {detailPath ? (

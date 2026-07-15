@@ -9,7 +9,7 @@ export default function TeamSection({ department }) {
       </div>
       <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
         {department.members.map((member, index) => (
-          // eslint-disable-next-line react/no-array-index-key
+           
           <TeamCard key={`${department.slug}-${index}`} member={member} />
         ))}
       </div>
