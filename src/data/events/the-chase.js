@@ -1,0 +1,27 @@
+export default {
+  id: 'the-chase',
+  slug: 'the-chase',
+  caseNumber: 'CASE-09',
+  name: 'The Chase',
+  formerlyKnownAs: 'Coding Relay',
+  tagline: 'One team. One keyboard. No stopping.',
+  category: 'Technical',
+  format: 'Team Coding Relay',
+  teamSize: '3–4 Operatives',
+  duration: 'Timed Relay',
+  description:
+    'A relay-style coding race — each operative takes their turn solving a DSA problem under a strict time limit before handing off to the next. Miss the handoff window and the whole team falls behind.',
+  rules: [
+    'Teams of 3 to 4.',
+    'Only one member codes at a time; others may only advise verbally.',
+    'Fixed time limit per leg — unsolved problems are skipped and penalized.',
+  ],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/the-chase/cover.jpg',
+  thumbnail: '/images/events/the-chase/thumb.jpg',
+  isFlagship: false,
+};

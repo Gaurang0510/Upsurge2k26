@@ -1,0 +1,23 @@
+export default {
+  id: 'manhunt',
+  slug: 'manhunt',
+  caseNumber: 'CASE-08',
+  name: 'Manhunt',
+  formerlyKnownAs: 'Free Fire',
+  tagline: '50 suspects enter the zone. One walks out.',
+  category: 'Gaming',
+  format: 'Mobile Battle Royale',
+  teamSize: 'Squad (4)',
+  duration: 'Multiple Matches',
+  description:
+    'A mobile battle-royale where squads fight to be the last ones standing on a shrinking map. Strategy and quick decision-making matter as much as aim.',
+  rules: ['Squads of 4.', 'Points awarded per match for placement and eliminations.', 'Best-of-series format.'],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/manhunt/cover.jpg',
+  thumbnail: '/images/events/manhunt/thumb.jpg',
+  isFlagship: false,
+};

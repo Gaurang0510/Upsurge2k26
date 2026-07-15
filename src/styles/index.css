@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: theme('colors.case-black');
+  }
+
+  ::selection {
+    background-color: theme('colors.evidence');
+    color: theme('colors.case-black');
+  }
+
+  /* visible keyboard focus everywhere — accessibility floor, do not remove */
+  :focus-visible {
+    outline: 2px solid theme('colors.evidence');
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Case-number eyebrow label, used above section headings */
+  .case-tag {
+    @apply inline-flex items-center gap-2 font-mono text-xs tracking-[0.25em] uppercase text-evidence;
+  }
+
+  /* Stenciled display heading */
+  .heading-display {
+    @apply font-display uppercase tracking-wide leading-[0.95] text-paper;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-evidence text-case-black font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-transform duration-150 hover:-translate-y-0.5 hover:bg-white focus-visible:outline-offset-4;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 95% 100%, 0 100%);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 border border-steel-dark text-paper font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-colors duration-150 hover:border-evidence hover:text-evidence;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 bg-breach text-paper font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-transform duration-150 hover:-translate-y-0.5;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 95% 100%, 0 100%);
+  }
+
+  /* Case-file card surface used across event/team cards */
+  .file-card {
+    @apply relative bg-ink border border-white/5 overflow-hidden;
+  }
+
+  .noise-overlay {
+    @apply pointer-events-none absolute inset-0 bg-noise opacity-[0.4] mix-blend-overlay;
+  }
+}

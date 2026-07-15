@@ -1,0 +1,27 @@
+export default {
+  id: 'evidence-locker',
+  slug: 'evidence-locker',
+  caseNumber: 'CASE-11',
+  name: 'Evidence Locker',
+  formerlyKnownAs: 'Alphinate',
+  tagline: 'Bring your proof. Present your case.',
+  category: 'Technical',
+  format: 'Project & Innovation Showcase',
+  teamSize: '1–4 Operatives',
+  duration: 'Single Day',
+  description:
+    'A stage for working models, prototypes, and bold ideas. Present your build to a review board of judges — creativity, practicality, and how well you sell the case all count.',
+  rules: [
+    'Individuals or teams of up to 4.',
+    'Working prototype or functional demo strongly preferred over slides alone.',
+    'Fixed presentation window plus panel questions.',
+  ],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/evidence-locker/cover.jpg',
+  thumbnail: '/images/events/evidence-locker/thumb.jpg',
+  isFlagship: false,
+};

@@ -1,0 +1,23 @@
+export default {
+  id: 'turf-wars',
+  slug: 'turf-wars',
+  caseNumber: 'CASE-06',
+  name: 'Turf Wars',
+  formerlyKnownAs: 'FIFA',
+  tagline: 'Every match is a territory dispute.',
+  category: 'Gaming',
+  format: 'Football Simulation Tournament',
+  teamSize: '1 Operative',
+  duration: 'Knockout Bracket',
+  description:
+    'A football-sim knockout tournament with authentic teams and dynamic gameplay. Win your matchup or you are out — pure bracket pressure from round one to the final whistle.',
+  rules: ['Solo entries.', 'Single-elimination bracket.', 'Match settings and duration confirmed at check-in.'],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/turf-wars/cover.jpg',
+  thumbnail: '/images/events/turf-wars/thumb.jpg',
+  isFlagship: false,
+};

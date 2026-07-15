@@ -1,0 +1,27 @@
+export default {
+  id: 'capture-the-flag',
+  slug: 'capture-the-flag',
+  caseNumber: 'CASE-05',
+  name: 'Capture the Flag',
+  formerlyKnownAs: 'CTF',
+  tagline: 'The Digital Heist. Every flag is behind a locked door.',
+  category: 'Cybersecurity',
+  format: 'Cybersecurity Puzzle Event',
+  teamSize: '1–3 Operatives',
+  duration: 'Timed Rounds',
+  description:
+    'Crack web, crypto, forensics, and reverse-engineering challenges to uncover hidden flags. Built for both first-time breachers and seasoned red-teamers — logic, persistence, and a bit of lateral thinking win the day.',
+  rules: [
+    'Teams of 1 to 3.',
+    'Standard CTF scoring — points scale with challenge difficulty.',
+    'No attacking the scoring infrastructure itself; play the challenges, not the platform.',
+  ],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/capture-the-flag/cover.jpg',
+  thumbnail: '/images/events/capture-the-flag/thumb.jpg',
+  isFlagship: false,
+};

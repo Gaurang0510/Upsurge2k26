@@ -1,0 +1,32 @@
+export default {
+  id: 'lockdown',
+  slug: 'lockdown',
+  caseNumber: 'CASE-03',
+  name: 'Lockdown',
+  formerlyKnownAs: 'Escape Room',
+  tagline: 'The vault is sealed. The clock is not on your side.',
+  category: 'Non-Technical',
+  format: 'Team Puzzle Challenge',
+  teamSize: '3–5 Operatives',
+  duration: '~45 Minutes',
+  description:
+    'Three rounds, one exit. Riddles, hidden clues, and locked puzzles stand between your team and freedom. Logic, coordination, and speed decide who breaks out before time expires.',
+  rounds: [
+    { title: 'Round 1 — Recon', description: 'Gather scattered clues hidden across the room.' },
+    { title: 'Round 2 — Decode', description: 'Piece the clues into a working combination.' },
+    { title: 'Round 3 — Breakout', description: 'Beat the final lock before the timer hits zero.' },
+  ],
+  rules: [
+    'Teams of 3 to 5 operatives.',
+    'No phones or outside help once the lockdown begins.',
+    'Fastest team to clear all three rounds wins; partial clears are ranked by progress.',
+  ],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/lockdown/cover.jpg',
+  thumbnail: '/images/events/lockdown/thumb.jpg',
+  isFlagship: false,
+};

@@ -1,0 +1,27 @@
+export default {
+  id: 'cipher-heist',
+  slug: 'cipher-heist',
+  caseNumber: 'CASE-10',
+  name: 'Cipher Heist',
+  formerlyKnownAs: 'Cipher Chase',
+  tagline: 'Crack the code. Follow the trail. Reach the vault.',
+  category: 'Technical',
+  format: 'Coding Treasure Hunt',
+  teamSize: '2–3 Operatives',
+  duration: 'Timed Hunt',
+  description:
+    'Solve a coding problem, get a QR clue, chase it to the next checkpoint — repeat until you reach the vault. Half programming contest, half scavenger hunt.',
+  rules: [
+    'Teams of 2 to 3.',
+    'Each solved problem unlocks a QR clue leading to the next location.',
+    'First team to reach the final checkpoint wins.',
+  ],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/cipher-heist/cover.jpg',
+  thumbnail: '/images/events/cipher-heist/thumb.jpg',
+  isFlagship: false,
+};

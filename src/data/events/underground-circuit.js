@@ -1,0 +1,26 @@
+export default {
+  id: 'underground-circuit',
+  slug: 'underground-circuit',
+  caseNumber: 'CASE-13',
+  name: 'Underground Circuit',
+  formerlyKnownAs: 'Carrom',
+  tagline: 'A quiet game, a serious table.',
+  category: 'Non-Technical',
+  format: 'Carrom Tournament + Casual Zone',
+  teamSize: '1–2 Operatives',
+  duration: 'Ongoing / Bracket',
+  description:
+    'A dual-format carrom event — a knockout tournament for competitive players, and a relaxed casual zone open to anyone who wants to drop by and play.',
+  rules: [
+    'Tournament bracket: singles or doubles, single-elimination.',
+    'Casual zone: open play, no registration required.',
+  ],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/underground-circuit/cover.jpg',
+  thumbnail: '/images/events/underground-circuit/thumb.jpg',
+  isFlagship: false,
+};

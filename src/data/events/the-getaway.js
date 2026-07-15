@@ -1,0 +1,23 @@
+export default {
+  id: 'the-getaway',
+  slug: 'the-getaway',
+  caseNumber: 'CASE-07',
+  name: 'The Getaway',
+  formerlyKnownAs: 'F1 Simulator',
+  tagline: 'First one across the line never gets caught.',
+  category: 'Gaming',
+  format: 'Racing Simulator',
+  teamSize: '1 Operative',
+  duration: 'Timed Laps',
+  description:
+    'A realistic racing simulator with a full garage of vehicles and open-world circuits. Solo time trials or head-to-head heats — outrun the clock, then outrun each other.',
+  rules: ['Solo entries.', 'Best lap time (or head-to-head heat, format confirmed on-site) determines ranking.'],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/the-getaway/cover.jpg',
+  thumbnail: '/images/events/the-getaway/thumb.jpg',
+  isFlagship: false,
+};

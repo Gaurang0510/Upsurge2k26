@@ -1,0 +1,28 @@
+# CODEOWNERS
+# Replace the placeholder GitHub usernames below with the real ones before
+# pushing to GitHub. This auto-requests the right reviewer on every PR and
+# is the enforcement mechanism behind /docs/TASK_DIVISION.md.
+#
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Member 1 — Pages, Routing & Deployment Lead
+/src/pages/            @member1-github-username
+/src/routes/           @member1-github-username
+/src/layouts/          @member1-github-username
+/index.html            @member1-github-username
+/vite.config.js        @member1-github-username
+
+# Member 2 — Components & Design System Lead
+/src/components/       @member2-github-username
+/src/styles/           @member2-github-username
+/tailwind.config.js    @member2-github-username
+/postcss.config.js     @member2-github-username
+
+# Member 3 — Data & Content Lead
+/src/data/              @member3-github-username
+/public/images/         @member3-github-username
+/public/videos/         @member3-github-username
+
+# Shared / whole-team review required
+/package.json           @member1-github-username @member2-github-username @member3-github-username
+/.github/               @member1-github-username @member2-github-username @member3-github-username

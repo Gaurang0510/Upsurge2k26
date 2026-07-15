@@ -1,0 +1,32 @@
+export default {
+  id: 'syndicate-pitch',
+  slug: 'syndicate-pitch',
+  caseNumber: 'CASE-02',
+  name: 'Syndicate Pitch',
+  formerlyKnownAs: 'Ideathon',
+  tagline: 'Every scheme needs a backer. Make yours worth the risk.',
+  category: 'Technical',
+  format: 'Idea Pitching, with TBI YCCE',
+  teamSize: '1–3 Operatives',
+  duration: 'Single Day',
+  description:
+    'Bring a real-world problem and a sharper solution. Pitch it to a panel of investors, mentors, and industry judges for a shot at mentorship and incubation support — this is where an idea on a napkin becomes a funded case file.',
+  highlights: [
+    'Direct mentorship rounds before the final pitch',
+    'Panel includes TBI YCCE incubation experts',
+    'Winning ideas get a path to incubation support',
+  ],
+  rules: [
+    'Individuals or teams of up to 3 may register.',
+    'Pitch deck must be original and not previously funded or incubated.',
+    'Each team gets a fixed pitch window plus Q&A with the panel.',
+  ],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/syndicate-pitch/cover.jpg',
+  thumbnail: '/images/events/syndicate-pitch/thumb.jpg',
+  isFlagship: false,
+};

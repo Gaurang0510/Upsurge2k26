@@ -1,0 +1,23 @@
+export default {
+  id: 'cage-match',
+  slug: 'cage-match',
+  caseNumber: 'CASE-12',
+  name: 'Cage Match',
+  formerlyKnownAs: 'WWE SmackDown',
+  tagline: 'Knockout rules. No rematches.',
+  category: 'Gaming',
+  format: 'Knockout Gaming Tournament',
+  teamSize: '1 Operative',
+  duration: 'Knockout Bracket',
+  description:
+    'A knockout-style virtual wrestling tournament — win your round or you are out. Straightforward, brutal, and over fast.',
+  rules: ['Solo entries.', 'Single-elimination bracket.', 'Match rules confirmed at check-in.'],
+  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  coordinators: [{ name: 'TBD', phone: 'TBD' }],
+  venue: 'TBD',
+  date: 'TBD',
+  registrationLink: '#',
+  image: '/images/events/cage-match/cover.jpg',
+  thumbnail: '/images/events/cage-match/thumb.jpg',
+  isFlagship: false,
+};
