@@ -1,31 +1,35 @@
-/**
- * TEAM DATA FILE — one file per department, same reasoning as /src/data/events/.
- * Replace these placeholder entries with the real 2K26 committee before launch.
- * Photos referenced here should be dropped into /public/images/team/<slug>.jpg
- */
 export default [
   {
-    name: 'TBD',
-    role: 'President',
-    photo: '/images/team/placeholder.svg',
-    socials: { instagram: '', linkedin: '', github: '' },
+    name: 'Paras Kalbande',
+    role: 'PRESIDENT',
+    committee: 'COSMOS',
+    photo: '/images/team/shiv_img.png',
+    socials: {
+      instagram: 'https://instagram.com',
+      linkedin: 'https://linkedin.com',
+      github: ''
+    }
   },
   {
-    name: 'TBD',
-    role: 'Vice President',
+    name: 'Karan Kangali',
+    role: 'PRESIDENT',
+    committee: 'COSMOS',
     photo: '/images/team/placeholder.svg',
-    socials: { instagram: '', linkedin: '', github: '' },
+    socials: {
+      instagram: 'https://instagram.com',
+      linkedin: 'https://linkedin.com',
+      github: ''
+    }
   },
   {
-    name: 'TBD',
-    role: 'Secretary',
-    photo: '/images/team/placeholder.svg',
-    socials: { instagram: '', linkedin: '', github: '' },
-  },
-  {
-    name: 'TBD',
-    role: 'Treasurer',
-    photo: '/images/team/placeholder.svg',
-    socials: { instagram: '', linkedin: '', github: '' },
-  },
+    name: 'Om Mane',
+    role: 'ACM CHAIRPERSON',
+    committee: 'ACM',
+    photo: '/images/team/Om_Mane.avif',
+    socials: {
+      instagram: 'https://instagram.com',
+      linkedin: 'https://linkedin.com',
+      github: 'https://github.com'
+    }
+  }
 ];
