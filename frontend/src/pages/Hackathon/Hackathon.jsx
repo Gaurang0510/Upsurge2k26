@@ -8,18 +8,18 @@ import './hackathon.css';
 const protocolTimeline = [
   {
     step: '01',
-    title: 'Initial Breach',
-    detail: 'Opening briefing, team verification, and the first locked case file drop.',
+    title: 'Idea Submission',
+    detail: 'Round 0 (Online): Submit your PPT proposing a solution. Completely free.',
   },
   {
     step: '02',
-    title: 'Surveillance Window',
-    detail: 'Mentor sweeps, live checkpoints, and strategic reroutes as ideas sharpen.',
+    title: 'Prototype Development',
+    detail: 'Round 1 (Offline/Online): Build a working prototype. Continuous mentoring and judging.',
   },
   {
     step: '03',
-    title: 'Evidence Submission',
-    detail: 'Final prototype handoff, demo staging, and judiciary review under the clock.',
+    title: 'Grand Finale',
+    detail: 'Final demonstration, jury interaction, and evaluation. Top 3 teams selected.',
   },
 ];
 
@@ -33,17 +33,17 @@ const dossierCards = [
   {
     label: 'Case Format',
     value: flagshipEvent.format,
-    note: 'Built for late-night sprints, high-stakes demos, and sharp pivots.',
+    note: 'Multi-stage structured process: Online Idea Submission to Offline Grand Finale.',
   },
   {
     label: 'Location',
     value: flagshipEvent.venue,
-    note: 'The entire scene stays on campus, so every checkpoint is close to the action.',
+    note: 'Round 1 and Grand Finale conducted at host campus. Online slots available on-demand.',
   },
   {
     label: 'Registration',
     value: flagshipEvent.registrationLink === '#' ? 'Opening Soon' : 'Live Now',
-    note: 'Reserve your slot before the grid fills up and the doors lock.',
+    note: 'Register on Unstop. Free Round 0. Offline fee ₹599.',
   },
 ];
 
@@ -68,8 +68,8 @@ export default function Hackathon() {
             </div>
             <span className="case-tag mt-8">{event.caseNumber} {" // "} {event.format}</span>
             <h1 className="heading-display mt-5 max-w-4xl text-5xl sm:text-7xl lg:text-[6.5rem]">
-              Smackathon:
-              <span className="hackathon-title-glow block text-evidence">Operation Breach</span>
+              SMACKATHON:
+              <span className="hackathon-title-glow block text-evidence">2K26</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-paper/85 sm:text-xl">
               A full-scale cyber crime scenario built for coders, designers, and operators who want a
