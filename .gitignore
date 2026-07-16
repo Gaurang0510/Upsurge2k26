@@ -35,7 +35,7 @@ pnpm-debug.log*
 Thumbs.db
 
 # large raw media — keep only optimized/final assets in git (see docs/GIT_WORKFLOW.md)
-public/videos/raw/
+frontend/public/videos/raw/
 *.mov
 *.psd
 *.ai
