@@ -417,3 +417,28 @@
 @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 @keyframes pulse-glow { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Logo Float Animation */
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.animate-\\[float_6s_ease-in-out_infinite\\] {
+  animation: float-subtle 6s ease-in-out infinite;
+}
+
+/* Red Vignette and Fog */
+.hackathon-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(193, 18, 31, 0.1) 70%, rgba(5, 5, 5, 0.95) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Text Shadow Glow */
+.text-shadow-glow {
+  text-shadow: 0 0 10px rgba(193, 18, 31, 0.8), 0 0 20px rgba(193, 18, 31, 0.4);
+}
