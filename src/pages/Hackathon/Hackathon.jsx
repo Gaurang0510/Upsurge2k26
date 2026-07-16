@@ -65,7 +65,7 @@ export default function Hackathon() {
               <span>Cyber Crime Division</span>
               <span>24-Hour Lock-In</span>
             </div>
-            <span className="case-tag mt-8">{event.caseNumber} // {event.format}</span>
+            <span className="case-tag mt-8">{event.caseNumber} {" // "} {event.format}</span>
             <h1 className="heading-display mt-5 max-w-4xl text-5xl sm:text-7xl lg:text-[6.5rem]">
               Smackathon:
               <span className="hackathon-title-glow block text-evidence">Operation Breach</span>
