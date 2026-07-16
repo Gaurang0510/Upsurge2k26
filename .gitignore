@@ -39,3 +39,4 @@ frontend/public/videos/raw/
 *.mov
 *.psd
 *.ai
+.vite/
