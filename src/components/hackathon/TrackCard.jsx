@@ -1,10 +1,14 @@
 export default function TrackCard({ track }) {
   return (
-    <div className="file-card p-6">
-      <div className="noise-overlay" />
-      <span className="relative font-mono text-xs tracking-widest text-breach">{track.code}</span>
-      <h4 className="relative mt-2 font-display text-2xl tracking-wide text-paper">{track.name}</h4>
-      <p className="relative mt-3 text-sm text-steel">{track.brief}</p>
-    </div>
+    <article className="hackathon-track-card">
+      <div className="hackathon-track-grid" aria-hidden="true" />
+      <span className="hackathon-track-code">{track.code}</span>
+      <h4 className="hackathon-track-title">{track.name}</h4>
+      <p className="hackathon-track-brief">{track.brief}</p>
+      <div className="hackathon-track-footer">
+        <span>Open dossier</span>
+        <span>Threat vector mapped</span>
+      </div>
+    </article>
   );
 }
