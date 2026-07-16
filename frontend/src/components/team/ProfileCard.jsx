@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 
 // Holographic pattern SVG data URI
 const DEFAULT_HOLO_PATTERN = `data:image/svg+xml,${encodeURIComponent(`
@@ -77,7 +77,6 @@ const ProfileCardComponent = ({
   iconUrl,
   innerGradient = 'linear-gradient(160deg, #8B001A 0%, #4A000E 60%, #150004 100%)',
   borderColor = '#E23744',
-  behindGlowEnabled = false,
   enableTilt = true,
   className = ''
 }) => {
