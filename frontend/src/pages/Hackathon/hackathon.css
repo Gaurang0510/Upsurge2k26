@@ -31,7 +31,6 @@
     linear-gradient(135deg, rgba(11, 13, 12, 0.6), rgba(15, 24, 22, 0.4));
 }
 
-.hackathon-grid-bg,
 .hackathon-grid-glow,
 .hackathon-scanline {
   pointer-events: none;
@@ -39,13 +38,6 @@
   inset: 0;
 }
 
-.hackathon-grid-bg {
-  background-image:
-    linear-gradient(rgba(47, 234, 140, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(47, 234, 140, 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.95), transparent 90%);
-}
 
 .hackathon-grid-glow {
   background:
@@ -195,149 +187,21 @@
   border-radius: 999px;
 }
 
-.hackathon-console {
-  position: relative;
-  display: flex;
-  min-height: 34rem;
-  width: min(100%, 30rem);
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at center, rgba(20, 24, 23, 0.98) 0%, rgba(7, 9, 9, 0.98) 72%),
-    linear-gradient(135deg, rgba(47, 234, 140, 0.12), transparent 60%);
-  box-shadow:
-    inset 0 0 50px rgba(47, 234, 140, 0.06),
-    0 30px 80px rgba(0, 0, 0, 0.38);
-  transform-style: preserve-3d;
-  perspective: 1200px;
-}
 
-.hackathon-console::before,
-.hackathon-console::after {
-  content: "";
-  position: absolute;
-  inset: 1.5rem;
-  border: 1px solid rgba(47, 234, 140, 0.1);
-  transform: translateZ(18px);
-}
 
-.hackathon-console::after {
-  inset: auto 1.2rem 1.2rem auto;
-  height: 7rem;
-  width: 7rem;
-  border-color: rgba(245, 197, 24, 0.25);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 22% 100%, 0 78%);
-}
 
-.hackathon-console-ring {
-  position: absolute;
-  border: 1px solid rgba(47, 234, 140, 0.18);
-  border-radius: 999px;
-  transform-style: preserve-3d;
-}
 
-.hackathon-console-ring-one {
-  width: 24rem;
-  height: 24rem;
-  animation: hackathon-rotate 20s linear infinite;
-}
 
-.hackathon-console-ring-two {
-  width: 17rem;
-  height: 17rem;
-  border-color: rgba(245, 197, 24, 0.18);
-  animation: hackathon-rotate-reverse 14s linear infinite;
-}
 
-.hackathon-console-ring-three {
-  width: 10rem;
-  height: 10rem;
-  border-style: dashed;
-  animation: hackathon-pulse 4s ease-in-out infinite;
-}
 
-.hackathon-console-core {
-  position: relative;
-  z-index: 1;
-  width: min(82%, 21rem);
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 10, 10, 0.84);
-  transform: rotateX(12deg) rotateY(-14deg);
-  box-shadow:
-    0 25px 45px rgba(0, 0, 0, 0.35),
-    inset 0 0 0 1px rgba(47, 234, 140, 0.08);
-}
 
-.hackathon-console-label {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: #f5c518;
-}
 
-.hackathon-console-matrix {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
 
-.hackathon-console-matrix span {
-  aspect-ratio: 1;
-  border: 1px solid rgba(47, 234, 140, 0.16);
-  background:
-    radial-gradient(circle at 35% 35%, rgba(47, 234, 140, 0.35), transparent 36%),
-    linear-gradient(180deg, rgba(20, 24, 23, 0.9), rgba(10, 12, 12, 0.98));
-  box-shadow: inset 0 0 18px rgba(47, 234, 140, 0.08);
-  animation: hackathon-pulse 3.5s ease-in-out infinite;
-}
 
-.hackathon-console-matrix span:nth-child(2n) {
-  animation-delay: 0.4s;
-}
 
-.hackathon-console-matrix span:nth-child(3n) {
-  animation-delay: 0.8s;
-}
 
-.hackathon-console-stack {
-  position: relative;
-  margin-top: 1.5rem;
-  display: grid;
-  gap: 0.75rem;
-}
 
-.hackathon-console-chip {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(17, 21, 20, 0.95);
-  padding: 0.85rem 1rem;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: #dcd3b8;
-}
 
-.hackathon-console-footer {
-  position: absolute;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  left: 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #8a8f8c;
-}
 
 .hackathon-panel,
 .hackathon-dossier-card,
@@ -410,16 +274,6 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 30px 70px rgba(0, 0, 0, 0.32);
 }
 
-.hackathon-track-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(47, 234, 140, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(47, 234, 140, 0.08) 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.35;
-  pointer-events: none;
-}
 
 .hackathon-track-title,
 .hackathon-track-brief,
@@ -472,15 +326,6 @@
 }
 
 @media (max-width: 1023px) {
-  .hackathon-console {
-    min-height: 28rem;
-  }
-
-  .hackathon-console-core {
-    transform: none;
-  }
-
-  .hackathon-console-footer,
   .hackathon-track-footer {
     flex-direction: column;
   }
@@ -488,13 +333,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hackathon-scanline,
-  .hackathon-console-ring-one,
-  .hackathon-console-ring-two,
-  .hackathon-console-ring-three,
-  .hackathon-console-matrix span {
-    animation: none !important;
-  }
-
   .hackathon-track-card {
     transition: none;
   }
@@ -538,3 +376,45 @@
     transform: scale(1.04);
   }
 }
+
+/* Ambient Orbs */
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  animation: float 20s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 0;
+}
+.ambient-orb-1 { width: 400px; height: 400px; background: rgba(47, 234, 140, 0.15); top: -10%; left: -10%; }
+.ambient-orb-2 { width: 500px; height: 500px; background: rgba(226, 55, 68, 0.1); bottom: -20%; right: -10%; animation-delay: -5s; }
+.ambient-orb-3 { width: 300px; height: 300px; background: rgba(245, 197, 24, 0.1); top: 40%; left: 60%; animation-delay: -10s; }
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+/* Cyber Core */
+.cyber-core-container { position: relative; width: 340px; height: 340px; display: flex; align-items: center; justify-content: center; }
+.cyber-core-ring { position: absolute; border-radius: 50%; border: 1px solid transparent; transform-style: preserve-3d; }
+.cyber-outer-ring { width: 100%; height: 100%; border-top-color: rgba(47, 234, 140, 0.5); border-bottom-color: rgba(47, 234, 140, 0.2); animation: spin 12s linear infinite; }
+.cyber-middle-ring { width: 75%; height: 75%; border-left-color: rgba(245, 197, 24, 0.6); border-right-color: rgba(245, 197, 24, 0.2); animation: spin-reverse 8s linear infinite; }
+.cyber-inner-ring { width: 50%; height: 50%; border: 2px dashed rgba(226, 55, 68, 0.8); animation: spin 20s linear infinite; }
+.cyber-core-glow { position: absolute; width: 60%; height: 60%; background: radial-gradient(circle, rgba(47, 234, 140, 0.2) 0%, transparent 70%); filter: blur(20px); animation: pulse-glow 4s ease-in-out infinite; }
+.cyber-core-center { position: relative; z-index: 10; text-align: center; display: flex; flex-direction: column; gap: 0.5rem; }
+.cyber-core-text { font-family: "JetBrains Mono", monospace; font-size: 0.85rem; letter-spacing: 0.3em; color: #8a8f8c; }
+.cyber-core-status { font-family: "Bebas Neue", sans-serif; font-size: 2.5rem; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(226, 55, 68, 0.8); }
+.blink-text { animation: blink 2s infinite; }
+.cyber-particles .particle { position: absolute; width: 4px; height: 4px; background: #2fea8c; border-radius: 50%; box-shadow: 0 0 10px #2fea8c; }
+.cyber-particles .p-1 { top: 10%; left: 20%; animation: float 6s infinite; }
+.cyber-particles .p-2 { top: 80%; right: 20%; animation: float 8s infinite -2s; }
+.cyber-particles .p-3 { bottom: 10%; left: 30%; animation: float 7s infinite -4s; }
+.cyber-particles .p-4 { top: 30%; right: 10%; animation: float 5s infinite -1s; }
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+@keyframes pulse-glow { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }

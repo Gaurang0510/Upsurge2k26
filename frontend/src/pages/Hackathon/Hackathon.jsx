@@ -53,8 +53,10 @@ export default function Hackathon() {
 
   return (
     <div className="hackathon-page">
+      <div className="ambient-orb ambient-orb-1" aria-hidden="true" />
+      <div className="ambient-orb ambient-orb-2" aria-hidden="true" />
+      <div className="ambient-orb ambient-orb-3" aria-hidden="true" />
       <section className="hackathon-hero relative overflow-hidden border-b border-white/5">
-        <div className="hackathon-grid-bg" aria-hidden="true" />
         <div className="hackathon-grid-glow" aria-hidden="true" />
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-24">
           <div className="relative z-10">
@@ -105,42 +107,21 @@ export default function Hackathon() {
             </div>
           </div>
 
-          <div className="relative z-10 flex items-center justify-center">
-            <div className="hackathon-console">
-              <div className="hackathon-console-ring hackathon-console-ring-one" />
-              <div className="hackathon-console-ring hackathon-console-ring-two" />
-              <div className="hackathon-console-ring hackathon-console-ring-three" />
-              <div className="hackathon-console-core">
-                <span className="hackathon-console-label">Threat Map</span>
-                <div className="hackathon-console-matrix">
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <div className="hackathon-console-stack">
-                  <div className="hackathon-console-chip">
-                    <span className="text-steel">Focus</span>
-                    <strong>UI / UX</strong>
-                  </div>
-                  <div className="hackathon-console-chip">
-                    <span className="text-steel">Visual Tone</span>
-                    <strong>Cyber Crime</strong>
-                  </div>
-                  <div className="hackathon-console-chip">
-                    <span className="text-steel">Experience</span>
-                    <strong>Immersive</strong>
-                  </div>
-                </div>
+          <div className="relative z-10 flex items-center justify-center min-h-[500px]">
+            <div className="cyber-core-container">
+              <div className="cyber-core-ring cyber-outer-ring" />
+              <div className="cyber-core-ring cyber-middle-ring" />
+              <div className="cyber-core-ring cyber-inner-ring" />
+              <div className="cyber-core-glow" />
+              <div className="cyber-core-center">
+                <span className="cyber-core-text">SYSTEM</span>
+                <span className="cyber-core-status text-evidence blink-text">BREACHED</span>
               </div>
-              <div className="hackathon-console-footer">
-                <span>Encrypted evidence stream</span>
-                <span>3D surveillance grid</span>
+              <div className="cyber-particles">
+                <span className="particle p-1"></span>
+                <span className="particle p-2"></span>
+                <span className="particle p-3"></span>
+                <span className="particle p-4"></span>
               </div>
             </div>
           </div>
