@@ -58,7 +58,7 @@ export default function Hackathon() {
       <div className="ambient-orb ambient-orb-3" aria-hidden="true" />
       <section className="hackathon-hero relative overflow-hidden border-b border-white/5">
         <div className="hackathon-grid-glow" aria-hidden="true" />
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-24">
+        <div className="w-full mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-24 z-10">
           <div className="relative z-10">
             <div className="hackathon-alert-strip">
               <span>{event.caseNumber}</span>

@@ -1,34 +1,33 @@
 .hackathon-page {
+  position: relative;
+}
+
+
+
+.hackathon-hero {
+  position: relative;
+  min-height: 100vh;
   background-image: url('/images/gallery/HOME_background.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-attachment: scroll;
   background-repeat: no-repeat;
-  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
 }
-
-.hackathon-page::before {
+.hackathon-hero::before {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at top, rgba(47, 234, 140, 0.15), transparent 24%),
-    radial-gradient(circle at 85% 10%, rgba(226, 55, 68, 0.15), transparent 18%),
-    rgba(11, 13, 12, 0.85);
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 5, 5, 0.9) 0%,
+    rgba(5, 5, 5, 0.6) 50%,
+    rgba(5, 5, 5, 1) 100%
+  );
   pointer-events: none;
   z-index: 0;
-}
-
-.hackathon-page > section {
-  position: relative;
-  z-index: 1;
-}
-
-.hackathon-hero {
-  background:
-    radial-gradient(circle at 20% 15%, rgba(245, 197, 24, 0.1), transparent 22%),
-    radial-gradient(circle at 80% 20%, rgba(47, 234, 140, 0.12), transparent 20%),
-    linear-gradient(135deg, rgba(11, 13, 12, 0.6), rgba(15, 24, 22, 0.4));
 }
 
 .hackathon-grid-glow,
@@ -41,8 +40,8 @@
 
 .hackathon-grid-glow {
   background:
-    radial-gradient(circle at center, rgba(47, 234, 140, 0.16), transparent 30%),
-    radial-gradient(circle at center, rgba(245, 197, 24, 0.12), transparent 50%);
+    radial-gradient(circle at center, rgba(193, 18, 31, 0.16), transparent 30%),
+    radial-gradient(circle at center, rgba(193, 18, 31, 0.12), transparent 50%);
   filter: blur(30px);
   opacity: 0.6;
 }
@@ -53,19 +52,19 @@
   display: inline-flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  border: 1px solid rgba(245, 197, 24, 0.35);
-  background: rgba(245, 197, 24, 0.08);
+  border: 1px solid rgba(193, 18, 31, 0.35);
+  background: rgba(193, 18, 31, 0.08);
   padding: 0.75rem 1rem;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.72rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #f5c518;
-  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.05), 0 0 24px rgba(245, 197, 24, 0.08);
+  color: #C1121F;
+  box-shadow: 0 0 0 1px rgba(193, 18, 31, 0.05), 0 0 24px rgba(193, 18, 31, 0.08);
 }
 
 .hackathon-title-glow {
-  text-shadow: 0 0 18px rgba(245, 197, 24, 0.28);
+  text-shadow: 0 0 18px rgba(193, 18, 31, 0.28);
 }
 
 .hackathon-signal-card,
@@ -96,9 +95,9 @@
 .hackathon-faq-card:hover,
 .hackathon-rule-card:hover,
 .hackathon-evidence-card:hover {
-  background: rgba(47, 234, 140, 0.08);
-  border-color: rgba(47, 234, 140, 0.3);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(47, 234, 140, 0.1);
+  background: rgba(193, 18, 31, 0.08);
+  border-color: rgba(193, 18, 31, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(193, 18, 31, 0.1);
   transform: translateY(-4px);
 }
 
@@ -115,7 +114,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(47, 234, 140, 0.1), transparent 42%, rgba(245, 197, 24, 0.08));
+  background: linear-gradient(135deg, rgba(193, 18, 31, 0.1), transparent 42%, rgba(193, 18, 31, 0.08));
   opacity: 0.45;
   pointer-events: none;
 }
@@ -146,13 +145,13 @@
   font-size: clamp(1.9rem, 4vw, 2.6rem);
   line-height: 1;
   letter-spacing: 0.05em;
-  color: #f5c518;
+  color: #C1121F;
 }
 
 .hackathon-terminal {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(47, 234, 140, 0.25);
+  border: 1px solid rgba(193, 18, 31, 0.25);
   background: rgba(6, 9, 8, 0.88);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
@@ -165,8 +164,8 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 16%),
     repeating-linear-gradient(
       180deg,
-      rgba(47, 234, 140, 0.03) 0,
-      rgba(47, 234, 140, 0.03) 1px,
+      rgba(193, 18, 31, 0.03) 0,
+      rgba(193, 18, 31, 0.03) 1px,
       transparent 1px,
       transparent 4px
     );
@@ -176,7 +175,7 @@
 .hackathon-terminal-bar {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(47, 234, 140, 0.15);
+  border-bottom: 1px solid rgba(193, 18, 31, 0.15);
   padding: 0.75rem 1rem;
   background: rgba(20, 24, 23, 0.92);
 }
@@ -229,14 +228,14 @@
   display: inline-flex;
   min-width: 3rem;
   justify-content: center;
-  border: 1px solid rgba(245, 197, 24, 0.25);
+  border: 1px solid rgba(193, 18, 31, 0.25);
   padding: 0.45rem 0.65rem;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.75rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #f5c518;
-  background: rgba(245, 197, 24, 0.08);
+  color: #C1121F;
+  background: rgba(193, 18, 31, 0.08);
 }
 
 .hackathon-rule-card {
@@ -256,8 +255,8 @@
 .hackathon-score-bar span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #2fea8c, #f5c518);
-  box-shadow: 0 0 16px rgba(47, 234, 140, 0.22);
+  background: linear-gradient(90deg, #C1121F, #C1121F);
+  box-shadow: 0 0 16px rgba(193, 18, 31, 0.22);
 }
 
 .hackathon-track-card {
@@ -270,7 +269,7 @@
 
 .hackathon-track-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(47, 234, 140, 0.28);
+  border-color: rgba(193, 18, 31, 0.28);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 30px 70px rgba(0, 0, 0, 0.32);
 }
 
@@ -308,7 +307,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #f5c518;
+  color: #C1121F;
 }
 
 .hackathon-command-card {
@@ -387,9 +386,9 @@
   pointer-events: none;
   z-index: 0;
 }
-.ambient-orb-1 { width: 400px; height: 400px; background: rgba(47, 234, 140, 0.15); top: -10%; left: -10%; }
-.ambient-orb-2 { width: 500px; height: 500px; background: rgba(226, 55, 68, 0.1); bottom: -20%; right: -10%; animation-delay: -5s; }
-.ambient-orb-3 { width: 300px; height: 300px; background: rgba(245, 197, 24, 0.1); top: 40%; left: 60%; animation-delay: -10s; }
+.ambient-orb-1 { width: 400px; height: 400px; background: rgba(193, 18, 31, 0.15); top: -10%; left: -10%; }
+.ambient-orb-2 { width: 500px; height: 500px; background: rgba(120, 0, 0, 0.1); bottom: -20%; right: -10%; animation-delay: -5s; }
+.ambient-orb-3 { width: 300px; height: 300px; background: rgba(193, 18, 31, 0.1); top: 40%; left: 60%; animation-delay: -10s; }
 
 @keyframes float {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -400,15 +399,15 @@
 /* Cyber Core */
 .cyber-core-container { position: relative; width: 340px; height: 340px; display: flex; align-items: center; justify-content: center; }
 .cyber-core-ring { position: absolute; border-radius: 50%; border: 1px solid transparent; transform-style: preserve-3d; }
-.cyber-outer-ring { width: 100%; height: 100%; border-top-color: rgba(47, 234, 140, 0.5); border-bottom-color: rgba(47, 234, 140, 0.2); animation: spin 12s linear infinite; }
-.cyber-middle-ring { width: 75%; height: 75%; border-left-color: rgba(245, 197, 24, 0.6); border-right-color: rgba(245, 197, 24, 0.2); animation: spin-reverse 8s linear infinite; }
-.cyber-inner-ring { width: 50%; height: 50%; border: 2px dashed rgba(226, 55, 68, 0.8); animation: spin 20s linear infinite; }
-.cyber-core-glow { position: absolute; width: 60%; height: 60%; background: radial-gradient(circle, rgba(47, 234, 140, 0.2) 0%, transparent 70%); filter: blur(20px); animation: pulse-glow 4s ease-in-out infinite; }
+.cyber-outer-ring { width: 100%; height: 100%; border-top-color: rgba(193, 18, 31, 0.5); border-bottom-color: rgba(193, 18, 31, 0.2); animation: spin 12s linear infinite; }
+.cyber-middle-ring { width: 75%; height: 75%; border-left-color: rgba(193, 18, 31, 0.6); border-right-color: rgba(193, 18, 31, 0.2); animation: spin-reverse 8s linear infinite; }
+.cyber-inner-ring { width: 50%; height: 50%; border: 2px dashed rgba(120, 0, 0, 0.8); animation: spin 20s linear infinite; }
+.cyber-core-glow { position: absolute; width: 60%; height: 60%; background: radial-gradient(circle, rgba(193, 18, 31, 0.2) 0%, transparent 70%); filter: blur(20px); animation: pulse-glow 4s ease-in-out infinite; }
 .cyber-core-center { position: relative; z-index: 10; text-align: center; display: flex; flex-direction: column; gap: 0.5rem; }
 .cyber-core-text { font-family: "JetBrains Mono", monospace; font-size: 0.85rem; letter-spacing: 0.3em; color: #8a8f8c; }
-.cyber-core-status { font-family: "Bebas Neue", sans-serif; font-size: 2.5rem; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(226, 55, 68, 0.8); }
+.cyber-core-status { font-family: "Bebas Neue", sans-serif; font-size: 2.5rem; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(120, 0, 0, 0.8); }
 .blink-text { animation: blink 2s infinite; }
-.cyber-particles .particle { position: absolute; width: 4px; height: 4px; background: #2fea8c; border-radius: 50%; box-shadow: 0 0 10px #2fea8c; }
+.cyber-particles .particle { position: absolute; width: 4px; height: 4px; background: #C1121F; border-radius: 50%; box-shadow: 0 0 10px #C1121F; }
 .cyber-particles .p-1 { top: 10%; left: 20%; animation: float 6s infinite; }
 .cyber-particles .p-2 { top: 80%; right: 20%; animation: float 8s infinite -2s; }
 .cyber-particles .p-3 { bottom: 10%; left: 30%; animation: float 7s infinite -4s; }

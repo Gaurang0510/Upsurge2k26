@@ -13,7 +13,7 @@
 
   ::selection {
     background-color: theme('colors.evidence');
-    color: theme('colors.case-black');
+    color: #FFFFFF;
   }
 
   /* visible keyboard focus everywhere — accessibility floor, do not remove */
@@ -42,20 +42,20 @@
 
   /* Stenciled display heading */
   .heading-display {
-    @apply font-display uppercase tracking-wide leading-[0.95] text-paper;
+    @apply font-display uppercase tracking-wide leading-[0.95] text-white;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-evidence text-case-black font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-transform duration-150 hover:-translate-y-0.5 hover:bg-white focus-visible:outline-offset-4;
+    @apply inline-flex items-center justify-center gap-2 bg-breach text-white font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-all duration-300 hover:scale-105 hover:bg-evidence hover:shadow-[0_0_15px_rgba(193,18,31,0.6)] focus-visible:outline-offset-4;
     clip-path: polygon(0 0, 100% 0, 100% 70%, 95% 100%, 0 100%);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 border border-steel-dark text-paper font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-colors duration-150 hover:border-evidence hover:text-evidence;
+    @apply inline-flex items-center justify-center gap-2 border border-evidence text-white font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-all duration-300 hover:bg-[rgba(193,18,31,0.1)] hover:shadow-[0_0_15px_rgba(193,18,31,0.4)];
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 bg-breach text-paper font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-transform duration-150 hover:-translate-y-0.5;
+    @apply inline-flex items-center justify-center gap-2 bg-breach text-white font-mono font-bold uppercase tracking-wider text-sm px-6 py-3 transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[0_0_15px_rgba(120,0,0,0.6)];
     clip-path: polygon(0 0, 100% 0, 100% 70%, 95% 100%, 0 100%);
   }
 

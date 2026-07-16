@@ -5,15 +5,15 @@ export default {
     extend: {
       colors: {
         // ---- UPSURGE 2K26 :: CASE FILE PALETTE ----
-        'case-black': '#0B0D0C', // primary background — the interrogation room
-        ink: '#141817', // card / surface background
-        'ink-light': '#1C211F', // hover / raised surface
-        evidence: '#F5C518', // crime-tape yellow — primary accent
-        breach: '#E23744', // alert red — danger, CTAs, "wanted" stamps
-        terminal: '#2FEA8C', // hacker-terminal green — cyber/CTF accent
-        paper: '#DCD3B8', // manila case-file paper tone (use sparingly, on paper-textured blocks only)
-        steel: '#8A8F8C', // muted secondary text
-        'steel-dark': '#5C615F',
+        'case-black': '#050505', // primary background — dark operations center
+        ink: '#0A0A0A', // card / surface background
+        'ink-light': '#141414', // hover / raised surface
+        evidence: '#C1121F', // crimson red — primary accent
+        breach: '#780000', // blood red — danger, CTAs
+        terminal: '#C1121F', // red — cyber accent
+        paper: '#E5E7EB', // light gray / white for readability
+        steel: '#9CA3AF', // muted secondary text
+        'steel-dark': '#4B5563',
       },
       fontFamily: {
         display: ['"Bebas Neue"', 'sans-serif'], // wanted-poster / stencil headlines
