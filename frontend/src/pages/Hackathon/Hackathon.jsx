@@ -1,7 +1,9 @@
+
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
+import Smackathon3DLogo from '../../components/hackathon/Smackathon3DLogo.jsx';
 import { flagshipEvent } from '../../data/events/index.js';
 import './hackathon.css';
 
@@ -51,79 +53,71 @@ export default function Hackathon() {
   useDocumentTitle(flagshipEvent.name);
   const event = flagshipEvent;
 
+
   return (
     <div className="hackathon-page">
       <div className="ambient-orb ambient-orb-1" aria-hidden="true" />
       <div className="ambient-orb ambient-orb-2" aria-hidden="true" />
       <div className="ambient-orb ambient-orb-3" aria-hidden="true" />
-      <section className="hackathon-hero relative overflow-hidden border-b border-white/5">
+      <section className="hackathon-hero relative overflow-hidden border-b border-white/5 flex flex-col items-center justify-center text-center">
         <div className="hackathon-grid-glow" aria-hidden="true" />
-        <div className="w-full mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-24 z-10">
-          <div className="relative z-10">
-            <div className="hackathon-alert-strip">
-              <span>{event.caseNumber}</span>
-              <span>Smackathon</span>
-              <span>Cyber Crime Division</span>
-              <span>24-Hour Lock-In</span>
-            </div>
-            <span className="case-tag mt-8">{event.caseNumber} {" // "} {event.format}</span>
-            <h1 className="heading-display mt-5 max-w-4xl text-5xl sm:text-7xl lg:text-[6.5rem]">
-              SMACKATHON:
-              <span className="hackathon-title-glow block text-evidence">2K26</span>
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-paper/85 sm:text-xl">
-              A full-scale cyber crime scenario built for coders, designers, and operators who want a
-              hackathon page that feels like an active case file instead of a plain event listing.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {heroSignals.map((signal) => (
-                <div key={signal.label} className="hackathon-signal-card">
-                  <span className="hackathon-signal-label">{signal.label}</span>
-                  <strong className="hackathon-signal-value">{signal.value}</strong>
-                </div>
-              ))}
-            </div>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <a href={event.registrationLink} className="btn-primary">
-                Secure Entry
-              </a>
-              <a href="#tracks" className="btn-secondary">
-                Inspect Tracks
-              </a>
-            </div>
-            <div className="hackathon-terminal mt-10 max-w-2xl">
-              <div className="hackathon-terminal-bar">
-                <span className="hackathon-dot bg-breach" />
-                <span className="hackathon-dot bg-evidence" />
-                <span className="hackathon-dot bg-terminal" />
-                <span className="ml-3 text-xs uppercase tracking-[0.3em] text-steel">live-briefing.log</span>
-              </div>
-              <div className="space-y-3 p-5 font-mono text-sm text-terminal">
-                <p>&gt; incident_status: active</p>
-                <p>&gt; mission_brief: {event.tagline}</p>
-                <p>&gt; directive: build, test, pitch before sunrise</p>
-                <p>&gt; mentor_channel: always online</p>
-              </div>
+        
+        {/* Subtle Background Radar */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-15 pointer-events-none scale-[2] md:scale-[2.5] z-0 mix-blend-screen">
+          <div className="cyber-core-container">
+            <div className="cyber-core-ring cyber-outer-ring" />
+            <div className="cyber-core-ring cyber-middle-ring" />
+            <div className="cyber-core-ring cyber-inner-ring" />
+            <div className="cyber-core-glow" />
+            <div className="cyber-particles">
+              <span className="particle p-1"></span>
+              <span className="particle p-2"></span>
+              <span className="particle p-3"></span>
+              <span className="particle p-4"></span>
             </div>
           </div>
+        </div>
 
-          <div className="relative z-10 flex items-center justify-center min-h-[500px]">
-            <div className="cyber-core-container">
-              <div className="cyber-core-ring cyber-outer-ring" />
-              <div className="cyber-core-ring cyber-middle-ring" />
-              <div className="cyber-core-ring cyber-inner-ring" />
-              <div className="cyber-core-glow" />
-              <div className="cyber-core-center">
-                <span className="cyber-core-text">SYSTEM</span>
-                <span className="cyber-core-status text-evidence blink-text">BREACHED</span>
+        <div className="w-full max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center justify-center">
+          <div className="hackathon-alert-strip mx-auto mb-8">
+            <span>{event.caseNumber}</span>
+            <span>Smackathon</span>
+            <span>Cyber Crime Division</span>
+            <span>24-Hour Lock-In</span>
+          </div>
+
+          <div className="relative mb-8 w-full max-w-2xl mx-auto flex justify-center">
+            <Smackathon3DLogo />
+          </div>
+
+          <h2 className="heading-display mt-4 text-3xl sm:text-5xl text-white tracking-[0.15em] uppercase">
+            OPERATION BREACH
+          </h2>
+          <p className="mt-4 text-evidence font-mono text-sm sm:text-base tracking-[0.25em] uppercase mb-10 text-shadow-glow">
+            India&apos;s Premier Cyber Crime Hackathon
+          </p>
+
+          <p className="max-w-3xl text-lg md:text-xl leading-relaxed text-paper/85 mb-14">
+            A full-scale cyber crime scenario built for coders, designers, and operators who want a
+            hackathon page that feels like an active case file instead of a plain event listing.
+          </p>
+
+          <div className="grid gap-6 sm:grid-cols-3 w-full max-w-4xl mb-14">
+            {heroSignals.map((signal) => (
+              <div key={signal.label} className="hackathon-signal-card text-center flex flex-col items-center justify-center py-8 hover:bg-white/5 transition-colors duration-300">
+                <span className="hackathon-signal-label">{signal.label}</span>
+                <strong className="hackathon-signal-value mt-3">{signal.value}</strong>
               </div>
-              <div className="cyber-particles">
-                <span className="particle p-1"></span>
-                <span className="particle p-2"></span>
-                <span className="particle p-3"></span>
-                <span className="particle p-4"></span>
-              </div>
-            </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <a href={event.registrationLink} className="btn-primary px-10 py-4 text-base">
+              Secure Entry
+            </a>
+            <a href="#tracks" className="btn-secondary px-10 py-4 text-base">
+              Inspect Tracks
+            </a>
           </div>
         </div>
       </section>
