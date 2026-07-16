@@ -94,7 +94,7 @@ export default function Hackathon() {
             OPERATION BREACH
           </h2>
           <p className="mt-4 text-evidence font-mono text-sm sm:text-base tracking-[0.25em] uppercase mb-10 text-shadow-glow">
-            India's Premier Cyber Crime Hackathon
+            India&apos;s Premier Cyber Crime Hackathon
           </p>
 
           <p className="max-w-3xl text-lg md:text-xl leading-relaxed text-paper/85 mb-14">
