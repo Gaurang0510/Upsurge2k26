@@ -56,7 +56,6 @@ export default function Hackathon() {
       <section className="hackathon-hero relative overflow-hidden border-b border-white/5">
         <div className="hackathon-grid-bg" aria-hidden="true" />
         <div className="hackathon-grid-glow" aria-hidden="true" />
-        <div className="hackathon-scanline" aria-hidden="true" />
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-24">
           <div className="relative z-10">
             <div className="hackathon-alert-strip">
