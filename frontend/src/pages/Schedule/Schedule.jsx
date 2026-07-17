@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import ScheduleTimeline from '../../components/schedule/ScheduleTimeline.jsx';
@@ -12,7 +13,7 @@ export default function Schedule() {
   return (
     <div className="relative min-h-screen z-0">
       {/* Glitchy Matrix Backdrop */}
-      <div className="absolute inset-0 -z-10 opacity-[0.45] pointer-events-none">
+      <div className="absolute inset-0 -z-10 opacity-[0.35] pointer-events-none">
         <LetterGlitch
           glitchSpeed={80}
           centerVignette={true}
@@ -26,29 +27,61 @@ export default function Schedule() {
         <SectionHeading
           eyebrow="Survival Lobby"
           title="Event Schedule"
-          description="Follow the timeline. Every checkpoint links back to its case file."
+          description="Chronological log of operational windows, checkpoints, and festive highlights. Terminals online."
         />
 
-        <div className="mt-8 flex gap-2">
+        {/* Cyberpunk Operational Dashboard */}
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-white/[0.01] border border-white/5 rounded-lg backdrop-blur-sm font-mono text-xs uppercase tracking-widest text-steel relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#61dca3]/5 via-transparent to-transparent pointer-events-none" />
+          <div className="flex flex-col gap-1 border-r border-white/5 last:border-0 pr-2">
+            <span className="text-[10px] text-steel/60">OPERATION STATUS</span>
+            <span className="text-[#61dca3] font-bold animate-pulse">● LOGGED_ACTIVE</span>
+          </div>
+          <div className="flex flex-col gap-1 sm:border-r border-white/5 last:border-0 sm:px-2">
+            <span className="text-[10px] text-steel/60">DECRYPT SPEED</span>
+            <span className="text-white font-bold">982.4 KB/S</span>
+          </div>
+          <div className="flex flex-col gap-1 border-r border-white/5 last:border-0 pr-2 sm:px-2">
+            <span className="text-[10px] text-steel/60">ACTIVE TRACKS</span>
+            <span className="text-white font-bold">13 / 13 STABLE</span>
+          </div>
+          <div className="flex flex-col gap-1 pl-2">
+            <span className="text-[10px] text-steel/60">SYSTEM DOMAIN</span>
+            <span className="text-[#61dca3] font-bold">NAGPUR_SEC_05</span>
+          </div>
+        </div>
+
+        <div className="mt-8 flex gap-3 bg-black/40 border border-white/5 p-1 rounded-lg w-fit backdrop-blur-md relative overflow-hidden">
           {schedule.map((day, index) => (
             <button
               key={day.day}
               type="button"
               onClick={() => setActiveDay(index)}
-              className={`border px-6 py-2 font-mono text-xs uppercase tracking-widest transition-colors ${activeDay === index
-                ? 'border-evidence bg-evidence text-case-black'
-                : 'border-white/10 text-steel hover:border-evidence/40 hover:text-evidence'
-                }`}
+              className={`relative px-6 py-2.5 font-mono text-xs uppercase tracking-widest font-bold z-10 transition-colors duration-300 ${
+                activeDay === index ? 'text-white' : 'text-steel hover:text-white'
+              }`}
             >
               {day.day}
+              {activeDay === index && (
+                <motion.div
+                  layoutId="scheduleActiveTab"
+                  className="absolute inset-0 bg-[#2b4539]/60 border border-[#61dca3]/50 z-[-1]"
+                  style={{
+                    clipPath: 'polygon(0 0, 100% 0, 100% 80%, 92% 100%, 0 100%)',
+                  }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                />
+              )}
             </button>
           ))}
         </div>
 
-        <p className="mt-4 font-mono text-xs uppercase tracking-widest text-steel">{schedule[activeDay].date}</p>
+        <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-[#61dca3] font-bold">{schedule[activeDay].date}</p>
 
-        <div className="mt-10">
-          <ScheduleTimeline day={schedule[activeDay]} />
+        <div className="mt-8">
+          <AnimatePresence mode="wait">
+            <ScheduleTimeline key={activeDay} day={schedule[activeDay]} />
+          </AnimatePresence>
         </div>
       </div>
     </div>
