@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef, useId } from 'react';
 import './GlassSurface.css';
 
@@ -7,27 +6,13 @@ const GlassSurface = ({
   width = 200,
   height = 80,
   borderRadius = 20,
-  borderWidth = 0.07,
-  brightness = 50,
-  opacity = 0.93,
-  blur = 11,
-  displace = 0,
   backgroundOpacity = 0,
   saturation = 1,
-  distortionScale = -180,
-  redOffset = 0,
-  greenOffset = 10,
-  blueOffset = 20,
-  xChannel = 'R',
-  yChannel = 'G',
-  mixBlendMode = 'difference',
   className = '',
   style = {}
 }) => {
   const uniqueId = useId().replace(/:/g, '-');
   const filterId = `glass-filter-${uniqueId}`;
-  const redGradId = `red-grad-${uniqueId}`;
-  const blueGradId = `blue-grad-${uniqueId}`;
 
   const [svgSupported, setSvgSupported] = useState(false);
 
@@ -38,19 +23,9 @@ const GlassSurface = ({
   const blueChannelRef = useRef(null);
   const gaussianBlurRef = useRef(null);
 
-  const generateDisplacementMap = () => {
-    return '';
-  };
-
-  const updateDisplacementMap = () => {};
-
   useEffect(() => {
     setSvgSupported(false);
   }, []);
-
-  const supportsSVGFilters = () => {
-    return false;
-  };
 
   const containerStyle = {
     ...style,
