@@ -15,7 +15,6 @@ body:has(.hackathon-page) header + div[aria-hidden="true"] {
   position: relative;
   min-height: 100vh;
   background-color: #050505;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
 }
@@ -28,7 +27,8 @@ body:has(.hackathon-page) header + div[aria-hidden="true"] {
     180deg,
     rgba(5, 5, 5, 0.92) 0%,
     rgba(8, 6, 6, 0.62) 44%,
-    rgba(5, 5, 5, 0.95) 100%
+    rgba(5, 5, 5, 0.8) 80%,
+    #050505 100%
   );
   pointer-events: none;
   z-index: 0;
