@@ -79,13 +79,15 @@ function ScopeRings() {
 
 
 export default function Smackathon3DLogo({
-  imageUrl = '/images/logo/logo.jpeg',
+  imageUrl = '/images/logo/logo.webp',
   imageAspect = 1,
   height = '500px',
 }) {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div style={{ width: '100%', height, background: 'transparent' }}>
-      <Canvas camera={{ position: [0, 0, 6.2], fov: 38 }} dpr={[1, 2]}>
+      <Canvas camera={{ position: [0, 0, 6.2], fov: 38 }} dpr={isMobile ? 1 : [1, 1.5]}>
         <ambientLight intensity={0.35} />
         <pointLight position={[5, 4, 5]} intensity={1.1} color="#ff3333" />
         <pointLight position={[-5, -2, 3]} intensity={0.5} color="#33d9ff" />
@@ -94,7 +96,7 @@ export default function Smackathon3DLogo({
           <ScopeRings />
           <LogoPlane imageUrl={imageUrl} imageAspect={imageAspect} />
           <Sparkles
-            count={90}
+            count={isMobile ? 40 : 90}
             scale={[9, 5.5, 4]}
             size={2.2}
             speed={0.25}
@@ -104,9 +106,11 @@ export default function Smackathon3DLogo({
           <Environment preset="night" />
         </Suspense>
 
-        <EffectComposer>
-          <Bloom intensity={0.75} luminanceThreshold={0.25} luminanceSmoothing={0.9} mipmapBlur />
-        </EffectComposer>
+        {!isMobile && (
+          <EffectComposer>
+            <Bloom intensity={0.75} luminanceThreshold={0.25} luminanceSmoothing={0.9} mipmapBlur />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
   );

@@ -129,7 +129,12 @@ export default function Balatro({
     let program;
 
     function resize() {
-      renderer.setSize(container.offsetWidth, container.offsetHeight);
+      const width = container.offsetWidth;
+      const height = container.offsetHeight;
+      const scale = window.innerWidth < 768 ? 0.5 : 1.0;
+      renderer.setSize(width * scale, height * scale);
+      gl.canvas.style.width = `${width}px`;
+      gl.canvas.style.height = `${height}px`;
       if (program) {
         program.uniforms.iResolution.value = [gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height];
       }

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
@@ -103,142 +104,154 @@ export default function Hackathon() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mb-12">
-          <div className="hackathon-panel">
-            <SectionHeading
-              eyebrow="Flagship Build Challenge"
-              title="Smackathon 2K26"
-              description="Smackathon is the flagship build challenge of UPSURGE 2K26, designed for teams who want to turn a strong idea into a working product and present it on a bigger stage."
-            />
-            <div className="mt-8 flex flex-wrap gap-4">
-              <a href={event.registrationLink} className="btn-primary">
-                Register
-              </a>
-              <a href="#tracks" className="btn-secondary">
-                View Tracks
-              </a>
+      <div className="hackathon-content-wrap relative z-10">
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <div className="hackathon-panel">
+              <SectionHeading
+                eyebrow="Flagship Build Challenge"
+                title="Smackathon 2K26"
+                description="Smackathon is the flagship build challenge of UPSURGE 2K26, designed for teams who want to turn a strong idea into a working product and present it on a bigger stage."
+              />
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link to={event.registrationLink} className="btn-primary">
+                  Register
+                </Link>
+                <a
+                  href="#problem-statements"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("problem-statements")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }}
+                  className="btn-secondary"
+                >
+                  View Problem Statements
+                </a>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
-          <div className="hackathon-panel">
-            <SectionHeading eyebrow="Overview" title="What Smackathon Is About" />
-            <div className="mt-6">
-              <RedactedText as="p" className="text-lg leading-8 text-paper/90">
-                {event.description}
-              </RedactedText>
+          <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+            <div className="hackathon-panel">
+              <SectionHeading eyebrow="Overview" title="What Smackathon Is About" />
+              <div className="mt-6">
+                <RedactedText as="p" className="text-lg leading-8 text-paper/90">
+                  {event.description}
+                </RedactedText>
+              </div>
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                {event.highlights.map((item) => (
+                  <div key={item} className="hackathon-evidence-card">
+                    <span className="hackathon-evidence-index">Highlight</span>
+                    <p className="mt-3 text-sm leading-7 text-paper/85">{item}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {event.highlights.map((item) => (
-                <div key={item} className="hackathon-evidence-card">
-                  <span className="hackathon-evidence-index">Highlight</span>
-                  <p className="mt-3 text-sm leading-7 text-paper/85">{item}</p>
+
+            <div className="space-y-6">
+              {summaryCards.map((card) => (
+                <div key={card.label} className="hackathon-dossier-card">
+                  <span className="hackathon-dossier-label">{card.label}</span>
+                  <h3 className="mt-3 font-display text-3xl uppercase tracking-wide text-paper">
+                    {card.value}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-steel">{card.note}</p>
                 </div>
               ))}
             </div>
           </div>
+        </section>
 
-          <div className="space-y-6">
-            {summaryCards.map((card) => (
-              <div key={card.label} className="hackathon-dossier-card">
-                <span className="hackathon-dossier-label">{card.label}</span>
-                <h3 className="mt-3 font-display text-3xl uppercase tracking-wide text-paper">
-                  {card.value}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-steel">{card.note}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-white/5 bg-ink/70">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeading
-            eyebrow="Process"
-            title="How The Hackathon Flows"
-            description="A simple three-step structure that takes teams from idea to final presentation."
-          />
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {stageTimeline.map((item) => (
-              <div key={item.step} className="hackathon-protocol-card">
-                <span className="hackathon-protocol-step">{item.step}</span>
-                <h3 className="mt-4 font-display text-3xl uppercase tracking-wide text-paper">{item.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-steel">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" id="tracks">
-        <SectionHeading
-          eyebrow="Tracks"
-          title="Choose The Problem Space"
-          description="Pick the area that matches your interest, skill set, and the kind of solution you want to build."
-        />
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {event.tracks.map((track) => (
-            <TrackCard key={track.code} track={track} />
-          ))}
-        </div>
-      </section>
-
-      <section className="border-y border-white/5 bg-ink/70">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeading eyebrow="Evaluation" title="How Teams Are Judged" align="center" />
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
-            {event.assessmentCriteria.map((criterion, index) => (
-                <div key={criterion.title} className="hackathon-score-card">
-                <div className="flex items-center justify-between gap-4">
-                  <p className="font-display text-2xl uppercase tracking-wide text-paper">{criterion.title}</p>
-                  <span className="font-mono text-xs uppercase tracking-[0.3em] text-evidence">
-                    0{index + 1}
-                  </span>
+        <section className="border-y border-white/5 bg-transparent">
+          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+            <SectionHeading
+              eyebrow="Process"
+              title="How The Hackathon Flows"
+              description="A simple three-step structure that takes teams from idea to final presentation."
+            />
+            <div className="mt-10 grid gap-5 lg:grid-cols-3">
+              {stageTimeline.map((item) => (
+                <div key={item.step} className="hackathon-protocol-card">
+                  <span className="hackathon-protocol-step">{item.step}</span>
+                  <h3 className="mt-4 font-display text-3xl uppercase tracking-wide text-paper">{item.title}</h3>
+                  <p className="mt-4 text-sm leading-7 text-steel">{item.detail}</p>
                 </div>
-                <p className="mt-3 text-sm leading-7 text-steel">{criterion.detail}</p>
-                <div className="hackathon-score-bar mt-5">
-                  <span style={{ width: `${78 + index * 2.5}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="hackathon-panel w-full">
-          <SectionHeading eyebrow="Rules" title="Participation Guidelines" />
-          <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2">
-            {event.rules.map((rule, index) => (
-              <div key={rule} className="hackathon-rule-card">
-                <span className="hackathon-rule-index">0{index + 1}</span>
-                <p className="text-sm leading-7 text-paper/85">{rule}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-white/5">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="hackathon-command-card">
-            <div>
-              <span className="case-tag">Venue</span>
-              <h2 className="heading-display mt-4 text-4xl sm:text-5xl">{event.venue}</h2>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-paper/80">
-                Smackathon brings teams together in a focused build environment where strong ideas can
-                turn into finished demos, feedback, and real momentum.
-              </p>
+              ))}
             </div>
-            <a href={event.registrationLink} className="btn-primary">
-              Join Smackathon
-            </a>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" id="problem-statements">
+          <SectionHeading
+            eyebrow="Problem Statements"
+            title="Choose The Problem Space"
+            description="Pick the area that matches your interest, skill set, and the kind of solution you want to build."
+          />
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {event.tracks.map((track) => (
+              <TrackCard key={track.code} track={track} />
+            ))}
+          </div>
+        </section>
+
+        <section className="border-y border-white/5 bg-transparent">
+          <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+            <SectionHeading eyebrow="Evaluation" title="How Teams Are Judged" align="center" />
+            <div className="mt-12 grid gap-5 md:grid-cols-2">
+              {event.assessmentCriteria.map((criterion, index) => (
+                  <div key={criterion.title} className="hackathon-score-card">
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="font-display text-2xl uppercase tracking-wide text-paper">{criterion.title}</p>
+                    <span className="font-mono text-xs uppercase tracking-[0.3em] text-evidence">
+                      0{index + 1}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-steel">{criterion.detail}</p>
+                  <div className="hackathon-score-bar mt-5">
+                    <span style={{ width: `${78 + index * 2.5}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="hackathon-panel w-full">
+            <SectionHeading eyebrow="Rules" title="Participation Guidelines" />
+            <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2">
+              {event.rules.map((rule, index) => (
+                <div key={rule} className="hackathon-rule-card">
+                  <span className="hackathon-rule-index">0{index + 1}</span>
+                  <p className="text-sm leading-7 text-paper/85">{rule}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-white/5 bg-transparent">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="hackathon-command-card">
+              <div>
+                <span className="case-tag">Venue</span>
+                <h2 className="heading-display mt-4 text-4xl sm:text-5xl">{event.venue}</h2>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-paper/80">
+                  Smackathon brings teams together in a focused build environment where strong ideas can
+                  turn into finished demos, feedback, and real momentum.
+                </p>
+              </div>
+              <Link to={event.registrationLink} className="btn-primary">
+                Join Smackathon
+              </Link>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
