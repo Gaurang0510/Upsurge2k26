@@ -1,52 +1,48 @@
-
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
+<<<<<<< HEAD
 import Smackathon3DLogo from '../../components/hackathon/Smackathon3DLogo.jsx';
 import Balatro from '../../components/Balatro.jsx';
+=======
+>>>>>>> b6ffc5293bca2c6a886aced410524f81506630c2
 import { flagshipEvent } from '../../data/events/index.js';
 import './hackathon.css';
 
-const protocolTimeline = [
+const summaryCards = [
   {
-    step: '01',
-    title: 'Idea Submission',
-    detail: 'Round 0 (Online): Submit your PPT proposing a solution. Completely free.',
-  },
-  {
-    step: '02',
-    title: 'Prototype Development',
-    detail: 'Round 1 (Offline/Online): Build a working prototype. Continuous mentoring and judging.',
-  },
-  {
-    step: '03',
-    title: 'Grand Finale',
-    detail: 'Final demonstration, jury interaction, and evaluation. Top 3 teams selected.',
-  },
-];
-
-const heroSignals = [
-  { label: 'Threat Level', value: 'Critical' },
-  { label: 'Access Window', value: flagshipEvent.duration },
-  { label: 'Crew Size', value: flagshipEvent.teamSize },
-];
-
-const dossierCards = [
-  {
-    label: 'Case Format',
+    label: 'Format',
     value: flagshipEvent.format,
-    note: 'Multi-stage structured process: Online Idea Submission to Offline Grand Finale.',
+    note: 'A guided multi-stage experience, from first idea to final demo.',
   },
   {
     label: 'Location',
     value: flagshipEvent.venue,
-    note: 'Round 1 and Grand Finale conducted at host campus. Online slots available on-demand.',
+    note: 'The main campus rounds happen at YCCE, with support for shortlisted teams.',
   },
   {
     label: 'Registration',
     value: flagshipEvent.registrationLink === '#' ? 'Opening Soon' : 'Live Now',
-    note: 'Register on Unstop. Free Round 0. Offline fee ₹599.',
+    note: 'Round 0 is free. Shortlisted teams complete the next step after selection.',
+  },
+];
+
+const stageTimeline = [
+  {
+    step: '01',
+    title: 'Submit your idea',
+    detail: 'Start with your concept deck and clearly show the problem, approach, and value.',
+  },
+  {
+    step: '02',
+    title: 'Build the prototype',
+    detail: 'Shortlisted teams move into development with mentoring, iteration, and review.',
+  },
+  {
+    step: '03',
+    title: 'Present the final product',
+    detail: 'The best teams showcase their finished solution in the closing round.',
   },
 ];
 
@@ -54,6 +50,7 @@ export default function Hackathon() {
   useDocumentTitle(flagshipEvent.name);
   const event = flagshipEvent;
 
+<<<<<<< HEAD
   return (
     <div className="hackathon-page">
       <div className="ambient-orb ambient-orb-1" aria-hidden="true" />
@@ -89,55 +86,83 @@ export default function Hackathon() {
             </div>
           </div>
         </div>
+=======
+  const handleHeroPointerMove = (pointerEvent) => {
+    const bounds = pointerEvent.currentTarget.getBoundingClientRect();
+    const x = ((pointerEvent.clientX - bounds.left) / bounds.width) * 100;
+    const y = ((pointerEvent.clientY - bounds.top) / bounds.height) * 100;
 
-        <div className="w-full max-w-5xl mx-auto px-4 py-24 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center justify-center">
-          <div className="hackathon-alert-strip mx-auto mb-8">
+    pointerEvent.currentTarget.style.setProperty('--pointer-x', `${x}%`);
+    pointerEvent.currentTarget.style.setProperty('--pointer-y', `${y}%`);
+  };
+
+  const resetHeroPointer = (pointerEvent) => {
+    pointerEvent.currentTarget.style.setProperty('--pointer-x', '50%');
+    pointerEvent.currentTarget.style.setProperty('--pointer-y', '50%');
+  };
+
+  return (
+    <div className="hackathon-page">
+      <section
+        className="hackathon-hero relative overflow-hidden border-b border-white/5 flex flex-col items-center justify-center text-center"
+        onMouseMove={handleHeroPointerMove}
+        onMouseLeave={resetHeroPointer}
+      >
+        <div className="hackathon-grid-glow" aria-hidden="true" />
+        <div className="hackathon-grid-lines" aria-hidden="true" />
+        <div className="hackathon-hero-spotlight" aria-hidden="true" />
+        <div className="hackathon-hero-ring hackathon-hero-ring-one" aria-hidden="true" />
+        <div className="hackathon-hero-ring hackathon-hero-ring-two" aria-hidden="true" />
+        <div className="hackathon-hero-beam hackathon-hero-beam-one" aria-hidden="true" />
+        <div className="hackathon-hero-beam hackathon-hero-beam-two" aria-hidden="true" />
+        <div className="hackathon-hero-noise" aria-hidden="true" />
+>>>>>>> b6ffc5293bca2c6a886aced410524f81506630c2
+
+        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-24 sm:px-6 lg:px-8">
+          <div className="hackathon-kicker mx-auto mb-10">
             <span>{event.caseNumber}</span>
-            <span>Smackathon</span>
-            <span>Cyber Crime Division</span>
-            <span>24-Hour Lock-In</span>
           </div>
 
-          <div className="relative mb-8 w-full max-w-2xl mx-auto flex justify-center">
-            <Smackathon3DLogo />
+          <div className="hackathon-wordmark-wrap" aria-label="Smackathon">
+            <span className="hackathon-wordmark-backdrop">SMACKATHON</span>
+            <h1 className="hackathon-wordmark">SMACKATHON</h1>
           </div>
 
-          <h2 className="heading-display mt-4 text-3xl sm:text-5xl text-white tracking-[0.15em] uppercase">
-            OPERATION BREACH
-          </h2>
-          <p className="mt-4 text-evidence font-mono text-sm sm:text-base tracking-[0.25em] uppercase mb-10 text-shadow-glow">
-            India&apos;s Premier Cyber Crime Hackathon
-          </p>
-
-          <p className="max-w-3xl text-lg md:text-xl leading-relaxed text-paper/85 mb-14">
-            A full-scale cyber crime scenario built for coders, designers, and operators who want a
-            hackathon page that feels like an active case file instead of a plain event listing.
-          </p>
-
-          <div className="grid gap-6 sm:grid-cols-3 w-full max-w-4xl mb-14">
-            {heroSignals.map((signal) => (
-              <div key={signal.label} className="hackathon-signal-card text-center flex flex-col items-center justify-center py-8 hover:bg-white/5 transition-colors duration-300">
-                <span className="hackathon-signal-label">{signal.label}</span>
-                <strong className="hackathon-signal-value mt-3">{signal.value}</strong>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <a href={event.registrationLink} className="btn-primary px-10 py-4 text-base">
-              Secure Entry
-            </a>
-            <a href="#tracks" className="btn-secondary px-10 py-4 text-base">
-              Inspect Tracks
-            </a>
-          </div>
+          <p className="hackathon-year-mark mt-4">2K26</p>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mb-12 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+          <div className="hackathon-panel">
+            <SectionHeading
+              eyebrow="Flagship Build Challenge"
+              title="Smackathon 2K26"
+              description="Smackathon is the flagship build challenge of UPSURGE 2K26, designed for teams who want to turn a strong idea into a working product and present it on a bigger stage."
+            />
+            <div className="mt-8 flex flex-wrap gap-4">
+              <a href={event.registrationLink} className="btn-primary">
+                Register
+              </a>
+              <a href="#tracks" className="btn-secondary">
+                View Tracks
+              </a>
+            </div>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-3 xl:grid-cols-1">
+            {summaryCards.map((card) => (
+              <div key={card.label} className="hackathon-signal-card flex flex-col justify-center py-8 text-center xl:text-left">
+                <span className="hackathon-signal-label">{card.label}</span>
+                <strong className="hackathon-signal-value mt-3">{card.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
           <div className="hackathon-panel">
-            <SectionHeading eyebrow="Briefing" title="Inside The Case File" />
+            <SectionHeading eyebrow="Overview" title="What Smackathon Is About" />
             <div className="mt-6">
               <RedactedText as="p" className="text-lg leading-8 text-paper/90">
                 {event.description}
@@ -146,7 +171,7 @@ export default function Hackathon() {
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {event.highlights.map((item) => (
                 <div key={item} className="hackathon-evidence-card">
-                  <span className="hackathon-evidence-index">Evidence</span>
+                  <span className="hackathon-evidence-index">Highlight</span>
                   <p className="mt-3 text-sm leading-7 text-paper/85">{item}</p>
                 </div>
               ))}
@@ -154,7 +179,7 @@ export default function Hackathon() {
           </div>
 
           <div className="space-y-6">
-            {dossierCards.map((card) => (
+            {summaryCards.map((card) => (
               <div key={card.label} className="hackathon-dossier-card">
                 <span className="hackathon-dossier-label">{card.label}</span>
                 <h3 className="mt-3 font-display text-3xl uppercase tracking-wide text-paper">
@@ -170,12 +195,12 @@ export default function Hackathon() {
       <section className="border-y border-white/5 bg-ink/70">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Protocol"
-            title="How The Operation Unfolds"
-            description="The route now reads like a live investigation board, with each phase treated like a tactical step in the breach."
+            eyebrow="Process"
+            title="How The Hackathon Flows"
+            description="A simple three-step structure that takes teams from idea to final presentation."
           />
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {protocolTimeline.map((item) => (
+            {stageTimeline.map((item) => (
               <div key={item.step} className="hackathon-protocol-card">
                 <span className="hackathon-protocol-step">{item.step}</span>
                 <h3 className="mt-4 font-display text-3xl uppercase tracking-wide text-paper">{item.title}</h3>
@@ -188,9 +213,9 @@ export default function Hackathon() {
 
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" id="tracks">
         <SectionHeading
-          eyebrow="Seven Case Files"
-          title="Tracks Under Surveillance"
-          description="Every track is framed like its own cyber crime dossier, so the page feels consistent with the larger criminal-investigation theme."
+          eyebrow="Tracks"
+          title="Choose The Problem Space"
+          description="Pick the area that matches your interest, skill set, and the kind of solution you want to build."
         />
         <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {event.tracks.map((track) => (
@@ -201,10 +226,10 @@ export default function Hackathon() {
 
       <section className="border-y border-white/5 bg-ink/70">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeading eyebrow="Judging Matrix" title="Assessment Criteria" align="center" />
+          <SectionHeading eyebrow="Evaluation" title="How Teams Are Judged" align="center" />
           <div className="mt-12 grid gap-5 md:grid-cols-2">
             {event.assessmentCriteria.map((criterion, index) => (
-              <div key={criterion.title} className="hackathon-score-card">
+                <div key={criterion.title} className="hackathon-score-card">
                 <div className="flex items-center justify-between gap-4">
                   <p className="font-display text-2xl uppercase tracking-wide text-paper">{criterion.title}</p>
                   <span className="font-mono text-xs uppercase tracking-[0.3em] text-evidence">
@@ -213,7 +238,7 @@ export default function Hackathon() {
                 </div>
                 <p className="mt-3 text-sm leading-7 text-steel">{criterion.detail}</p>
                 <div className="hackathon-score-bar mt-5">
-                  <span style={{ width: `${78 + index * 5}%` }} />
+                  <span style={{ width: `${78 + index * 2.5}%` }} />
                 </div>
               </div>
             ))}
@@ -224,7 +249,7 @@ export default function Hackathon() {
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="hackathon-panel">
-            <SectionHeading eyebrow="Rules Of Engagement" title="Operational Constraints" />
+            <SectionHeading eyebrow="Rules" title="Participation Guidelines" />
             <div className="mt-8 space-y-4">
               {event.rules.map((rule, index) => (
                 <div key={rule} className="hackathon-rule-card">
@@ -236,7 +261,7 @@ export default function Hackathon() {
           </div>
 
           <div className="hackathon-panel">
-            <SectionHeading eyebrow="Debrief" title="Frequently Asked Questions" />
+            <SectionHeading eyebrow="FAQ" title="Common Questions" />
             <div className="mt-8 space-y-4">
               {event.faqs.map((faq) => (
                 <details key={faq.q} className="hackathon-faq-card group">
@@ -255,15 +280,15 @@ export default function Hackathon() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="hackathon-command-card">
             <div>
-              <span className="case-tag">Command Center</span>
+              <span className="case-tag">Venue</span>
               <h2 className="heading-display mt-4 text-4xl sm:text-5xl">{event.venue}</h2>
               <p className="mt-4 max-w-2xl text-base leading-7 text-paper/80">
-                The hackathon route is now framed like a cyber crime control room, making the event feel sharper,
-                darker, and much more memorable while staying limited to this page’s code path.
+                Smackathon brings teams together in a focused build environment where strong ideas can
+                turn into finished demos, feedback, and real momentum.
               </p>
             </div>
             <a href={event.registrationLink} className="btn-primary">
-              Join The Operation
+              Join Smackathon
             </a>
           </div>
         </div>

@@ -6,8 +6,8 @@ export default function TrackCard({ track }) {
       <h4 className="hackathon-track-title">{track.name}</h4>
       <p className="hackathon-track-brief">{track.brief}</p>
       <div className="hackathon-track-footer">
-        <span>Open dossier</span>
-        <span>Threat vector mapped</span>
+        <span>Track overview</span>
+        <span>Explore more</span>
       </div>
     </article>
   );
