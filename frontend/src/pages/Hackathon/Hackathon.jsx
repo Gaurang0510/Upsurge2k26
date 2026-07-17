@@ -2,11 +2,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
-<<<<<<< HEAD
-import Smackathon3DLogo from '../../components/hackathon/Smackathon3DLogo.jsx';
 import Balatro from '../../components/Balatro.jsx';
-=======
->>>>>>> b6ffc5293bca2c6a886aced410524f81506630c2
 import { flagshipEvent } from '../../data/events/index.js';
 import './hackathon.css';
 
@@ -50,43 +46,6 @@ export default function Hackathon() {
   useDocumentTitle(flagshipEvent.name);
   const event = flagshipEvent;
 
-<<<<<<< HEAD
-  return (
-    <div className="hackathon-page">
-      <div className="ambient-orb ambient-orb-1" aria-hidden="true" />
-      <div className="ambient-orb ambient-orb-2" aria-hidden="true" />
-      <div className="ambient-orb ambient-orb-3" aria-hidden="true" />
-      <section className="hackathon-hero relative overflow-hidden border-b border-white/5 flex flex-col items-center justify-center text-center">
-        {/* React Bits Balatro Shader Background */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
-          <Balatro
-            color1="#C1121F"
-            color2="#780000"
-            color3="#050505"
-            spinSpeed={5.0}
-            contrast={3.0}
-            lighting={0.3}
-          />
-        </div>
-        <div className="hackathon-grid-glow" aria-hidden="true" />
-
-        
-        {/* Subtle Background Radar */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-15 pointer-events-none scale-[2] md:scale-[2.5] z-0 mix-blend-screen">
-          <div className="cyber-core-container">
-            <div className="cyber-core-ring cyber-outer-ring" />
-            <div className="cyber-core-ring cyber-middle-ring" />
-            <div className="cyber-core-ring cyber-inner-ring" />
-            <div className="cyber-core-glow" />
-            <div className="cyber-particles">
-              <span className="particle p-1"></span>
-              <span className="particle p-2"></span>
-              <span className="particle p-3"></span>
-              <span className="particle p-4"></span>
-            </div>
-          </div>
-        </div>
-=======
   const handleHeroPointerMove = (pointerEvent) => {
     const bounds = pointerEvent.currentTarget.getBoundingClientRect();
     const x = ((pointerEvent.clientX - bounds.left) / bounds.width) * 100;
@@ -108,6 +67,17 @@ export default function Hackathon() {
         onMouseMove={handleHeroPointerMove}
         onMouseLeave={resetHeroPointer}
       >
+        {/* React Bits Balatro Shader Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
+          <Balatro
+            color1="#C1121F"
+            color2="#780000"
+            color3="#050505"
+            spinSpeed={5.0}
+            contrast={3.0}
+            lighting={0.3}
+          />
+        </div>
         <div className="hackathon-grid-glow" aria-hidden="true" />
         <div className="hackathon-grid-lines" aria-hidden="true" />
         <div className="hackathon-hero-spotlight" aria-hidden="true" />
@@ -116,7 +86,6 @@ export default function Hackathon() {
         <div className="hackathon-hero-beam hackathon-hero-beam-one" aria-hidden="true" />
         <div className="hackathon-hero-beam hackathon-hero-beam-two" aria-hidden="true" />
         <div className="hackathon-hero-noise" aria-hidden="true" />
->>>>>>> b6ffc5293bca2c6a886aced410524f81506630c2
 
         <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-24 sm:px-6 lg:px-8">
           <div className="hackathon-kicker mx-auto mb-10">
