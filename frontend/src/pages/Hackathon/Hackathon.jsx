@@ -2,6 +2,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
+import Balatro from '../../components/Balatro.jsx';
 import { flagshipEvent } from '../../data/events/index.js';
 import './hackathon.css';
 
@@ -66,6 +67,17 @@ export default function Hackathon() {
         onMouseMove={handleHeroPointerMove}
         onMouseLeave={resetHeroPointer}
       >
+        {/* React Bits Balatro Shader Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
+          <Balatro
+            color1="#C1121F"
+            color2="#780000"
+            color3="#050505"
+            spinSpeed={5.0}
+            contrast={3.0}
+            lighting={0.3}
+          />
+        </div>
         <div className="hackathon-grid-glow" aria-hidden="true" />
         <div className="hackathon-grid-lines" aria-hidden="true" />
         <div className="hackathon-hero-spotlight" aria-hidden="true" />
