@@ -135,9 +135,12 @@ export default function Aurora(props) {
       if (!ctn) return;
       const width = ctn.offsetWidth;
       const height = ctn.offsetHeight;
-      renderer.setSize(width, height);
+      const scale = window.innerWidth < 768 ? 0.5 : 1.0;
+      renderer.setSize(width * scale, height * scale);
+      gl.canvas.style.width = `${width}px`;
+      gl.canvas.style.height = `${height}px`;
       if (program) {
-        program.uniforms.uResolution.value = [width, height];
+        program.uniforms.uResolution.value = [gl.canvas.width, gl.canvas.height];
       }
     }
     window.addEventListener('resize', resize);

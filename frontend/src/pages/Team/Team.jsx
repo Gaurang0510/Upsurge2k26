@@ -24,7 +24,7 @@ export default function Team() {
       </div>
 
       {/* Main Page Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-28 pb-16 sm:pt-32 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Personnel Files"
           title="The Task Force"

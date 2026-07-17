@@ -22,7 +22,7 @@ export default function Schedule() {
         />
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8 relative z-10">
+      <div className="mx-auto max-w-4xl px-4 pt-28 pb-16 sm:pt-32 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading
           eyebrow="Survival Lobby"
           title="Event Schedule"

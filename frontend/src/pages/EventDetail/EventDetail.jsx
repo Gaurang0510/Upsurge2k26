@@ -18,7 +18,7 @@ export default function EventDetail() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-4xl px-4 pt-28 pb-16 sm:pt-32 sm:px-6 lg:px-8">
       <Link to="/events" className="font-mono text-xs uppercase tracking-widest text-evidence hover:text-white">
         ← Back to all cases
       </Link>
@@ -71,9 +71,23 @@ export default function EventDetail() {
       )}
 
       <div className="mt-12 flex flex-wrap items-center gap-4 border-t border-white/10 pt-8">
-        <a href={event.registrationLink} className="btn-primary">
-          Register Now
-        </a>
+        {event.registrationLink === '#' || event.registrationLink.startsWith('/') ? (
+          <Link
+            to={event.registrationLink === '#' ? `/register?event=${event.slug}` : event.registrationLink}
+            className="btn-primary"
+          >
+            Register Now
+          </Link>
+        ) : (
+          <a
+            href={event.registrationLink}
+            className="btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Register Now
+          </a>
+        )}
         <div className="font-mono text-xs uppercase tracking-widest text-steel">
           Venue: {event.venue} · Date: {event.date}
         </div>

@@ -125,7 +125,7 @@ export default {
   ],
   venue: 'CSE Department, YCCE, Wanadongri, Nagpur',
   date: '16 Jul - 7 Aug 2026',
-  registrationLink: '#',
+  registrationLink: '/register?event=operation-breach',
   image: '/images/events/operation-breach/cover.jpg',
   thumbnail: '/images/events/operation-breach/thumb.jpg',
   isFlagship: true,
