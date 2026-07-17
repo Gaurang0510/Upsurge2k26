@@ -4,6 +4,7 @@ import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
 import Smackathon3DLogo from '../../components/hackathon/Smackathon3DLogo.jsx';
+import Balatro from '../../components/Balatro.jsx';
 import { flagshipEvent } from '../../data/events/index.js';
 import './hackathon.css';
 
@@ -53,14 +54,25 @@ export default function Hackathon() {
   useDocumentTitle(flagshipEvent.name);
   const event = flagshipEvent;
 
-
   return (
     <div className="hackathon-page">
       <div className="ambient-orb ambient-orb-1" aria-hidden="true" />
       <div className="ambient-orb ambient-orb-2" aria-hidden="true" />
       <div className="ambient-orb ambient-orb-3" aria-hidden="true" />
       <section className="hackathon-hero relative overflow-hidden border-b border-white/5 flex flex-col items-center justify-center text-center">
+        {/* React Bits Balatro Shader Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
+          <Balatro
+            color1="#C1121F"
+            color2="#780000"
+            color3="#050505"
+            spinSpeed={5.0}
+            contrast={3.0}
+            lighting={0.3}
+          />
+        </div>
         <div className="hackathon-grid-glow" aria-hidden="true" />
+
         
         {/* Subtle Background Radar */}
         <div className="absolute inset-0 flex items-center justify-center opacity-15 pointer-events-none scale-[2] md:scale-[2.5] z-0 mix-blend-screen">

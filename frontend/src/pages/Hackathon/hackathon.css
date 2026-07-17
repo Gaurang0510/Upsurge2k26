@@ -7,11 +7,7 @@
 .hackathon-hero {
   position: relative;
   min-height: 100vh;
-  background-image: url('/images/gallery/HOME_background.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: scroll;
-  background-repeat: no-repeat;
+  background-color: #050505;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;

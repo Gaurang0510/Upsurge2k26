@@ -1,47 +1,54 @@
-import { Link } from 'react-router-dom';
-import RedactedText from '../common/RedactedText.jsx';
-import { siteConfig } from '../../data/site.js';
-
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-case-black">
-      {/* scanline + noise atmosphere */}
-      <div className="pointer-events-none absolute inset-0 bg-noise opacity-40" aria-hidden="true" />
+    <section className="relative w-full aspect-video sm:aspect-auto sm:h-[75vh] lg:h-[calc(100vh-64px)] sm:min-h-[580px] lg:min-h-[680px] max-h-[1000px] overflow-hidden bg-case-black px-4 sm:px-0">
+      {/* Radial ambient crimson glow */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-terminal/10 to-transparent animate-scanline"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(193,18,31,0.25),transparent_70%)]"
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto flex max-w-7xl flex-col items-start px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
-        <span className="case-tag mb-6">
-          <span className="h-2 w-2 animate-blink rounded-full bg-breach" />
-          Case File #2K26 — Status: Active
-        </span>
+      {/* Noise atmosphere + scanline animation */}
+      <div className="pointer-events-none absolute inset-0 bg-noise opacity-30 z-10" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-terminal/20 to-transparent animate-scanline z-10"
+        aria-hidden="true"
+      />
 
-        <h1 className="heading-display text-6xl sm:text-7xl lg:text-8xl">
-          The system
-          <br />
-          has been
-          <br />
-          <span className="text-evidence">compromised.</span>
-        </h1>
+      {/* 3D Spline Interactive Canvas */}
+      <iframe
+        src="https://my.spline.design/cybermannequin-ccOtsiHhCv3krIP92SQIuq2s/"
+        frameBorder="0"
+        width="100%"
+        height="100%"
+        title="Spline 3D Cyber Mannequin"
+        className="relative z-10 h-full w-full border-0 select-none"
+        allow="fullscreen; autoplay; xr-spatial-tracking"
+      />
 
-        <div className="mt-6 max-w-xl">
-          <RedactedText as="p" className="text-lg text-steel sm:text-xl" delay={300}>
-            {siteConfig.organizer} presents UPSURGE 2K26 — hackathons, cyber-forensics, escape rooms and esports,
-            all wrapped in one theme: {siteConfig.theme}. Answer the call, or watch the case go cold.
-          </RedactedText>
-        </div>
-
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link to="/hackathon" className="btn-primary">
-            Enter Operation Breach
-          </Link>
-          <Link to="/events" className="btn-secondary">
-            View All Cases
-          </Link>
-        </div>
-      </div>
+      {/* Bottom atmospheric gradient fade for smooth section transition */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 sm:h-24 bg-gradient-to-t from-case-black via-case-black/50 to-transparent z-20" />
     </section>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
