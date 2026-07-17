@@ -16,9 +16,9 @@ export default {
         'steel-dark': '#4B5563',
       },
       fontFamily: {
-        display: ['"Bebas Neue"', 'sans-serif'], // wanted-poster / stencil headlines
-        body: ['"Inter"', 'sans-serif'], // readable body copy
-        mono: ['"JetBrains Mono"', 'monospace'], // terminal / data / case numbers
+        display: ['"Neue Machina"', 'sans-serif'], // wanted-poster / stencil headlines
+        body: ['"Neue Machina"', 'sans-serif'], // readable body copy
+        mono: ['"Neue Machina"', 'monospace'], // terminal / data / case numbers
       },
       backgroundImage: {
         noise: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E\")",
