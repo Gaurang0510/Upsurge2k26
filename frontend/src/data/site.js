@@ -20,7 +20,7 @@ export const siteConfig = {
   },
   navLinks: [
     { label: 'Home', path: '/' },
-    { label: 'Operation Breach', path: '/hackathon' },
+    { label: 'Smackathon', path: '/hackathon' },
     { label: 'Events', path: '/events' },
     { label: 'Schedule', path: '/schedule' },
     { label: 'Team', path: '/team' },

@@ -1,103 +1,118 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import Logo from './Logo.jsx';
-import { siteConfig } from '../../data/site.js';
-import GlassSurface from './GlassSurface.jsx';
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";
+import { Home, Shield, Calendar, Clock, Users } from "lucide-react";
+import { cn } from "../../lib/utils.js";
+import { siteConfig } from "../../data/site.js";
 
-export default function Navbar() {
-  const [open, setOpen] = useState(false);
+const iconMap = {
+  'Home': Home,
+  'Smackathon': Shield,
+  'Events': Calendar,
+  'Schedule': Clock,
+  'Team': Users
+};
 
-  const linkClass = ({ isActive }) =>
-    `font-mono text-xs uppercase tracking-[0.2em] transition-colors ${
-      isActive ? 'text-evidence' : 'text-paper/80 hover:text-evidence'
-    }`;
+export default function Navbar({ className }) {
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('');
+  const [hoveredTab, setHoveredTab] = useState(null);
+
+  useEffect(() => {
+    // Find the active tab based on the current path
+    const currentLink = siteConfig.navLinks.find(link =>
+      link.path === '/'
+        ? location.pathname === '/'
+        : location.pathname.startsWith(link.path)
+    );
+    if (currentLink) {
+      setActiveTab(currentLink.label);
+    } else {
+      setActiveTab(siteConfig.navLinks[0].label);
+    }
+  }, [location.pathname]);
+
+  // removed handleResize as isMobile state is no longer used
+
+  const items = siteConfig.navLinks.map(link => ({
+    name: link.label,
+    url: link.path,
+    icon: iconMap[link.label] || Home
+  }));
 
   return (
-    <header className="sticky top-0 z-50 px-4 py-4 sm:px-6 lg:px-8">
-      <GlassSurface
-        width="100%"
-        height="auto"
-        borderRadius={16}
-        backgroundOpacity={0}
-        borderWidth={0.05}
-        brightness={50}
-        opacity={0.95}
-        blur={0}
-        displace={6}
-        saturation={1.2}
-        distortionScale={-140}
-        redOffset={4}
-        greenOffset={12}
-        blueOffset={20}
-        className="mx-auto max-w-[85rem]"
-      >
-        <nav className="w-full flex items-center justify-between px-6 py-3">
-          <NavLink to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-            <Logo />
-            <span className="font-display text-2xl tracking-widest text-paper">
-              {siteConfig.shortName}
-              <span className="text-evidence">2K26</span>
-            </span>
-          </NavLink>
-
-          {/* Desktop nav */}
-          <div className="hidden items-center gap-8 md:flex">
-            {siteConfig.navLinks.map((link) => (
-              <NavLink key={link.path} to={link.path} className={linkClass} end={link.path === '/'}>
-                {link.label}
-              </NavLink>
-            ))}
-            <NavLink to="/events" className="btn-primary">
-              Register
-            </NavLink>
-          </div>
-
-          {/* Mobile toggle */}
-          <button
-            type="button"
-            className="flex h-10 w-10 items-center justify-center border border-white/10 text-evidence md:hidden"
-            onClick={() => setOpen((prev) => !prev)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-          >
-            <span className="font-mono text-lg">{open ? '×' : '≡'}</span>
-          </button>
-        </nav>
-      </GlassSurface>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="mx-auto mt-2 max-w-[85rem]">
-          <GlassSurface
-            width="100%"
-            height="auto"
-            borderRadius={16}
-            backgroundOpacity={0.15}
-            className="md:hidden"
-          >
-            <div className="w-full flex flex-col gap-1 px-6 py-4">
-              {siteConfig.navLinks.map((link) => (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  className={({ isActive }) =>
-                    `border-b border-white/5 py-3 font-mono text-sm uppercase tracking-widest ${
-                      isActive ? 'text-evidence' : 'text-paper/80'
-                    }`
-                  }
-                  onClick={() => setOpen(false)}
-                  end={link.path === '/'}
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-              <NavLink to="/events" className="btn-primary mt-4 w-full" onClick={() => setOpen(false)}>
-                Register
-              </NavLink>
-            </div>
-          </GlassSurface>
-        </div>
+    <div
+      className={cn(
+        "fixed bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 w-full flex justify-center z-50 mb-6 sm:pt-6 pointer-events-none",
+        className,
       )}
-    </header>
+    >
+      <div 
+        className="flex items-center gap-3 bg-transparent py-1 px-1 rounded-full pointer-events-auto"
+        onMouseLeave={() => setHoveredTab(null)}
+      >
+        <AnimatePresence>
+          {items.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.name;
+
+            return (
+              <Link
+                key={item.name}
+                to={item.url}
+                onClick={() => setActiveTab(item.name)}
+                onMouseEnter={() => setHoveredTab(item.name)}
+                className={cn(
+                  "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors duration-300",
+                  "text-paper/80 hover:text-evidence",
+                  isActive && "text-evidence"
+                )}
+              >
+                <span className="relative z-10 hidden md:inline font-mono tracking-widest uppercase transition-transform duration-200 hover:scale-105 inline-block">{item.name}</span>
+                <span className="relative z-10 md:hidden transition-transform duration-200 hover:scale-110 inline-block">
+                  <Icon size={18} strokeWidth={2.5} />
+                </span>
+                
+                {/* Hover Pill Background */}
+                {hoveredTab === item.name && (
+                  <motion.div
+                    layoutId="hoverPill"
+                    className="absolute inset-0 bg-white/[0.04] border border-white/[0.03] rounded-full -z-10"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 25,
+                    }}
+                  />
+                )}
+
+                {/* Active Lamp Background */}
+                {isActive && (
+                  <motion.div
+                    layoutId="lamp"
+                    className="absolute inset-0 w-full bg-evidence/5 rounded-full -z-10"
+                    initial={false}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30,
+                    }}
+                  >
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-evidence rounded-t-full">
+                      <div className="absolute w-12 h-6 bg-evidence/20 rounded-full blur-md -top-2 -left-2" />
+                      <div className="absolute w-8 h-6 bg-evidence/20 rounded-full blur-md -top-1" />
+                      <div className="absolute w-4 h-4 bg-evidence/20 rounded-full blur-sm top-0 left-2" />
+                    </div>
+                  </motion.div>
+                )}
+              </Link>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }

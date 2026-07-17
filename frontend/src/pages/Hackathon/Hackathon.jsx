@@ -63,7 +63,7 @@ export default function Hackathon() {
   return (
     <div className="hackathon-page">
       <section
-        className="hackathon-hero relative overflow-hidden border-b border-white/5 flex flex-col items-center justify-center text-center"
+        className="hackathon-hero relative overflow-hidden flex flex-col items-center justify-center text-center"
         onMouseMove={handleHeroPointerMove}
         onMouseLeave={resetHeroPointer}
       >
@@ -78,6 +78,8 @@ export default function Hackathon() {
             lighting={0.3}
           />
         </div>
+        {/* Submerge/fade effect at the bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-case-black to-transparent pointer-events-none z-10" />
         <div className="hackathon-grid-glow" aria-hidden="true" />
         <div className="hackathon-grid-lines" aria-hidden="true" />
         <div className="hackathon-hero-spotlight" aria-hidden="true" />
@@ -102,7 +104,7 @@ export default function Hackathon() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mb-12 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="mb-12">
           <div className="hackathon-panel">
             <SectionHeading
               eyebrow="Flagship Build Challenge"
@@ -117,15 +119,6 @@ export default function Hackathon() {
                 View Tracks
               </a>
             </div>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-3 xl:grid-cols-1">
-            {summaryCards.map((card) => (
-              <div key={card.label} className="hackathon-signal-card flex flex-col justify-center py-8 text-center xl:text-left">
-                <span className="hackathon-signal-label">{card.label}</span>
-                <strong className="hackathon-signal-value mt-3">{card.value}</strong>
-              </div>
-            ))}
           </div>
         </div>
 
@@ -216,31 +209,15 @@ export default function Hackathon() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="hackathon-panel">
-            <SectionHeading eyebrow="Rules" title="Participation Guidelines" />
-            <div className="mt-8 space-y-4">
-              {event.rules.map((rule, index) => (
-                <div key={rule} className="hackathon-rule-card">
-                  <span className="hackathon-rule-index">0{index + 1}</span>
-                  <p className="text-sm leading-7 text-paper/85">{rule}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="hackathon-panel">
-            <SectionHeading eyebrow="FAQ" title="Common Questions" />
-            <div className="mt-8 space-y-4">
-              {event.faqs.map((faq) => (
-                <details key={faq.q} className="hackathon-faq-card group">
-                  <summary className="cursor-pointer list-none font-display text-xl uppercase tracking-wide text-paper">
-                    {faq.q}
-                  </summary>
-                  <p className="mt-4 text-sm leading-7 text-steel">{faq.a}</p>
-                </details>
-              ))}
-            </div>
+        <div className="hackathon-panel w-full">
+          <SectionHeading eyebrow="Rules" title="Participation Guidelines" />
+          <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2">
+            {event.rules.map((rule, index) => (
+              <div key={rule} className="hackathon-rule-card">
+                <span className="hackathon-rule-index">0{index + 1}</span>
+                <p className="text-sm leading-7 text-paper/85">{rule}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
