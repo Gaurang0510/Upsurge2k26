@@ -19,9 +19,18 @@ const ScrollFloat = ({
 
   const splitText = useMemo(() => {
     const text = typeof children === 'string' ? children : '';
-    return text.split('').map((char, index) => (
-      <span className="inline-block word" key={index}>
-        {char === ' ' ? '\u00A0' : char}
+    const words = text.split(' ');
+
+    return words.map((word, wordIndex) => (
+      <span key={wordIndex} className="inline-block whitespace-nowrap">
+        {word.split('').map((char, charIndex) => (
+          <span className="scroll-float-char inline-block" key={charIndex}>
+            {char}
+          </span>
+        ))}
+        {wordIndex < words.length - 1 && (
+          <span className="scroll-float-char inline-block">&nbsp;</span>
+        )}
       </span>
     ));
   }, [children]);
@@ -32,7 +41,7 @@ const ScrollFloat = ({
 
     const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
 
-    const charElements = el.querySelectorAll('.inline-block');
+    const charElements = el.querySelectorAll('.scroll-float-char');
 
     gsap.fromTo(charElements, {
       willChange: 'opacity, transform',

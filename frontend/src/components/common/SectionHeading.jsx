@@ -1,10 +1,10 @@
 import ScrollFloat from '../ScrollFloat.jsx';
 
-export default function SectionHeading({ eyebrow, title, description, align = 'left', scrollFloat = false }) {
+export default function SectionHeading({ eyebrow, title, description, align = 'left', scrollFloat = false, className = '' }) {
   const alignment = align === 'center' ? 'text-center items-center mx-auto' : 'text-left items-start';
 
   return (
-    <div className={`flex flex-col gap-3 max-w-2xl ${alignment}`}>
+    <div className={`flex flex-col gap-3 max-w-3xl ${alignment} ${className}`}>
       {eyebrow && <span className="case-tag">{"//"} {eyebrow}</span>}
       {scrollFloat && typeof title === 'string' ? (
         <ScrollFloat
