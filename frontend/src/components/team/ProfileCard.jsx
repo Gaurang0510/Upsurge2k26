@@ -275,7 +275,7 @@ const ProfileCardComponent = ({
   return (
     <div
       ref={wrapRef}
-      className={`relative touch-none ${className}`.trim()}
+      className={`relative ${className}`.trim()}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onMouseMove={handleCardMouseMove}
@@ -285,7 +285,7 @@ const ProfileCardComponent = ({
       <div ref={shellRef} className="relative z-[1] group">
         {/* Glassmorphism Border Glow Shell */}
         <div
-          className="relative rounded-[22px] p-[2px] transition-all duration-500 ease-out w-[260px] h-[380px] sm:w-[280px] sm:h-[410px] lg:w-[300px] lg:h-[430px]"
+          className="relative rounded-[22px] p-[2px] transition-all duration-500 ease-out w-[240px] h-[360px] xs:w-[260px] xs:h-[380px] sm:w-[280px] sm:h-[410px] lg:w-[300px] lg:h-[430px]"
           style={{
             background: 'linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.08) 100%)',
             backdropFilter: 'blur(12px)',

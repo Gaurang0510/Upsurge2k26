@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import ScheduleTimeline from '../../components/schedule/ScheduleTimeline.jsx';
+import ScrollFade from '../../components/common/ScrollFade.jsx';
 import { schedule } from '../../data/schedule.js';
 import LetterGlitch from '../../components/common/LetterGlitch.jsx';
 
@@ -23,35 +24,40 @@ export default function Schedule() {
         />
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 pt-28 pb-16 sm:pt-32 sm:px-6 lg:px-8 relative z-10">
-        <SectionHeading
-          eyebrow="Survival Lobby"
-          title="Event Schedule"
-          description="Chronological log of operational windows, checkpoints, and festive highlights. Terminals online."
-        />
+      <div className="mx-auto max-w-4xl px-4 pt-36 pb-28 sm:pt-44 sm:pb-36 sm:px-6 lg:px-8 relative z-10">
+        <ScrollFade direction="up">
+          <SectionHeading
+            eyebrow="Survival Lobby"
+            title="Event Schedule"
+            description="Chronological log of operational windows, checkpoints, and festive highlights. Terminals online."
+            scrollFloat={true}
+          />
+        </ScrollFade>
 
         {/* Cyberpunk Operational Dashboard */}
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-white/[0.01] border border-white/5 rounded-lg backdrop-blur-sm font-mono text-xs uppercase tracking-widest text-steel relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#61dca3]/5 via-transparent to-transparent pointer-events-none" />
-          <div className="flex flex-col gap-1 border-r border-white/5 last:border-0 pr-2">
-            <span className="text-[10px] text-steel/60">OPERATION STATUS</span>
-            <span className="text-[#61dca3] font-bold animate-pulse">● LOGGED_ACTIVE</span>
+        <ScrollFade direction="up" delay={0.15}>
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-white/[0.01] border border-white/5 rounded-lg backdrop-blur-sm font-mono text-xs uppercase tracking-widest text-steel relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#61dca3]/5 via-transparent to-transparent pointer-events-none" />
+            <div className="flex flex-col gap-1 border-r border-white/5 last:border-0 pr-2">
+              <span className="text-[10px] text-steel/60">OPERATION STATUS</span>
+              <span className="text-[#61dca3] font-bold animate-pulse">● LOGGED_ACTIVE</span>
+            </div>
+            <div className="flex flex-col gap-1 sm:border-r border-white/5 last:border-0 sm:px-2">
+              <span className="text-[10px] text-steel/60">DECRYPT SPEED</span>
+              <span className="text-white font-bold">982.4 KB/S</span>
+            </div>
+            <div className="flex flex-col gap-1 border-r border-white/5 last:border-0 pr-2 sm:px-2">
+              <span className="text-[10px] text-steel/60">ACTIVE TRACKS</span>
+              <span className="text-white font-bold">13 / 13 STABLE</span>
+            </div>
+            <div className="flex flex-col gap-1 pl-2">
+              <span className="text-[10px] text-steel/60">SYSTEM DOMAIN</span>
+              <span className="text-[#61dca3] font-bold">NAGPUR_SEC_05</span>
+            </div>
           </div>
-          <div className="flex flex-col gap-1 sm:border-r border-white/5 last:border-0 sm:px-2">
-            <span className="text-[10px] text-steel/60">DECRYPT SPEED</span>
-            <span className="text-white font-bold">982.4 KB/S</span>
-          </div>
-          <div className="flex flex-col gap-1 border-r border-white/5 last:border-0 pr-2 sm:px-2">
-            <span className="text-[10px] text-steel/60">ACTIVE TRACKS</span>
-            <span className="text-white font-bold">13 / 13 STABLE</span>
-          </div>
-          <div className="flex flex-col gap-1 pl-2">
-            <span className="text-[10px] text-steel/60">SYSTEM DOMAIN</span>
-            <span className="text-[#61dca3] font-bold">NAGPUR_SEC_05</span>
-          </div>
-        </div>
+        </ScrollFade>
 
-        <div className="mt-8 flex gap-3 bg-black/40 border border-white/5 p-1 rounded-lg w-fit backdrop-blur-md relative overflow-hidden">
+        <ScrollFade direction="up" delay={0.25} className="mt-12 flex gap-3 bg-black/40 border border-white/5 p-1 rounded-lg w-fit backdrop-blur-md relative overflow-hidden">
           {schedule.map((day, index) => (
             <button
               key={day.day}
@@ -74,11 +80,11 @@ export default function Schedule() {
               )}
             </button>
           ))}
-        </div>
+        </ScrollFade>
 
-        <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-[#61dca3] font-bold">{schedule[activeDay].date}</p>
+        <p className="mt-8 font-mono text-xs uppercase tracking-[0.2em] text-[#61dca3] font-bold">{schedule[activeDay].date}</p>
 
-        <div className="mt-8">
+        <div className="mt-10">
           <AnimatePresence mode="wait">
             <ScheduleTimeline key={activeDay} day={schedule[activeDay]} />
           </AnimatePresence>

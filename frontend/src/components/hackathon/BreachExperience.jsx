@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import FuzzyText from '../FuzzyText.jsx';
 
 const PHASES = [
   {
@@ -266,13 +267,20 @@ export default function BreachExperience({ scrollYProgress }) {
                 marginBottom: 10, boxShadow: '0 0 5px #E10600',
               }} />
 
-              <motion.h2 variants={childVariants} style={{
-                fontFamily: '"Space Grotesk", sans-serif',
-                fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)',
-                fontWeight: 900, color: '#E5E5E5',
-                lineHeight: 1.0, letterSpacing: '-0.02em',
-                textTransform: 'uppercase', margin: 0,
-              }}>{phase.title}</motion.h2>
+              <motion.div variants={childVariants} className="my-2">
+                <FuzzyText
+                  fontSize="clamp(1.8rem, 4.5vw, 3.2rem)"
+                  fontWeight={900}
+                  color="#E5E5E5"
+                  baseIntensity={0.15}
+                  hoverIntensity={0.5}
+                  fuzzRange={25}
+                  glitchMode={true}
+                  glitchInterval={3000}
+                >
+                  {phase.title}
+                </FuzzyText>
+              </motion.div>
 
               <motion.p variants={childVariants} style={{
                 fontFamily: '"Inter", sans-serif',
