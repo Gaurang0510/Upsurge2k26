@@ -1,6 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "base-nova",
+  "style": "default",
   "rsc": false,
   "tsx": false,
   "tailwind": {
@@ -19,13 +19,7 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "menuColor": "default",
-  "menuAccent": "subtle",
-<<<<<<< HEAD
   "registries": {
     "@react-bits": "https://reactbits.dev/r/{name}.json"
   }
-=======
-  "registries": {}
->>>>>>> 0c467209161962b224e201ed31f940eb43a861f4
 }
