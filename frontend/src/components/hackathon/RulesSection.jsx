@@ -176,7 +176,7 @@ export default function RulesSection({ rules }) {
                 REMEMBER
               </span>
               <p className="mt-1 text-base sm:text-lg font-medium text-white">
-                This isn't just a hackathon. <span className="text-steel">It's a cyber battleground.</span>
+                This isn&apos;t just a hackathon. <span className="text-steel">It&apos;s a cyber battleground.</span>
               </p>
             </div>
           </div>

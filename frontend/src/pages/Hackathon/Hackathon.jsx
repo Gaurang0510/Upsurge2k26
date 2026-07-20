@@ -116,7 +116,7 @@ export default function Hackathon() {
         <section className="mx-auto max-w-7xl px-4 py-28 sm:py-36 sm:px-6 lg:px-8">
           <ScrollFade direction="up" className="mb-16 sm:mb-20">
             <div className="hackathon-panel">
-              <span className="case-tag mb-3 inline-block">// Flagship Build Challenge</span>
+              <span className="case-tag mb-3 inline-block">{"//"} Flagship Build Challenge</span>
               <div className="my-2">
                 <FuzzyText
                   fontSize="clamp(2.2rem, 6vw, 4.5rem)"
