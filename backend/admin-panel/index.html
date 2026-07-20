@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UPSURGE 2K26 — Admin Control Deck</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-tag">// upsurge 2k26</div>
+        <div class="brand-title">Control Deck</div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Monitor</div>
+        <div class="nav-item active" data-view="dashboard">▤ Dashboard</div>
+        <div class="nav-item" data-view="teams">☰ Teams &amp; Registrations</div>
+        <div class="nav-item" data-view="checkin">◈ Venue Check-in</div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Session</div>
+        <div class="nav-item" id="adminWhoami">—</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost" id="logoutBtn" style="width:100%;">Log out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- ===== Dashboard View ===== -->
+      <section id="view-dashboard">
+        <div class="topbar">
+          <div>
+            <h1 class="page-title">Registration Overview</h1>
+            <div class="page-sub">Live snapshot across all UPSURGE 2K26 events</div>
+          </div>
+          <button class="btn btn-ghost" id="refreshStatsBtn">↻ Refresh</button>
+        </div>
+
+        <div class="stat-grid" id="statGrid">
+          <div class="stat-card"><div class="stat-label">Total Teams</div><div class="stat-value" id="statTotal">—</div></div>
+          <div class="stat-card"><div class="stat-label">Confirmed</div><div class="stat-value ok" id="statConfirmed">—</div></div>
+          <div class="stat-card"><div class="stat-label">Pending Payment</div><div class="stat-value warn" id="statPending">—</div></div>
+          <div class="stat-card"><div class="stat-label">Cancelled</div><div class="stat-value" id="statCancelled">—</div></div>
+          <div class="stat-card"><div class="stat-label">Revenue Captured</div><div class="stat-value accent" id="statRevenue">—</div></div>
+          <div class="stat-card"><div class="stat-label">Checked-in at Venue</div><div class="stat-value ok" id="statCheckedIn">—</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Breakdown by Event</h3></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr><th>Event</th><th>Total Teams</th><th>Confirmed</th><th>Pending</th></tr>
+              </thead>
+              <tbody id="byEventBody">
+                <tr><td colspan="4" class="empty-state">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Teams View ===== -->
+      <section id="view-teams" style="display:none;">
+        <div class="topbar">
+          <div>
+            <h1 class="page-title">Teams &amp; Registrations</h1>
+            <div class="page-sub">Search, filter, and manage every team registration</div>
+          </div>
+          <button class="btn btn-primary" id="exportBtn">⬇ Export CSV</button>
+        </div>
+
+        <div class="panel">
+          <div class="filters">
+            <input type="text" id="searchInput" placeholder="Search team, leader, email, phone, code…" />
+            <select id="eventFilter"><option value="">All Events</option></select>
+            <select id="statusFilter">
+              <option value="">All Statuses</option>
+              <option value="CONFIRMED">Confirmed</option>
+              <option value="PENDING">Pending</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+            <select id="paymentFilter">
+              <option value="">All Payments</option>
+              <option value="CAPTURED">Captured</option>
+              <option value="PENDING">Pending</option>
+              <option value="FAILED">Failed</option>
+              <option value="REFUNDED">Refunded</option>
+            </select>
+            <button class="btn btn-ghost" id="applyFiltersBtn">Apply</button>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Team Code</th>
+                  <th>Team Name</th>
+                  <th>Event</th>
+                  <th>Leader</th>
+                  <th>Size</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Check-in</th>
+                  <th>Case Code</th>
+                  <th>Registered</th>
+                </tr>
+              </thead>
+              <tbody id="teamsBody">
+                <tr><td colspan="10" class="empty-state">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination">
+            <div id="pageInfo">—</div>
+            <div class="pg-btns">
+              <button class="btn btn-ghost" id="prevPageBtn">← Prev</button>
+              <button class="btn btn-ghost" id="nextPageBtn">Next →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Check-in View ===== -->
+      <section id="view-checkin" style="display:none;">
+        <div class="topbar">
+          <div>
+            <h1 class="page-title">Venue Check-in</h1>
+            <div class="page-sub">Scan or type a team's Case Reference Code to check them in on-site</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="checkin-box">
+            <div class="checkin-row">
+              <input type="text" id="checkinInput" placeholder="UP-BREACH-8492" autofocus />
+              <button class="btn btn-primary" id="checkinBtn">Check In</button>
+            </div>
+            <div class="checkin-result" id="checkinResult"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
