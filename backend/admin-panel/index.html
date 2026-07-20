@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>UPSURGE 2K26 — Admin Control Deck</title>
+<title>SMACKATHON 2K26 Admin Panel</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="brand-tag">// upsurge 2k26</div>
-        <div class="brand-title">Control Deck</div>
+        <div class="brand-tag">// smackathon 2k26</div>
+        <div class="brand-title">Admin Panel</div>
       </div>
 
       <div class="nav-group">
-        <div class="nav-label">Monitor</div>
-        <div class="nav-item active" data-view="dashboard">▤ Dashboard</div>
-        <div class="nav-item" data-view="teams">☰ Teams &amp; Registrations</div>
-        <div class="nav-item" data-view="checkin">◈ Venue Check-in</div>
+        <div class="nav-label">Console</div>
+        <div class="nav-item active" data-view="dashboard">Overview</div>
+        <div class="nav-item" data-view="teams">Registrations</div>
+        <div class="nav-item" data-view="shortlist">Shortlist</div>
       </div>
 
       <div class="nav-group">
@@ -32,66 +32,68 @@
     </aside>
 
     <main class="main">
-      <!-- ===== Dashboard View ===== -->
       <section id="view-dashboard">
         <div class="topbar">
           <div>
-            <h1 class="page-title">Registration Overview</h1>
-            <div class="page-sub">Live snapshot across all UPSURGE 2K26 events</div>
+            <h1 class="page-title">Smackathon Registration Overview</h1>
+            <div class="page-sub">Shortlisted-team verification, payment review, and final confirmation snapshot</div>
           </div>
-          <button class="btn btn-ghost" id="refreshStatsBtn">↻ Refresh</button>
+          <button class="btn btn-ghost" id="refreshStatsBtn">Refresh</button>
         </div>
 
-        <div class="stat-grid" id="statGrid">
-          <div class="stat-card"><div class="stat-label">Total Teams</div><div class="stat-value" id="statTotal">—</div></div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-label">Shortlisted Emails</div><div class="stat-value" id="statShortlist">—</div></div>
+          <div class="stat-card"><div class="stat-label">Submitted Teams</div><div class="stat-value" id="statTotal">—</div></div>
+          <div class="stat-card"><div class="stat-label">Under Review</div><div class="stat-value warn" id="statUnderReview">—</div></div>
           <div class="stat-card"><div class="stat-label">Confirmed</div><div class="stat-value ok" id="statConfirmed">—</div></div>
-          <div class="stat-card"><div class="stat-label">Pending Payment</div><div class="stat-value warn" id="statPending">—</div></div>
-          <div class="stat-card"><div class="stat-label">Cancelled</div><div class="stat-value" id="statCancelled">—</div></div>
-          <div class="stat-card"><div class="stat-label">Revenue Captured</div><div class="stat-value accent" id="statRevenue">—</div></div>
-          <div class="stat-card"><div class="stat-label">Checked-in at Venue</div><div class="stat-value ok" id="statCheckedIn">—</div></div>
+          <div class="stat-card"><div class="stat-label">Rejected Payments</div><div class="stat-value accent" id="statRejected">—</div></div>
+          <div class="stat-card"><div class="stat-label">Verified Revenue</div><div class="stat-value ok" id="statRevenue">—</div></div>
         </div>
 
         <div class="panel">
-          <div class="panel-head"><h3>Breakdown by Event</h3></div>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead>
-                <tr><th>Event</th><th>Total Teams</th><th>Confirmed</th><th>Pending</th></tr>
-              </thead>
-              <tbody id="byEventBody">
-                <tr><td colspan="4" class="empty-state">Loading…</td></tr>
-              </tbody>
-            </table>
+          <div class="panel-head">
+            <h3>Manual Flow Summary</h3>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-step">1</div>
+              <div class="summary-copy">Import shortlisted Unstop emails, then teams verify access through OTP.</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-step">2</div>
+              <div class="summary-copy">Teams submit member details, UTR, and Cloudinary-hosted payment proof.</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-step">3</div>
+              <div class="summary-copy">Admins verify or reject proof, edit records if needed, and resend confirmation.</div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- ===== Teams View ===== -->
       <section id="view-teams" style="display:none;">
         <div class="topbar">
           <div>
-            <h1 class="page-title">Teams &amp; Registrations</h1>
-            <div class="page-sub">Search, filter, and manage every team registration</div>
+            <h1 class="page-title">Registrations</h1>
+            <div class="page-sub">Review payment proofs, edit teams, and manage final confirmation</div>
           </div>
-          <button class="btn btn-primary" id="exportBtn">⬇ Export CSV</button>
+          <button class="btn btn-primary" id="exportBtn">Export Excel</button>
         </div>
 
         <div class="panel">
           <div class="filters">
-            <input type="text" id="searchInput" placeholder="Search team, leader, email, phone, code…" />
-            <select id="eventFilter"><option value="">All Events</option></select>
+            <input type="text" id="searchInput" placeholder="Search team, email, phone, code..." />
             <select id="statusFilter">
-              <option value="">All Statuses</option>
+              <option value="">All Team Statuses</option>
+              <option value="PAYMENT_UNDER_REVIEW">Payment Under Review</option>
               <option value="CONFIRMED">Confirmed</option>
-              <option value="PENDING">Pending</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="PAYMENT_REJECTED">Payment Rejected</option>
             </select>
             <select id="paymentFilter">
-              <option value="">All Payments</option>
-              <option value="CAPTURED">Captured</option>
-              <option value="PENDING">Pending</option>
-              <option value="FAILED">Failed</option>
-              <option value="REFUNDED">Refunded</option>
+              <option value="">All Payment Statuses</option>
+              <option value="UNDER_REVIEW">Under Review</option>
+              <option value="VERIFIED">Verified</option>
+              <option value="REJECTED">Rejected</option>
             </select>
             <button class="btn btn-ghost" id="applyFiltersBtn">Apply</button>
           </div>
@@ -101,19 +103,18 @@
               <thead>
                 <tr>
                   <th>Team Code</th>
-                  <th>Team Name</th>
-                  <th>Event</th>
+                  <th>Registration</th>
+                  <th>Team</th>
                   <th>Leader</th>
-                  <th>Size</th>
                   <th>Status</th>
                   <th>Payment</th>
-                  <th>Check-in</th>
-                  <th>Case Code</th>
-                  <th>Registered</th>
+                  <th>UTR</th>
+                  <th>Submitted</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody id="teamsBody">
-                <tr><td colspan="10" class="empty-state">Loading…</td></tr>
+                <tr><td colspan="9" class="empty-state">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -121,29 +122,131 @@
           <div class="pagination">
             <div id="pageInfo">—</div>
             <div class="pg-btns">
-              <button class="btn btn-ghost" id="prevPageBtn">← Prev</button>
-              <button class="btn btn-ghost" id="nextPageBtn">Next →</button>
+              <button class="btn btn-ghost" id="prevPageBtn">Prev</button>
+              <button class="btn btn-ghost" id="nextPageBtn">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel detail-panel" id="detailPanel" style="display:none;">
+          <div class="panel-head">
+            <h3>Registration Detail</h3>
+            <button class="btn btn-ghost" id="closeDetailBtn">Close</button>
+          </div>
+
+          <div class="detail-grid">
+            <div>
+              <div class="detail-meta" id="detailMeta"></div>
+              <div class="proof-card" id="proofCard"></div>
+              <div class="field">
+                <label for="reviewReason">Review Reason</label>
+                <input type="text" id="reviewReason" placeholder="Reason for rejection or internal note" />
+              </div>
+              <div class="detail-actions">
+                <button class="btn btn-primary" id="verifyBtn">Verify Payment</button>
+                <button class="btn btn-ghost" id="rejectBtn">Reject Payment</button>
+                <button class="btn btn-ghost" id="resendBtn">Resend Confirmation</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="teamNameInput">Team Name</label>
+                  <input type="text" id="teamNameInput" />
+                </div>
+                <div class="field">
+                  <label for="collegeNameInput">College Name</label>
+                  <input type="text" id="collegeNameInput" />
+                </div>
+                <div class="field">
+                  <label for="problemStatementInput">Problem Statement</label>
+                  <input type="text" id="problemStatementInput" />
+                </div>
+                <div class="field">
+                  <label for="modePreferenceInput">Mode Preference</label>
+                  <select id="modePreferenceInput">
+                    <option value="OFFLINE">OFFLINE</option>
+                    <option value="ONLINE_REQUEST">ONLINE_REQUEST</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="leaderNameInput">Leader Name</label>
+                  <input type="text" id="leaderNameInput" />
+                </div>
+                <div class="field">
+                  <label for="leaderEmailInput">Leader Email</label>
+                  <input type="text" id="leaderEmailInput" />
+                </div>
+                <div class="field">
+                  <label for="leaderPhoneInput">Leader Phone</label>
+                  <input type="text" id="leaderPhoneInput" />
+                </div>
+                <div class="field">
+                  <label for="leaderDepartmentInput">Leader Department</label>
+                  <input type="text" id="leaderDepartmentInput" />
+                </div>
+                <div class="field">
+                  <label for="leaderYearInput">Leader Year</label>
+                  <input type="text" id="leaderYearInput" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="membersInput">Members</label>
+                <textarea id="membersInput" rows="8" placeholder="One member per line: Name | Email | Phone | Department | Year"></textarea>
+              </div>
+
+              <button class="btn btn-primary" id="saveTeamBtn">Save Team Changes</button>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ===== Check-in View ===== -->
-      <section id="view-checkin" style="display:none;">
+      <section id="view-shortlist" style="display:none;">
         <div class="topbar">
           <div>
-            <h1 class="page-title">Venue Check-in</h1>
-            <div class="page-sub">Scan or type a team's Case Reference Code to check them in on-site</div>
+            <h1 class="page-title">Shortlisted Email Import</h1>
+            <div class="page-sub">Paste shortlisted Unstop emails to unlock OTP-based registration access</div>
           </div>
         </div>
 
         <div class="panel">
-          <div class="checkin-box">
-            <div class="checkin-row">
-              <input type="text" id="checkinInput" placeholder="UP-BREACH-8492" autofocus />
-              <button class="btn btn-primary" id="checkinBtn">Check In</button>
+          <div class="panel-head">
+            <h3>Import Emails</h3>
+          </div>
+          <div class="shortlist-import">
+            <div class="field">
+              <label for="batchLabelInput">Batch Label</label>
+              <input type="text" id="batchLabelInput" placeholder="Round 0 shortlist - July 29" />
             </div>
-            <div class="checkin-result" id="checkinResult"></div>
+            <div class="field">
+              <label for="emailsInput">Emails</label>
+              <textarea id="emailsInput" rows="10" placeholder="Paste emails separated by commas, spaces, or new lines"></textarea>
+            </div>
+            <button class="btn btn-primary" id="importShortlistBtn">Import Shortlist</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Recent Shortlist Entries</h3>
+            <button class="btn btn-ghost" id="refreshShortlistBtn">Refresh</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Verified</th>
+                  <th>Batch Label</th>
+                  <th>Imported</th>
+                </tr>
+              </thead>
+              <tbody id="shortlistBody">
+                <tr><td colspan="4" class="empty-state">Loading...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>

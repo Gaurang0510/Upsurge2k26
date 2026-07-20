@@ -1,7 +1,7 @@
 {
   "name": "upsurge-2k26-backend",
   "version": "1.0.0",
-  "description": "Registration & Payment backend for UPSURGE 2K26 (Smackathon / all events) with Razorpay integration and Admin Panel",
+  "description": "Smackathon 2K26 backend with shortlisted-email OTP verification, manual UPI payment review, and admin panel",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
@@ -22,7 +22,6 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.14",
     "qrcode": "^1.5.4",
-    "razorpay": "^2.9.4",
     "json2csv": "^6.0.0-alpha.2"
   },
   "devDependencies": {

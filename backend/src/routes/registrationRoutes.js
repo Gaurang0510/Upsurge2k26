@@ -1,9 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { createOrder, verifyPayment, trackRegistration } = require('../controllers/registrationController');
+const {
+  requestOtp,
+  verifyOtp,
+  submitRegistration,
+  getRegistrationStatus,
+} = require('../controllers/registrationController');
 
-router.post('/create-order', createOrder);
-router.post('/verify-payment', verifyPayment);
-router.get('/track/:caseCode', trackRegistration);
+router.post('/request-otp', requestOtp);
+router.post('/verify-otp', verifyOtp);
+router.post('/submit', submitRegistration);
+router.get('/status', getRegistrationStatus);
 
 module.exports = router;
