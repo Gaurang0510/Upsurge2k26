@@ -106,13 +106,11 @@ export default function Hackathon() {
       </section>
 
       {/* ═══════════════════════════════════════
-          REST OF PAGE — scrolls naturally below
+          REST OF PAGE — GitHub main branch layout
       ═══════════════════════════════════════ */}
-      <div style={{ position: 'relative', zIndex: 20, background: '#0A0A0B' }}>
-
-        {/* About + Summary cards */}
+      <div className="hackathon-content-wrap relative z-10" style={{ position: 'relative', zIndex: 20, background: '#0A0A0B' }}>
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mb-12 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+          <div className="mb-12">
             <div className="hackathon-panel">
               <SectionHeading
                 eyebrow="Flagship Build Challenge"
@@ -120,22 +118,23 @@ export default function Hackathon() {
                 description="Smackathon is the flagship build challenge of UPSURGE 2K26, designed for teams who want to turn a strong idea into a working product and present it on a bigger stage."
               />
               <div className="mt-8 flex flex-wrap gap-4">
-                <a href={event.registrationLink} className="btn-primary">
+                <Link to={event.registrationLink} className="btn-primary">
                   Register
-                </a>
-                <a href="#tracks" className="btn-secondary">
-                  View Tracks
+                </Link>
+                <a
+                  href="#problem-statements"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("problem-statements")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }}
+                  className="btn-secondary"
+                >
+                  View Problem Statements
                 </a>
               </div>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-3 xl:grid-cols-1">
-              {summaryCards.map((card) => (
-                <div key={card.label} className="hackathon-signal-card flex flex-col justify-center py-8 text-center xl:text-left">
-                  <span className="hackathon-signal-label">{card.label}</span>
-                  <strong className="hackathon-signal-value mt-3">{card.value}</strong>
-                </div>
-              ))}
             </div>
           </div>
 
@@ -171,8 +170,7 @@ export default function Hackathon() {
           </div>
         </section>
 
-        {/* Timeline */}
-        <section className="border-y border-white/5 bg-ink/70">
+        <section className="border-y border-white/5 bg-transparent">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
             <SectionHeading
               eyebrow="Process"
@@ -191,10 +189,9 @@ export default function Hackathon() {
           </div>
         </section>
 
-        {/* Tracks */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" id="tracks">
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" id="problem-statements">
           <SectionHeading
-            eyebrow="Tracks"
+            eyebrow="Problem Statements"
             title="Choose The Problem Space"
             description="Pick the area that matches your interest, skill set, and the kind of solution you want to build."
           />
@@ -205,8 +202,7 @@ export default function Hackathon() {
           </div>
         </section>
 
-        {/* Judging */}
-        <section className="border-y border-white/5 bg-ink/70">
+        <section className="border-y border-white/5 bg-transparent">
           <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
             <SectionHeading eyebrow="Evaluation" title="How Teams Are Judged" align="center" />
             <div className="mt-12 grid gap-5 md:grid-cols-2">
@@ -228,39 +224,21 @@ export default function Hackathon() {
           </div>
         </section>
 
-        {/* Rules + FAQ */}
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="hackathon-panel">
-              <SectionHeading eyebrow="Rules" title="Participation Guidelines" />
-              <div className="mt-8 space-y-4">
-                {event.rules.map((rule, index) => (
-                  <div key={rule} className="hackathon-rule-card">
-                    <span className="hackathon-rule-index">0{index + 1}</span>
-                    <p className="text-sm leading-7 text-paper/85">{rule}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="hackathon-panel">
-              <SectionHeading eyebrow="FAQ" title="Common Questions" />
-              <div className="mt-8 space-y-4">
-                {event.faqs.map((faq) => (
-                  <details key={faq.q} className="hackathon-faq-card group">
-                    <summary className="cursor-pointer list-none font-display text-xl uppercase tracking-wide text-paper">
-                      {faq.q}
-                    </summary>
-                    <p className="mt-4 text-sm leading-7 text-steel">{faq.a}</p>
-                  </details>
-                ))}
-              </div>
+          <div className="hackathon-panel w-full">
+            <SectionHeading eyebrow="Rules" title="Participation Guidelines" />
+            <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2">
+              {event.rules.map((rule, index) => (
+                <div key={rule} className="hackathon-rule-card">
+                  <span className="hackathon-rule-index">0{index + 1}</span>
+                  <p className="text-sm leading-7 text-paper/85">{rule}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* CTA / Venue */}
-        <section className="border-t border-white/5">
+        <section className="border-t border-white/5 bg-transparent">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="hackathon-command-card">
               <div>
@@ -271,9 +249,9 @@ export default function Hackathon() {
                   turn into finished demos, feedback, and real momentum.
                 </p>
               </div>
-              <a href={event.registrationLink} className="btn-primary">
+              <Link to={event.registrationLink} className="btn-primary">
                 Join Smackathon
-              </a>
+              </Link>
             </div>
           </div>
         </section>
