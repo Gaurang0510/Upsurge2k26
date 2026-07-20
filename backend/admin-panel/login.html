@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UPSURGE 2K26 — Admin Access</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="login-wrap">
+    <form class="login-card" id="loginForm" autocomplete="off">
+      <div class="brand-tag">// upsurge 2k26</div>
+      <h1 class="brand-title">Control Deck</h1>
+      <div class="brand-sub">Authenticate to access the registration console</div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="admin" required autofocus />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required />
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="loginBtn">Access Console</button>
+
+      <div class="login-hint">
+        Default credentials are set via <span class="mono">ADMIN_USERNAME</span> /
+        <span class="mono">ADMIN_PASSWORD</span> in <span class="mono">.env</span>, created by running
+        <span class="mono">npm run create-admin</span>.
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const API_BASE = '/api/v1';
+    const form = document.getElementById('loginForm');
+    const errorBox = document.getElementById('errorBox');
+    const btn = document.getElementById('loginBtn');
+
+    // Already logged in? go straight to dashboard.
+    if (localStorage.getItem('upsurge_admin_token')) {
+      window.location.href = 'index.html';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.classList.remove('show');
+      btn.textContent = 'Verifying...';
+      btn.disabled = true;
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'Login failed');
+        }
+
+        localStorage.setItem('upsurge_admin_token', data.token);
+        localStorage.setItem('upsurge_admin_user', JSON.stringify(data.admin));
+        window.location.href = 'index.html';
+      } catch (err) {
+        errorBox.textContent = `⚠ ${err.message}`;
+        errorBox.classList.add('show');
+      } finally {
+        btn.textContent = 'Access Console';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

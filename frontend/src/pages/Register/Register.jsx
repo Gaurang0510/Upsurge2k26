@@ -5,6 +5,18 @@ import { events } from '../../data/events/index.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import Aurora from '../../components/team/Aurora.jsx';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function Register() {
   useDocumentTitle('Case Entry — Register');
   const location = useLocation();
@@ -26,6 +38,7 @@ export default function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [caseCode, setCaseCode] = useState('');
+  const [error, setError] = useState('');
 
   // Find active event details
   const activeEvent = events.find((e) => e.slug === selectedEventSlug) || events[0];
@@ -53,18 +66,114 @@ export default function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError('');
 
-    // Simulate submission delay
-    setTimeout(() => {
+    try {
+      const formattedMembers = formData.members
+        .filter((name) => name.trim() !== '')
+        .map((name) => ({
+          fullName: name,
+          email: '',
+          phone: '',
+          college: formData.collegeName,
+          tShirtSize: '',
+        }));
+
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventSlug: selectedEventSlug,
+          teamName: isTeamEvent ? formData.teamName : `${formData.leaderName}'s Team`,
+          collegeName: formData.collegeName,
+          leaderName: formData.leaderName,
+          leaderEmail: formData.leaderEmail,
+          leaderPhone: formData.leaderPhone,
+          members: formattedMembers,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to initialize registration.');
+      }
+
+      // If it's a free event, backend confirms it immediately
+      if (data.free) {
+        setIsSuccess(true);
+        setCaseCode(data.caseCode);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Paid event: load Razorpay checkout script
+      const loaded = await loadRazorpayScript();
+      if (!loaded) {
+        throw new Error('Razorpay SDK failed to load. Are you offline?');
+      }
+
+      const options = {
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'UPSURGE 2K26',
+        description: `Registration for ${activeEvent.name}`,
+        order_id: data.orderId,
+        handler: async function (paymentResponse) {
+          try {
+            setIsSubmitting(true);
+            const verifyResponse = await fetch(`${API_BASE_URL}/api/v1/registrations/verify-payment`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+                caseCode: data.caseCode,
+              }),
+            });
+
+            const verifyData = await verifyResponse.json();
+            if (verifyResponse.ok && verifyData.success) {
+              setIsSuccess(true);
+              setCaseCode(verifyData.caseCode);
+            } else {
+              throw new Error(verifyData.message || 'Payment verification failed.');
+            }
+          } catch (err) {
+            setError(err.message || 'An error occurred during payment verification.');
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: formData.leaderName,
+          email: formData.leaderEmail,
+          contact: formData.leaderPhone,
+        },
+        theme: {
+          color: '#780000',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (resp) {
+        setError(resp.error.description || 'Payment failed.');
+      });
+      rzp.open();
+    } catch (err) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
       setIsSubmitting(false);
-      setIsSuccess(true);
-      // Generate a themed case tracking code
-      const randNum = Math.floor(1000 + Math.random() * 9000);
-      setCaseCode(`UP-${activeEvent.caseNumber.split('-')[1] || 'REG'}-${randNum}`);
-    }, 1500);
+    }
   };
 
   return (
@@ -262,6 +371,12 @@ export default function Register() {
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {error && (
+              <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-400 text-xs font-mono rounded">
+                [SYSTEM ERROR]: {error}
               </div>
             )}
 
