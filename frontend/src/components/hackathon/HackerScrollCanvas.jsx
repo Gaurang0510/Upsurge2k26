@@ -120,7 +120,7 @@ export default function HackerScrollCanvas({ scrollYProgress }) {
     });
     ro.observe(canvas);
     return () => ro.disconnect();
-  }, []); // eslint-disable-line
+  }, []);
 
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
