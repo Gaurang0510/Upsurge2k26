@@ -1,9 +1,12 @@
+import { useRef } from 'react';
+import { useScroll } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
-import Balatro from '../../components/Balatro.jsx';
+import HackerScrollCanvas from '../../components/hackathon/HackerScrollCanvas.jsx';
+import BreachExperience from '../../components/hackathon/BreachExperience.jsx';
 import { flagshipEvent } from '../../data/events/index.js';
 import './hackathon.css';
 
@@ -47,64 +50,65 @@ export default function Hackathon() {
   useDocumentTitle(flagshipEvent.name);
   const event = flagshipEvent;
 
-  const handleHeroPointerMove = (pointerEvent) => {
-    const bounds = pointerEvent.currentTarget.getBoundingClientRect();
-    const x = ((pointerEvent.clientX - bounds.left) / bounds.width) * 100;
-    const y = ((pointerEvent.clientY - bounds.top) / bounds.height) * 100;
-
-    pointerEvent.currentTarget.style.setProperty('--pointer-x', `${x}%`);
-    pointerEvent.currentTarget.style.setProperty('--pointer-y', `${y}%`);
-  };
-
-  const resetHeroPointer = (pointerEvent) => {
-    pointerEvent.currentTarget.style.setProperty('--pointer-x', '50%');
-    pointerEvent.currentTarget.style.setProperty('--pointer-y', '50%');
-  };
+  /* ── Master scroll — 600vh sticky container ── */
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
 
   return (
-    <div className="hackathon-page">
+    <div className="hackathon-page" style={{ background: '#0A0A0B' }}>
+
+      {/* ═══════════════════════════════════════
+          HERO — Scroll-Sequence (600vh sticky)
+      ═══════════════════════════════════════ */}
       <section
-        className="hackathon-hero relative overflow-hidden flex flex-col items-center justify-center text-center"
-        onMouseMove={handleHeroPointerMove}
-        onMouseLeave={resetHeroPointer}
+        ref={containerRef}
+        style={{ height: '600vh', position: 'relative' }}
       >
-        {/* React Bits Balatro Shader Background */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
-          <Balatro
-            color1="#C1121F"
-            color2="#780000"
-            color3="#050505"
-            spinSpeed={5.0}
-            contrast={3.0}
-            lighting={0.3}
-          />
-        </div>
-        {/* Submerge/fade effect at the bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-case-black to-transparent pointer-events-none z-10" />
-        <div className="hackathon-grid-glow" aria-hidden="true" />
-        <div className="hackathon-grid-lines" aria-hidden="true" />
-        <div className="hackathon-hero-spotlight" aria-hidden="true" />
-        <div className="hackathon-hero-ring hackathon-hero-ring-one" aria-hidden="true" />
-        <div className="hackathon-hero-ring hackathon-hero-ring-two" aria-hidden="true" />
-        <div className="hackathon-hero-beam hackathon-hero-beam-one" aria-hidden="true" />
-        <div className="hackathon-hero-beam hackathon-hero-beam-two" aria-hidden="true" />
-        <div className="hackathon-hero-noise" aria-hidden="true" />
+        <div style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          width: '100%',
+          overflow: 'hidden',
+          background: '#0A0A0B',
+          willChange: 'transform',   /* GPU compositor layer — no paint on scroll */
+          transform: 'translateZ(0)',
+        }}>
+          {/* Layer 0 — Scroll-scrubbed hacker image canvas */}
+          <HackerScrollCanvas scrollYProgress={scrollYProgress} />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 py-24 sm:px-6 lg:px-8">
-          <div className="hackathon-kicker mx-auto mb-10">
-            <span>{event.caseNumber}</span>
-          </div>
+          {/* Layer 1 — Scanline CRT texture */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 5,
+            pointerEvents: 'none',
+            backgroundImage:
+              'repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 4px)',
+          }} />
 
-          <div className="hackathon-wordmark-wrap" aria-label="Smackathon">
-            <span className="hackathon-wordmark-backdrop">SMACKATHON</span>
-            <h1 className="hackathon-wordmark">SMACKATHON</h1>
-          </div>
+          {/* Layer 2 — Top/bottom gradient vignette for text contrast */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 6,
+            pointerEvents: 'none',
+            background:
+              'linear-gradient(to bottom, rgba(10,10,11,0.7) 0%, transparent 20%, transparent 72%, rgba(10,10,11,0.9) 100%)',
+          }} />
 
-          <p className="hackathon-year-mark mt-4">2K26</p>
+          {/* Layer 3 — HUD overlay */}
+          <BreachExperience scrollYProgress={scrollYProgress} />
         </div>
       </section>
 
-      <div className="hackathon-content-wrap relative z-10">
+      {/* ═══════════════════════════════════════
+          REST OF PAGE — GitHub main branch layout
+      ═══════════════════════════════════════ */}
+      <div className="hackathon-content-wrap relative z-10" style={{ position: 'relative', zIndex: 20, background: '#0A0A0B' }}>
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="mb-12">
             <div className="hackathon-panel">
@@ -203,7 +207,7 @@ export default function Hackathon() {
             <SectionHeading eyebrow="Evaluation" title="How Teams Are Judged" align="center" />
             <div className="mt-12 grid gap-5 md:grid-cols-2">
               {event.assessmentCriteria.map((criterion, index) => (
-                  <div key={criterion.title} className="hackathon-score-card">
+                <div key={criterion.title} className="hackathon-score-card">
                   <div className="flex items-center justify-between gap-4">
                     <p className="font-display text-2xl uppercase tracking-wide text-paper">{criterion.title}</p>
                     <span className="font-mono text-xs uppercase tracking-[0.3em] text-evidence">
