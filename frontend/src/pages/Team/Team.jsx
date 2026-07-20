@@ -2,6 +2,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import TeamSection from '../../components/team/TeamSection.jsx';
 import Aurora from '../../components/team/Aurora.jsx';
+import ScrollFade from '../../components/common/ScrollFade.jsx';
 import { teamDepartments } from '../../data/team/index.js';
 
 export default function Team() {
@@ -24,17 +25,22 @@ export default function Team() {
       </div>
 
       {/* Main Page Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-28 pb-16 sm:pt-32 sm:px-6 lg:px-8">
-        <SectionHeading
-          eyebrow="Personnel Files"
-          title="The Task Force"
-          description="Meet the operatives running UPSURGE 2K26 — the people who make the case happen."
-        />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-36 pb-28 sm:pt-44 sm:pb-36 sm:px-6 lg:px-8">
+        <ScrollFade direction="up">
+          <SectionHeading
+            eyebrow="Personnel Files"
+            title="The Task Force"
+            description="Meet the operatives running UPSURGE 2K26 — the people who make the case happen."
+            scrollFloat={true}
+          />
+        </ScrollFade>
 
         {/* Team Departments Grid */}
-        <div className="mt-14">
+        <div className="mt-20 space-y-24 sm:space-y-36">
           {teamDepartments.map((department) => (
-            <TeamSection key={department.slug} department={department} />
+            <ScrollFade key={department.slug} direction="up">
+              <TeamSection department={department} />
+            </ScrollFade>
           ))}
         </div>
       </div>

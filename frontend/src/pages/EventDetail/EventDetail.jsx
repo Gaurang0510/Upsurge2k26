@@ -1,6 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import { getEventBySlug } from '../../data/events/index.js';
+import ScrollFade, { ScrollStaggerContainer, ScrollStaggerItem } from '../../components/common/ScrollFade.jsx';
 
 export default function EventDetail() {
   const { slug } = useParams();
@@ -19,30 +20,40 @@ export default function EventDetail() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 pt-28 pb-16 sm:pt-32 sm:px-6 lg:px-8">
-      <Link to="/events" className="font-mono text-xs uppercase tracking-widest text-evidence hover:text-white">
-        ← Back to all cases
-      </Link>
+      <ScrollFade direction="up">
+        <Link to="/events" className="font-mono text-xs uppercase tracking-widest text-evidence hover:text-white">
+          ← Back to all cases
+        </Link>
 
-      <div className="mt-6 flex flex-wrap items-center gap-4">
-        <span className="font-mono text-xs tracking-widest text-steel">{event.caseNumber}</span>
-        <span className="border border-evidence/40 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-evidence">
-          {event.category}
-        </span>
-      </div>
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <span className="font-mono text-xs tracking-widest text-steel">{event.caseNumber}</span>
+          <span className="border border-evidence/40 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-evidence">
+            {event.category}
+          </span>
+        </div>
 
-      <h1 className="heading-display mt-4 text-5xl sm:text-6xl">{event.name}</h1>
-      <p className="mt-3 text-lg text-steel">{event.tagline}</p>
+        <h1 className="heading-display mt-4 text-5xl sm:text-6xl">{event.name}</h1>
+        <p className="mt-3 text-lg text-steel">{event.tagline}</p>
+      </ScrollFade>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
-        <InfoBlock label="Format" value={event.format} />
-        <InfoBlock label="Team Size" value={event.teamSize} />
-        <InfoBlock label="Duration" value={event.duration} />
-      </div>
+      <ScrollStaggerContainer className="mt-10 grid gap-4 sm:grid-cols-3">
+        <ScrollStaggerItem direction="up">
+          <InfoBlock label="Format" value={event.format} />
+        </ScrollStaggerItem>
+        <ScrollStaggerItem direction="up">
+          <InfoBlock label="Team Size" value={event.teamSize} />
+        </ScrollStaggerItem>
+        <ScrollStaggerItem direction="up">
+          <InfoBlock label="Duration" value={event.duration} />
+        </ScrollStaggerItem>
+      </ScrollStaggerContainer>
 
-      <p className="mt-10 text-base leading-relaxed text-paper/90">{event.description}</p>
+      <ScrollFade direction="up" className="mt-10 text-base leading-relaxed text-paper/90">
+        {event.description}
+      </ScrollFade>
 
       {event.rounds && (
-        <div className="mt-10">
+        <ScrollFade direction="up" className="mt-10">
           <h2 className="case-tag mb-4">Rounds</h2>
           <div className="space-y-3">
             {event.rounds.map((round) => (
@@ -53,11 +64,11 @@ export default function EventDetail() {
               </div>
             ))}
           </div>
-        </div>
+        </ScrollFade>
       )}
 
       {event.rules && (
-        <div className="mt-10">
+        <ScrollFade direction="up" className="mt-10">
           <h2 className="case-tag mb-4">Rules</h2>
           <ul className="space-y-2">
             {event.rules.map((rule) => (
@@ -67,10 +78,10 @@ export default function EventDetail() {
               </li>
             ))}
           </ul>
-        </div>
+        </ScrollFade>
       )}
 
-      <div className="mt-12 flex flex-wrap items-center gap-4 border-t border-white/10 pt-8">
+      <ScrollFade direction="up" className="mt-12 flex flex-wrap items-center gap-4 border-t border-white/10 pt-8">
         {event.registrationLink === '#' || event.registrationLink.startsWith('/') ? (
           <Link
             to={event.registrationLink === '#' ? `/register?event=${event.slug}` : event.registrationLink}
@@ -91,7 +102,7 @@ export default function EventDetail() {
         <div className="font-mono text-xs uppercase tracking-widest text-steel">
           Venue: {event.venue} · Date: {event.date}
         </div>
-      </div>
+      </ScrollFade>
     </div>
   );
 }

@@ -234,8 +234,8 @@ export default function Footer() {
               </p>
               <div className="pt-1">
                 <p className="font-mono text-xs uppercase tracking-widest text-white/40 mb-2">Contacts</p>
-                {siteConfig.contacts.map((c) => (
-                  <p key={c.name} className="font-mono text-sm text-white/75">
+                {siteConfig.contacts.map((c, index) => (
+                  <p key={`${c.name}-${index}`} className="font-mono text-sm text-white/75">
                     {c.name} &mdash; <span className="text-white/50 text-xs">{c.role}</span>
                   </p>
                 ))}
