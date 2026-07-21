@@ -1,0 +1,17 @@
+/* ScrollStack styling for UPSURGE 2K26 Events Page */
+
+.scroll-stack-card {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95), 0 0 35px rgba(193, 18, 31, 0.15);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+.scroll-stack-card:hover {
+  border-color: rgba(193, 18, 31, 0.5);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.95), 0 0 50px rgba(193, 18, 31, 0.28);
+}
