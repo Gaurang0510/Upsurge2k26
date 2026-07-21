@@ -8,7 +8,7 @@ export default function EventsPreview() {
   const preview = events.slice(0, 6);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-28 sm:py-36 sm:px-6 lg:px-8">
+    <section className="relative mx-auto max-w-7xl px-4 py-28 sm:py-36 sm:px-6 lg:px-8 overflow-visible">
       <ScrollFade direction="up" className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
         <SectionHeading
           eyebrow="Open Cases"

@@ -1,11 +1,19 @@
 import { motion } from 'framer-motion';
 import { SplineScene } from '../ui/splite.jsx';
 import { Spotlight } from '../ui/spotlight.jsx';
+import CCTVCamera from './CCTVCamera.jsx';
 
 export default function Hero() {
   return (
     <section className="relative w-full aspect-video sm:aspect-auto sm:h-[80vh] lg:h-[calc(100vh-64px)] sm:min-h-[620px] lg:min-h-[720px] max-h-[1050px] overflow-hidden bg-case-black">
       
+      {/* ── PINNED 3D SURVEILLANCE CCTV CAMERA (FLIPPED BASE DIRECTION OPPOSITE TO 0.8) ── */}
+      <CCTVCamera
+        className="fixed -top-12 -left-12 sm:-top-16 sm:-left-16 lg:-top-20 lg:-left-20 z-50"
+        baseRotationY={-2.34}
+        sweepSpeed={1.0}
+      />
+
       {/* ── 1. CINEMATIC UNREAL ENGINE 5 COFFIN BACKDROP IMAGE ── */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <img

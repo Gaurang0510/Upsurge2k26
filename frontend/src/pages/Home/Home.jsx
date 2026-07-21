@@ -26,7 +26,6 @@ export default function Home() {
 
       {/* Flagship spotlight (SMACKATHON 2K26) with Police Ambient Lighting */}
       <section className="relative border-y border-white/5 bg-ink overflow-hidden py-24 sm:py-32">
-        
         {/* Ambient Strobe Lighting Cones across Smackathon Section */}
         <div className="absolute inset-0 pointer-events-none z-0">
           {/* Blue Police Light Ambient Fill (Top-Left) */}
