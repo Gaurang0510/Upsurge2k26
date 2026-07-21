@@ -11,26 +11,18 @@ const randomSegment = (length = 4) => {
     .slice(0, length);
 };
 
-/**
- * TEAM-UP26-XXXX
- */
-const generateTeamCode = () => {
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `TEAM-UP26-${num}`;
-};
+const generateTeamCode = () => `TEAM-SM26-${randomSegment(8)}`;
 
-/**
- * UP-<EVENTTAG>-XXXX  e.g. UP-BREACH-8492
- */
-const generateCaseCode = (eventSlug = 'EVENT') => {
+const generateRegistrationCode = (eventSlug = 'SMACK') => {
   const tag = eventSlug
     .replace(/[^a-zA-Z0-9-]/g, '')
     .split('-')
     .filter(Boolean)[0]
     ?.toUpperCase()
-    .slice(0, 8) || 'EVENT';
-  const num = Math.floor(1000 + Math.random() * 9000);
-  return `UP-${tag}-${num}`;
+    .slice(0, 8) || 'SMACK';
+  return `REG-${tag}-${randomSegment(10)}`;
 };
 
-module.exports = { generateTeamCode, generateCaseCode, randomSegment };
+const generateOtpCode = () => String(Math.floor(100000 + Math.random() * 900000));
+
+module.exports = { generateTeamCode, generateRegistrationCode, generateOtpCode, randomSegment };

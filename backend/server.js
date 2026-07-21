@@ -11,10 +11,13 @@ const { errorHandler, notFound } = require('./src/middleware/errorHandler');
 
 const eventRoutes = require('./src/routes/eventRoutes');
 const registrationRoutes = require('./src/routes/registrationRoutes');
-const webhookRoutes = require('./src/routes/webhookRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 
 const app = express();
+const configuredOrigins = String(process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 // ---- DB ----
 connectDB();
@@ -23,7 +26,22 @@ connectDB();
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || '*',
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (
+        configuredOrigins.length === 0 ||
+        configuredOrigins.includes(origin) ||
+        /^http:\/\/localhost:\d+$/.test(origin) ||
+        /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
   })
 );
@@ -37,16 +55,41 @@ const publicLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// ---- Webhook route needs RAW body for HMAC verification — must be BEFORE express.json() ----
-app.use('/api/v1/payments', express.raw({ type: 'application/json' }), webhookRoutes);
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many login attempts. Please try again later.' },
+});
+
+const otpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many OTP requests. Please try again later.' },
+});
+
+const statusLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many status checks. Please try again later.' },
+});
 
 // ---- Standard JSON body parsing for everything else ----
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ---- API routes ----
 app.use('/api/v1/events', publicLimiter, eventRoutes);
+app.use('/api/v1/registrations/request-otp', otpLimiter);
+app.use('/api/v1/registrations/verify-otp', otpLimiter);
+app.use('/api/v1/registrations/status', statusLimiter);
 app.use('/api/v1/registrations', publicLimiter, registrationRoutes);
+app.use('/api/v1/admin/login', authLimiter);
 app.use('/api/v1/admin', adminRoutes);
 
 // ---- Static Admin Panel (served at /admin) ----
@@ -56,7 +99,7 @@ app.use('/admin', express.static(path.join(__dirname, 'admin-panel')));
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'UPSURGE 2K26 Registration & Payment API is running',
+    message: 'SMACKATHON 2K26 backend is running',
     adminPanel: '/admin',
     docs: '/api/v1',
   });
@@ -68,20 +111,20 @@ app.get('/api/v1', (req, res) => {
     endpoints: [
       'GET  /api/v1/events',
       'GET  /api/v1/events/:slug',
-      'POST /api/v1/registrations/create-order',
-      'POST /api/v1/registrations/verify-payment',
-      'GET  /api/v1/registrations/track/:caseCode',
-      'POST /api/v1/payments/webhook',
+      'POST /api/v1/registrations/request-otp',
+      'POST /api/v1/registrations/verify-otp',
+      'POST /api/v1/registrations/submit',
+      'GET  /api/v1/registrations/status',
       'POST /api/v1/admin/login',
       'GET  /api/v1/admin/stats',
       'GET  /api/v1/admin/teams',
       'GET  /api/v1/admin/teams/:id',
-      'PATCH /api/v1/admin/teams/:id/status',
+      'PATCH /api/v1/admin/teams/:id',
+      'PATCH /api/v1/admin/teams/:id/review-payment',
+      'POST /api/v1/admin/teams/:id/resend-confirmation',
       'GET  /api/v1/admin/export',
-      'POST /api/v1/admin/checkin',
-      'GET  /api/v1/admin/events',
-      'POST /api/v1/admin/events',
-      'PATCH /api/v1/admin/events/:id',
+      'GET  /api/v1/admin/shortlist',
+      'POST /api/v1/admin/shortlist/import',
     ],
   });
 });
@@ -92,6 +135,6 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 UPSURGE 2K26 backend running on port ${PORT}`);
-  console.log(`🛡️  Admin panel available at http://localhost:${PORT}/admin`);
+  console.log(`SMACKATHON 2K26 backend running on port ${PORT}`);
+  console.log(`Admin panel available at http://localhost:${PORT}/admin`);
 });

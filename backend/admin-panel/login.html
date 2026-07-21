@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>UPSURGE 2K26 — Admin Access</title>
+<title>SMACKATHON 2K26 — Admin Access</title>
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="login-wrap">
     <form class="login-card" id="loginForm" autocomplete="off">
-      <div class="brand-tag">// upsurge 2k26</div>
-      <h1 class="brand-title">Control Deck</h1>
-      <div class="brand-sub">Authenticate to access the registration console</div>
+      <div class="brand-tag">// smackathon 2k26</div>
+      <h1 class="brand-title">Admin Console</h1>
+      <div class="brand-sub">Authenticate to access shortlisted-team registration control</div>
 
       <div class="error-box" id="errorBox"></div>
 
@@ -41,7 +41,7 @@
     const btn = document.getElementById('loginBtn');
 
     // Already logged in? go straight to dashboard.
-    if (localStorage.getItem('upsurge_admin_token')) {
+    if (sessionStorage.getItem('upsurge_admin_token')) {
       window.location.href = 'index.html';
     }
 
@@ -66,8 +66,8 @@
           throw new Error(data.message || 'Login failed');
         }
 
-        localStorage.setItem('upsurge_admin_token', data.token);
-        localStorage.setItem('upsurge_admin_user', JSON.stringify(data.admin));
+        sessionStorage.setItem('upsurge_admin_token', data.token);
+        sessionStorage.setItem('upsurge_admin_user', JSON.stringify(data.admin));
         window.location.href = 'index.html';
       } catch (err) {
         errorBox.textContent = `⚠ ${err.message}`;

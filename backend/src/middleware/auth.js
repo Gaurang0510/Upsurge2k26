@@ -14,6 +14,9 @@ const protectAdmin = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'ADMIN' && decoded.role !== 'STAFF') {
+      return res.status(401).json({ success: false, message: 'Invalid or expired token.' });
+    }
     const admin = await Admin.findById(decoded.id).select('-passwordHash');
 
     if (!admin) {

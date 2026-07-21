@@ -12,7 +12,13 @@ const Admin = require('../src/models/Admin');
 
     const existing = await Admin.findOne({ username });
     if (existing) {
-      console.log(`ℹ️  Admin '${username}' already exists. Skipping.`);
+      existing.email = email;
+      existing.passwordHash = await Admin.hashPassword(password);
+      existing.role = 'ADMIN';
+      await existing.save();
+      console.log(`✅ Admin '${username}' already existed. Password reset from current .env value.`);
+      console.log(`   Username: ${username}`);
+      console.log(`   Password: ${password}`);
       process.exit(0);
     }
 

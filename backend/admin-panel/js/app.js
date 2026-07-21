@@ -1,5 +1,5 @@
 const API_BASE = '/api/v1';
-const token = localStorage.getItem('upsurge_admin_token');
+const token = sessionStorage.getItem('upsurge_admin_token');
 
 if (!token) {
   window.location.href = 'login.html';
@@ -11,150 +11,318 @@ const authHeaders = () => ({
 });
 
 const toastEl = document.getElementById('toast');
-const showToast = (msg, ok = false) => {
-  toastEl.textContent = msg;
+const showToast = (message, ok = false) => {
+  toastEl.textContent = message;
   toastEl.className = `toast show ${ok ? 'ok' : ''}`;
   setTimeout(() => toastEl.classList.remove('show'), 3200);
 };
 
-const apiFetch = async (path, opts = {}) => {
-  const res = await fetch(`${API_BASE}${path}`, { ...opts, headers: authHeaders() });
-  if (res.status === 401) {
-    localStorage.removeItem('upsurge_admin_token');
+const escapeHtml = (value) =>
+  String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[char]));
+
+const apiFetch = async (path, options = {}) => {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      ...authHeaders(),
+      ...(options.headers || {}),
+    },
+  });
+
+  if (response.status === 401) {
+    sessionStorage.removeItem('upsurge_admin_token');
+    sessionStorage.removeItem('upsurge_admin_user');
     window.location.href = 'login.html';
     throw new Error('Session expired');
   }
-  const data = await res.json();
-  if (!res.ok || data.success === false) {
+
+  const data = await response.json();
+  if (!response.ok || data.success === false) {
     throw new Error(data.message || 'Request failed');
   }
   return data;
 };
 
-// ---------------- Sidebar navigation ----------------
-const views = { dashboard: 'view-dashboard', teams: 'view-teams', checkin: 'view-checkin' };
+const views = {
+  dashboard: 'view-dashboard',
+  teams: 'view-teams',
+  shortlist: 'view-shortlist',
+};
+
+let currentPage = 1;
+let totalPages = 1;
+let selectedTeamId = null;
+
 document.querySelectorAll('.nav-item[data-view]').forEach((item) => {
   item.addEventListener('click', () => {
-    document.querySelectorAll('.nav-item[data-view]').forEach((i) => i.classList.remove('active'));
+    document.querySelectorAll('.nav-item[data-view]').forEach((node) => node.classList.remove('active'));
     item.classList.add('active');
-    Object.values(views).forEach((id) => (document.getElementById(id).style.display = 'none'));
+    Object.values(views).forEach((id) => {
+      document.getElementById(id).style.display = 'none';
+    });
     document.getElementById(views[item.dataset.view]).style.display = 'block';
+
     if (item.dataset.view === 'dashboard') loadStats();
     if (item.dataset.view === 'teams') loadTeams();
+    if (item.dataset.view === 'shortlist') loadShortlist();
   });
 });
 
-// ---------------- Whoami / logout ----------------
 try {
-  const adminUser = JSON.parse(localStorage.getItem('upsurge_admin_user') || '{}');
-  document.getElementById('adminWhoami').textContent = `👤 ${adminUser.username || 'admin'} (${adminUser.role || 'ADMIN'})`;
-} catch (e) {}
+  const admin = JSON.parse(sessionStorage.getItem('upsurge_admin_user') || '{}');
+  document.getElementById('adminWhoami').textContent = `${admin.username || 'admin'} (${admin.role || 'ADMIN'})`;
+} catch (error) {
+  document.getElementById('adminWhoami').textContent = 'admin';
+}
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('upsurge_admin_token');
-  localStorage.removeItem('upsurge_admin_user');
+  sessionStorage.removeItem('upsurge_admin_token');
+  sessionStorage.removeItem('upsurge_admin_user');
   window.location.href = 'login.html';
 });
 
-// ---------------- Dashboard / Stats ----------------
 const loadStats = async () => {
   try {
     const { stats } = await apiFetch('/admin/stats');
+    document.getElementById('statShortlist').textContent = stats.shortlistCount;
     document.getElementById('statTotal').textContent = stats.totalTeams;
-    document.getElementById('statConfirmed').textContent = stats.confirmedTeams;
-    document.getElementById('statPending').textContent = stats.pendingTeams;
-    document.getElementById('statCancelled').textContent = stats.cancelledTeams;
+    document.getElementById('statUnderReview').textContent = stats.underReview;
+    document.getElementById('statConfirmed').textContent = stats.confirmed;
+    document.getElementById('statRejected').textContent = stats.paymentRejected;
     document.getElementById('statRevenue').textContent = `₹${stats.totalRevenueINR.toLocaleString('en-IN')}`;
-    document.getElementById('statCheckedIn').textContent = `${stats.checkedIn}/${stats.totalCapturedForCheckIn}`;
-
-    const body = document.getElementById('byEventBody');
-    if (!stats.byEvent.length) {
-      body.innerHTML = `<tr><td colspan="4" class="empty-state">No registrations yet.</td></tr>`;
-    } else {
-      body.innerHTML = stats.byEvent
-        .map(
-          (e) => `<tr>
-            <td>${escapeHtml(e.eventName)}</td>
-            <td class="mono">${e.totalTeams}</td>
-            <td class="mono" style="color:var(--ok)">${e.confirmed}</td>
-            <td class="mono" style="color:var(--warn)">${e.pending}</td>
-          </tr>`
-        )
-        .join('');
-    }
-  } catch (err) {
-    showToast(err.message);
-  }
-};
-
-// ---------------- Teams table ----------------
-let currentPage = 1;
-let totalPages = 1;
-
-const loadEventFilterOptions = async () => {
-  try {
-    const { events } = await apiFetch('/admin/events');
-    const sel = document.getElementById('eventFilter');
-    sel.innerHTML =
-      '<option value="">All Events</option>' +
-      events.map((e) => `<option value="${e.slug}">${escapeHtml(e.name)}</option>`).join('');
-  } catch (err) {
-    /* non-fatal */
+  } catch (error) {
+    showToast(error.message);
   }
 };
 
 const loadTeams = async (page = 1) => {
   currentPage = page;
   const search = document.getElementById('searchInput').value.trim();
-  const eventSlug = document.getElementById('eventFilter').value;
   const status = document.getElementById('statusFilter').value;
   const paymentStatus = document.getElementById('paymentFilter').value;
 
   const params = new URLSearchParams({ page, limit: 25 });
   if (search) params.set('search', search);
-  if (eventSlug) params.set('eventSlug', eventSlug);
   if (status) params.set('status', status);
   if (paymentStatus) params.set('paymentStatus', paymentStatus);
 
   const body = document.getElementById('teamsBody');
-  body.innerHTML = `<tr><td colspan="10" class="empty-state">Loading…</td></tr>`;
+  body.innerHTML = '<tr><td colspan="9" class="empty-state">Loading...</td></tr>';
 
   try {
     const data = await apiFetch(`/admin/teams?${params.toString()}`);
     totalPages = data.totalPages || 1;
 
     if (!data.teams.length) {
-      body.innerHTML = `<tr><td colspan="10" class="empty-state">No teams match these filters.</td></tr>`;
+      body.innerHTML = '<tr><td colspan="9" class="empty-state">No registrations match these filters.</td></tr>';
     } else {
       body.innerHTML = data.teams
-        .map((t) => {
-          const reg = t.registration || {};
-          const date = new Date(t.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
-          return `<tr>
-            <td class="mono">${escapeHtml(t.teamCode)}</td>
-            <td>${escapeHtml(t.teamName)}</td>
-            <td>${escapeHtml(t.eventName)}</td>
-            <td>${escapeHtml(t.leader?.fullName || '')}<br/><span class="dim small">${escapeHtml(t.leader?.email || '')}</span></td>
-            <td class="mono">${t.teamSize}</td>
-            <td><span class="badge badge-${t.status}">${t.status}</span></td>
-            <td><span class="badge badge-${reg.paymentStatus || 'PENDING'}">${reg.paymentStatus || '—'}</span></td>
-            <td><span class="badge badge-${reg.qrCheckInStatus || 'PENDING'}">${reg.qrCheckInStatus || '—'}</span></td>
-            <td class="mono">${escapeHtml(reg.caseCode || '—')}</td>
-            <td class="dim small">${date}</td>
-          </tr>`;
+        .map((team) => {
+          const registration = team.registration || {};
+          const submittedAt = new Date(team.createdAt).toLocaleString('en-IN', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          });
+          return `
+            <tr>
+              <td class="mono">${escapeHtml(team.teamCode)}</td>
+              <td class="mono">${escapeHtml(registration.registrationCode || '—')}</td>
+              <td>${escapeHtml(team.teamName)}</td>
+              <td>${escapeHtml(team.leader?.fullName || '')}<br/><span class="dim small">${escapeHtml(team.leader?.email || '')}</span></td>
+              <td><span class="badge badge-${escapeHtml(team.status)}">${escapeHtml(team.status)}</span></td>
+              <td><span class="badge badge-${escapeHtml(registration.paymentStatus || 'UNDER_REVIEW')}">${escapeHtml(registration.paymentStatus || 'UNDER_REVIEW')}</span></td>
+              <td class="mono">${escapeHtml(registration.paymentProof?.utr || '—')}</td>
+              <td class="dim small">${submittedAt}</td>
+              <td><button class="table-btn" data-team-id="${team._id}">Open</button></td>
+            </tr>
+          `;
         })
         .join('');
     }
 
     document.getElementById('pageInfo').textContent = `Page ${data.page} of ${data.totalPages} · ${data.total} total teams`;
-  } catch (err) {
-    body.innerHTML = `<tr><td colspan="10" class="empty-state">⚠ ${escapeHtml(err.message)}</td></tr>`;
+
+    body.querySelectorAll('button[data-team-id]').forEach((button) => {
+      button.addEventListener('click', () => openTeamDetail(button.dataset.teamId));
+    });
+  } catch (error) {
+    body.innerHTML = `<tr><td colspan="9" class="empty-state">${escapeHtml(error.message)}</td></tr>`;
+  }
+};
+
+const membersToTextarea = (members = []) =>
+  members
+    .map((member) => [member.fullName, member.email, member.phone, member.department, member.year].join(' | '))
+    .join('\n');
+
+const textareaToMembers = (value) =>
+  value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [fullName = '', email = '', phone = '', department = '', year = ''] = line.split('|').map((part) => part.trim());
+      return { fullName, email, phone, department, year };
+    });
+
+const openTeamDetail = async (teamId) => {
+  try {
+    const { team } = await apiFetch(`/admin/teams/${teamId}`);
+    selectedTeamId = teamId;
+    document.getElementById('detailPanel').style.display = 'block';
+    document.getElementById('detailMeta').innerHTML = `
+      <div><strong>Team Code:</strong> ${escapeHtml(team.teamCode)}</div>
+      <div><strong>Registration Code:</strong> ${escapeHtml(team.registration?.registrationCode || '—')}</div>
+      <div><strong>Team Status:</strong> ${escapeHtml(team.status)}</div>
+      <div><strong>Payment Status:</strong> ${escapeHtml(team.registration?.paymentStatus || '—')}</div>
+      <div><strong>Shortlisted Email:</strong> ${escapeHtml(team.shortlistEmail)}</div>
+      <div><strong>UTR:</strong> ${escapeHtml(team.registration?.paymentProof?.utr || '—')}</div>
+      <div><strong>Review Reason:</strong> ${escapeHtml(team.paymentReviewReason || team.registration?.adminReview?.reason || '—')}</div>
+    `;
+
+    document.getElementById('proofCard').innerHTML = `
+      <div class="mono">Payment proof screenshot</div>
+      <div class="small dim">Cloudinary URL: <a href="${escapeHtml(team.registration?.paymentProof?.screenshotUrl || '#')}" target="_blank">Open original</a></div>
+      ${team.registration?.paymentProof?.screenshotUrl ? `<img src="${escapeHtml(team.registration.paymentProof.screenshotUrl)}" alt="Payment proof" />` : '<div class="small dim">No screenshot uploaded</div>'}
+    `;
+
+    document.getElementById('reviewReason').value = team.paymentReviewReason || team.registration?.adminReview?.reason || '';
+    document.getElementById('teamNameInput').value = team.teamName || '';
+    document.getElementById('collegeNameInput').value = team.collegeName || '';
+    document.getElementById('problemStatementInput').value = team.problemStatement || '';
+    document.getElementById('modePreferenceInput').value = team.modePreference || 'OFFLINE';
+    document.getElementById('leaderNameInput').value = team.leader?.fullName || '';
+    document.getElementById('leaderEmailInput').value = team.leader?.email || '';
+    document.getElementById('leaderPhoneInput').value = team.leader?.phone || '';
+    document.getElementById('leaderDepartmentInput').value = team.leader?.department || '';
+    document.getElementById('leaderYearInput').value = team.leader?.year || '';
+    document.getElementById('membersInput').value = membersToTextarea(team.members || []);
+
+    document.getElementById('detailPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    showToast(error.message);
+  }
+};
+
+const saveTeamChanges = async () => {
+  if (!selectedTeamId) return;
+
+  const payload = {
+    teamName: document.getElementById('teamNameInput').value.trim(),
+    collegeName: document.getElementById('collegeNameInput').value.trim(),
+    problemStatement: document.getElementById('problemStatementInput').value.trim(),
+    modePreference: document.getElementById('modePreferenceInput').value,
+    leader: {
+      fullName: document.getElementById('leaderNameInput').value.trim(),
+      email: document.getElementById('leaderEmailInput').value.trim(),
+      phone: document.getElementById('leaderPhoneInput').value.trim(),
+      department: document.getElementById('leaderDepartmentInput').value.trim(),
+      year: document.getElementById('leaderYearInput').value.trim(),
+    },
+    members: textareaToMembers(document.getElementById('membersInput').value),
+  };
+
+  try {
+    await apiFetch(`/admin/teams/${selectedTeamId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+    showToast('Team details updated', true);
+    loadTeams(currentPage);
+    openTeamDetail(selectedTeamId);
+  } catch (error) {
+    showToast(error.message);
+  }
+};
+
+const reviewPayment = async (decision) => {
+  if (!selectedTeamId) return;
+  const reason = document.getElementById('reviewReason').value.trim();
+
+  try {
+    await apiFetch(`/admin/teams/${selectedTeamId}/review-payment`, {
+      method: 'PATCH',
+      body: JSON.stringify({ decision, reason }),
+    });
+    showToast(decision === 'VERIFIED' ? 'Payment verified' : 'Payment rejected', true);
+    loadStats();
+    loadTeams(currentPage);
+    openTeamDetail(selectedTeamId);
+  } catch (error) {
+    showToast(error.message);
+  }
+};
+
+const resendConfirmation = async () => {
+  if (!selectedTeamId) return;
+  try {
+    await apiFetch(`/admin/teams/${selectedTeamId}/resend-confirmation`, {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
+    showToast('Confirmation email resent', true);
+  } catch (error) {
+    showToast(error.message);
+  }
+};
+
+const loadShortlist = async () => {
+  const body = document.getElementById('shortlistBody');
+  body.innerHTML = '<tr><td colspan="4" class="empty-state">Loading...</td></tr>';
+
+  try {
+    const { entries } = await apiFetch('/admin/shortlist');
+    if (!entries.length) {
+      body.innerHTML = '<tr><td colspan="4" class="empty-state">No shortlisted emails imported yet.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = entries
+      .map((entry) => `
+        <tr>
+          <td>${escapeHtml(entry.email)}</td>
+          <td>${entry.emailVerifiedAt ? `<span class="badge badge-VERIFIED">VERIFIED</span>` : '<span class="badge badge-UNDER_REVIEW">PENDING</span>'}</td>
+          <td>${escapeHtml(entry.importBatchLabel || '—')}</td>
+          <td class="dim small">${new Date(entry.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+        </tr>
+      `)
+      .join('');
+  } catch (error) {
+    body.innerHTML = `<tr><td colspan="4" class="empty-state">${escapeHtml(error.message)}</td></tr>`;
+  }
+};
+
+const importShortlist = async () => {
+  const emailsText = document.getElementById('emailsInput').value.trim();
+  const batchLabel = document.getElementById('batchLabelInput').value.trim();
+  if (!emailsText) {
+    showToast('Paste shortlisted emails first');
+    return;
+  }
+
+  try {
+    const data = await apiFetch('/admin/shortlist/import', {
+      method: 'POST',
+      body: JSON.stringify({ emailsText, batchLabel }),
+    });
+    showToast(`${data.processed} shortlisted emails processed`, true);
+    document.getElementById('emailsInput').value = '';
+    loadShortlist();
+    loadStats();
+  } catch (error) {
+    showToast(error.message);
   }
 };
 
 document.getElementById('applyFiltersBtn').addEventListener('click', () => loadTeams(1));
-document.getElementById('searchInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') loadTeams(1);
+document.getElementById('searchInput').addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') loadTeams(1);
 });
 document.getElementById('prevPageBtn').addEventListener('click', () => {
   if (currentPage > 1) loadTeams(currentPage - 1);
@@ -163,77 +331,36 @@ document.getElementById('nextPageBtn').addEventListener('click', () => {
   if (currentPage < totalPages) loadTeams(currentPage + 1);
 });
 document.getElementById('refreshStatsBtn').addEventListener('click', loadStats);
-
-document.getElementById('exportBtn').addEventListener('click', () => {
-  const eventSlug = document.getElementById('eventFilter').value;
-  const params = new URLSearchParams();
-  if (eventSlug) params.set('eventSlug', eventSlug);
-  fetch(`${API_BASE}/admin/export?${params.toString()}`, { headers: authHeaders() })
-    .then((res) => res.blob())
-    .then((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `upsurge_teams_${Date.now()}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      showToast('CSV export downloaded', true);
-    })
-    .catch(() => showToast('Export failed'));
+document.getElementById('saveTeamBtn').addEventListener('click', saveTeamChanges);
+document.getElementById('verifyBtn').addEventListener('click', () => reviewPayment('VERIFIED'));
+document.getElementById('rejectBtn').addEventListener('click', () => reviewPayment('REJECTED'));
+document.getElementById('resendBtn').addEventListener('click', resendConfirmation);
+document.getElementById('closeDetailBtn').addEventListener('click', () => {
+  document.getElementById('detailPanel').style.display = 'none';
+  selectedTeamId = null;
 });
+document.getElementById('importShortlistBtn').addEventListener('click', importShortlist);
+document.getElementById('refreshShortlistBtn').addEventListener('click', loadShortlist);
 
-// ---------------- Check-in ----------------
-const checkinInput = document.getElementById('checkinInput');
-const checkinResult = document.getElementById('checkinResult');
-
-const runCheckIn = async () => {
-  const caseCode = checkinInput.value.trim().toUpperCase();
-  if (!caseCode) return;
-
-  checkinResult.className = 'checkin-result show';
-  checkinResult.textContent = 'Checking…';
-
+document.getElementById('exportBtn').addEventListener('click', async () => {
   try {
-    const res = await fetch(`${API_BASE}/admin/checkin`, {
-      method: 'POST',
-      headers: authHeaders(),
-      body: JSON.stringify({ caseCode }),
-    });
-    const data = await res.json();
+    const response = await fetch(`${API_BASE}/admin/export`, { headers: authHeaders() });
+    if (!response.ok) throw new Error('Export failed');
 
-    if (res.status === 409) {
-      checkinResult.className = 'checkin-result show warn';
-      checkinResult.innerHTML = `⚠ Already checked in.<br/>Team: <strong>${escapeHtml(data.team?.teamName || '')}</strong> (${escapeHtml(data.team?.teamCode || '')})`;
-      return;
-    }
-    if (!res.ok || !data.success) {
-      checkinResult.className = 'checkin-result show err';
-      checkinResult.textContent = `✕ ${data.message}`;
-      return;
-    }
-
-    checkinResult.className = 'checkin-result show ok';
-    checkinResult.innerHTML = `✓ Checked in successfully.<br/>Team: <strong>${escapeHtml(data.team.teamName)}</strong> (${escapeHtml(data.team.teamCode)})<br/>Event: ${escapeHtml(data.team.eventName)} · Size: ${data.team.teamSize}`;
-    checkinInput.value = '';
-  } catch (err) {
-    checkinResult.className = 'checkin-result show err';
-    checkinResult.textContent = `✕ ${err.message}`;
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `smackathon_registrations_${Date.now()}.xls`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.URL.revokeObjectURL(url);
+    showToast('Excel export downloaded', true);
+  } catch (error) {
+    showToast(error.message);
   }
-};
-
-document.getElementById('checkinBtn').addEventListener('click', runCheckIn);
-checkinInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') runCheckIn();
 });
 
-// ---------------- Utility ----------------
-function escapeHtml(str) {
-  return String(str ?? '').replace(/[&<>"']/g, (c) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  }[c]));
-}
-
-// ---------------- Init ----------------
 loadStats();
-loadEventFilterOptions();
+loadTeams();

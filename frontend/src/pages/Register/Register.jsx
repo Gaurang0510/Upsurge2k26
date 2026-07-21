@@ -1,394 +1,536 @@
-import { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
-import { events } from '../../data/events/index.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import Aurora from '../../components/team/Aurora.jsx';
+import operationBreach from '../../data/events/operation-breach.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
-const loadRazorpayScript = () => {
-  return new Promise((resolve) => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
+const emptyMember = () => ({
+  fullName: '',
+  email: '',
+  phone: '',
+  department: '',
+  year: '',
+});
+
+const toDataUri = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Failed to read payment screenshot'));
+    reader.readAsDataURL(file);
   });
-};
 
 export default function Register() {
-  useDocumentTitle('Case Entry — Register');
-  const location = useLocation();
+  useDocumentTitle('Smackathon Registration');
 
-  // Parse event from query parameter e.g. /register?event=operation-breach
-  const queryParams = new URLSearchParams(location.search);
-  const initialEventSlug = queryParams.get('event') || 'operation-breach';
+  const [eventInfo, setEventInfo] = useState(null);
+  const [eventError, setEventError] = useState('');
 
-  const [selectedEventSlug, setSelectedEventSlug] = useState(initialEventSlug);
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpRequested, setOtpRequested] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+
+  const [statusLookup, setStatusLookup] = useState({ email: '', teamCode: '' });
+  const [statusResult, setStatusResult] = useState(null);
+  const [statusError, setStatusError] = useState('');
+
   const [formData, setFormData] = useState({
-    leaderName: '',
-    leaderEmail: '',
-    leaderPhone: '',
-    collegeName: '',
     teamName: '',
-    members: ['', '', '', ''], // Member 2, 3, 4, 5
+    collegeName: '',
+    problemStatement: '',
+    modePreference: 'OFFLINE',
+    leader: {
+      fullName: '',
+      email: '',
+      phone: '',
+      department: '',
+      year: '',
+    },
+    members: [emptyMember(), emptyMember(), emptyMember(), emptyMember()],
+    utr: '',
+    paymentScreenshot: null,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [caseCode, setCaseCode] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(null);
 
-  // Find active event details
-  const activeEvent = events.find((e) => e.slug === selectedEventSlug) || events[0];
-  const isTeamEvent = activeEvent ? !activeEvent.teamSize.toLowerCase().includes('solo') : true;
+  const problemStatements = useMemo(
+    () =>
+      operationBreach.tracks.map((track) => ({
+        value: track.name,
+        label: `${track.name} — ${track.brief}`,
+      })),
+    []
+  );
 
-  // Sync selected event if query param changes
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const eventParam = params.get('event');
-    if (eventParam) {
-      setSelectedEventSlug(eventParam);
-    }
-  }, [location.search]);
+    let active = true;
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const loadEvent = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/events/smackathon-2k26`);
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Failed to load registration details');
+        }
+        if (active) setEventInfo(data.event);
+      } catch (err) {
+        if (active) setEventError(err.message || 'Failed to load registration details');
+      }
+    };
+
+    loadEvent();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (accessToken) {
+      setFormData((prev) => ({
+        ...prev,
+        leader: {
+          ...prev.leader,
+          email,
+        },
+      }));
+    }
+  }, [accessToken, email]);
+
+  const handleLeaderChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      leader: {
+        ...prev.leader,
+        [field]: value,
+      },
+    }));
   };
 
-  const handleMemberChange = (index, value) => {
+  const handleMemberChange = (index, field, value) => {
     setFormData((prev) => {
-      const newMembers = [...prev.members];
-      newMembers[index] = value;
-      return { ...prev, members: newMembers };
+      const nextMembers = [...prev.members];
+      nextMembers[index] = {
+        ...nextMembers[index],
+        [field]: value,
+      };
+      return { ...prev, members: nextMembers };
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const requestOtp = async () => {
     setIsSubmitting(true);
     setError('');
 
     try {
-      const formattedMembers = formData.members
-        .filter((name) => name.trim() !== '')
-        .map((name) => ({
-          fullName: name,
-          email: '',
-          phone: '',
-          college: formData.collegeName,
-          tShirtSize: '',
-        }));
-
-      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/create-order`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/request-otp`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          eventSlug: selectedEventSlug,
-          teamName: isTeamEvent ? formData.teamName : `${formData.leaderName}'s Team`,
-          collegeName: formData.collegeName,
-          leaderName: formData.leaderName,
-          leaderEmail: formData.leaderEmail,
-          leaderPhone: formData.leaderPhone,
-          members: formattedMembers,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       });
-
       const data = await response.json();
-
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Failed to initialize registration.');
+        throw new Error(data.message || 'OTP request failed');
       }
-
-      // If it's a free event, backend confirms it immediately
-      if (data.free) {
-        setIsSuccess(true);
-        setCaseCode(data.caseCode);
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Paid event: load Razorpay checkout script
-      const loaded = await loadRazorpayScript();
-      if (!loaded) {
-        throw new Error('Razorpay SDK failed to load. Are you offline?');
-      }
-
-      const options = {
-        key: data.keyId,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'UPSURGE 2K26',
-        description: `Registration for ${activeEvent.name}`,
-        order_id: data.orderId,
-        handler: async function (paymentResponse) {
-          try {
-            setIsSubmitting(true);
-            const verifyResponse = await fetch(`${API_BASE_URL}/api/v1/registrations/verify-payment`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                razorpay_order_id: paymentResponse.razorpay_order_id,
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_signature: paymentResponse.razorpay_signature,
-                caseCode: data.caseCode,
-              }),
-            });
-
-            const verifyData = await verifyResponse.json();
-            if (verifyResponse.ok && verifyData.success) {
-              setIsSuccess(true);
-              setCaseCode(verifyData.caseCode);
-            } else {
-              throw new Error(verifyData.message || 'Payment verification failed.');
-            }
-          } catch (err) {
-            setError(err.message || 'An error occurred during payment verification.');
-          } finally {
-            setIsSubmitting(false);
-          }
-        },
-        prefill: {
-          name: formData.leaderName,
-          email: formData.leaderEmail,
-          contact: formData.leaderPhone,
-        },
-        theme: {
-          color: '#780000',
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (resp) {
-        setError(resp.error.description || 'Payment failed.');
-      });
-      rzp.open();
+      setOtpRequested(true);
     } catch (err) {
-      setError(err.message || 'An unexpected error occurred.');
+      setError(err.message || 'OTP request failed');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const verifyOtp = async () => {
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'OTP verification failed');
+      }
+      setAccessToken(data.accessToken);
+      setError('');
+    } catch (err) {
+      setError(err.message || 'OTP verification failed');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const validMembers = formData.members.filter((member) =>
+        Object.values(member).some((value) => String(value).trim() !== '')
+      );
+
+      if (validMembers.length < 2) {
+        throw new Error('At least two additional team members are required');
+      }
+
+      if (!formData.paymentScreenshot) {
+        throw new Error('Payment screenshot is required');
+      }
+
+      const paymentScreenshotDataUri = await toDataUri(formData.paymentScreenshot);
+
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accessToken,
+          teamName: formData.teamName,
+          collegeName: formData.collegeName,
+          problemStatement: formData.problemStatement,
+          modePreference: formData.modePreference,
+          leader: formData.leader,
+          members: validMembers,
+          utr: formData.utr,
+          paymentScreenshotDataUri,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Registration submission failed');
+      }
+
+      setSuccess({
+        registrationCode: data.registrationCode,
+        teamCode: data.teamCode,
+        paymentStatus: data.paymentStatus,
+      });
+    } catch (err) {
+      setError(err.message || 'Registration submission failed');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const checkStatus = async (event) => {
+    event.preventDefault();
+    setStatusError('');
+    setStatusResult(null);
+
+    try {
+      const params = new URLSearchParams();
+      if (statusLookup.email) params.set('email', statusLookup.email);
+      if (statusLookup.teamCode) params.set('teamCode', statusLookup.teamCode);
+
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/status?${params.toString()}`);
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Status lookup failed');
+      }
+
+      setStatusResult(data);
+    } catch (err) {
+      setStatusError(err.message || 'Status lookup failed');
+    }
+  };
+
+  const paymentConfig = eventInfo?.payment;
+
   return (
     <div className="relative w-full min-h-screen overflow-hidden pb-20">
-      {/* Background Aurora Shader */}
       <div className="absolute inset-x-0 top-0 h-[800px] z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 opacity-60">
-          <Aurora
-            colorStops={['#C1121F', '#780000', '#000000']}
-            amplitude={1.6}
-            speed={1.0}
-          />
+          <Aurora colorStops={['#C1121F', '#780000', '#000000']} amplitude={1.6} speed={1.0} />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-case-black" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-3xl px-4 pt-28 sm:pt-32 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 pt-28 sm:pt-32 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <SectionHeading
-            eyebrow="Decryption Portal"
-            title="Initialize Registration"
-            description="Log your credentials into the UPSURGE 2K26 system to secure your event slot."
+            eyebrow="Shortlisted Teams Only"
+            title="Smackathon Confirmation Registration"
+            description="Verify your shortlisted Unstop email, upload payment proof, and lock your team into the paid round."
             align="center"
           />
         </div>
 
-        {isSuccess ? (
-          <div className="hackathon-panel p-8 text-center max-w-xl mx-auto border border-evidence/30 bg-black/40 backdrop-blur-md rounded-lg">
-            <span className="case-tag">Case Logged</span>
-            <h2 className="heading-display mt-4 text-3xl text-white">Registration Received</h2>
-            <div className="mt-6 p-4 bg-ink/75 border border-white/5 font-mono text-left rounded">
-              <p className="text-sm text-green-500 font-bold mb-2">&gt; CONNECTION SECURED...</p>
-              <p className="text-sm text-steel">
-                <strong className="text-white">Event:</strong> {activeEvent.name}
-              </p>
-              <p className="text-sm text-steel">
-                <strong className="text-white">Leader:</strong> {formData.leaderName}
-              </p>
-              {isTeamEvent && (
-                <p className="text-sm text-steel">
-                  <strong className="text-white">Team Name:</strong> {formData.teamName}
-                </p>
-              )}
-              <p className="text-sm text-steel mt-2">
-                <strong className="text-white">Case Reference:</strong>{' '}
-                <span className="text-evidence font-bold">{caseCode}</span>
-              </p>
-              <p className="text-xs text-steel/70 mt-4">
-                * An encryption confirmation receipt has been scheduled for dispatch to {formData.leaderEmail}. Keep your case reference safe for campus check-in.
-              </p>
-            </div>
-
-            <div className="mt-8 flex justify-center gap-4">
-              <Link to="/events" className="btn-secondary">
-                View Other Events
-              </Link>
-              <Link to="/" className="btn-primary">
-                Return to HQ
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <form
-            onSubmit={handleSubmit}
-            className="hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6"
-          >
-            {/* Event Selection */}
-            <div>
-              <label className="block font-mono text-xs uppercase tracking-wider text-steel mb-2">
-                Select Case / Event
-              </label>
-              <select
-                value={selectedEventSlug}
-                onChange={(e) => setSelectedEventSlug(e.target.value)}
-                className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded cursor-pointer"
-              >
-                {events.map((event) => (
-                  <option key={event.slug} value={event.slug} className="bg-case-black">
-                    {event.name} ({event.category})
-                  </option>
-                ))}
-              </select>
-              {activeEvent && (
-                <div className="mt-2 flex items-center justify-between text-xs font-mono text-steel">
-                  <span>Size: {activeEvent.teamSize}</span>
-                  <span>Venue: {activeEvent.venue}</span>
+        <div className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+          <div className="space-y-8">
+            {success ? (
+              <div className="hackathon-panel p-8 border border-evidence/30 bg-black/40 backdrop-blur-md rounded-lg">
+                <span className="case-tag">Submission Logged</span>
+                <h2 className="heading-display mt-4 text-3xl text-white">Registration Sent For Review</h2>
+                <div className="mt-6 space-y-2 font-mono text-sm text-steel">
+                  <p><strong className="text-white">Team Code:</strong> {success.teamCode}</p>
+                  <p><strong className="text-white">Registration Code:</strong> {success.registrationCode}</p>
+                  <p><strong className="text-white">Payment Status:</strong> {success.paymentStatus}</p>
+                  <p className="text-steel/80">
+                    Admin will verify your payment manually. You’ll receive a confirmation email after approval.
+                  </p>
                 </div>
-              )}
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2">
-              {/* Leader Name */}
-              <div>
-                <label className="block font-mono text-xs uppercase tracking-wider text-steel mb-2">
-                  Full Name {isTeamEvent && '(Team Leader)'}
-                </label>
-                <input
-                  type="text"
-                  name="leaderName"
-                  required
-                  value={formData.leaderName}
-                  onChange={handleInputChange}
-                  placeholder="e.g. John Doe"
-                  className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                />
-              </div>
-
-              {/* College Name */}
-              <div>
-                <label className="block font-mono text-xs uppercase tracking-wider text-steel mb-2">
-                  College / Institution Name
-                </label>
-                <input
-                  type="text"
-                  name="collegeName"
-                  required
-                  value={formData.collegeName}
-                  onChange={handleInputChange}
-                  placeholder="e.g. YCCE, Nagpur"
-                  className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2">
-              {/* Leader Email */}
-              <div>
-                <label className="block font-mono text-xs uppercase tracking-wider text-steel mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="leaderEmail"
-                  required
-                  value={formData.leaderEmail}
-                  onChange={handleInputChange}
-                  placeholder="e.g. john@example.com"
-                  className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                />
-              </div>
-
-              {/* Leader Phone */}
-              <div>
-                <label className="block font-mono text-xs uppercase tracking-wider text-steel mb-2">
-                  Contact / Phone Number
-                </label>
-                <input
-                  type="tel"
-                  name="leaderPhone"
-                  required
-                  value={formData.leaderPhone}
-                  onChange={handleInputChange}
-                  placeholder="e.g. +91 9876543210"
-                  className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                />
-              </div>
-            </div>
-
-            {/* Team details if applicable */}
-            {isTeamEvent && (
-              <div className="border-t border-white/10 pt-6 space-y-6">
-                <div>
-                  <label className="block font-mono text-xs uppercase tracking-wider text-steel mb-2">
-                    Team Name
-                  </label>
-                  <input
-                    type="text"
-                    name="teamName"
-                    required={isTeamEvent}
-                    value={formData.teamName}
-                    onChange={handleInputChange}
-                    placeholder="e.g. Cyber Ninjas"
-                    className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                  />
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <Link to="/hackathon" className="btn-secondary">Back to Smackathon</Link>
+                  <button
+                    type="button"
+                    onClick={() => setSuccess(null)}
+                    className="btn-primary"
+                  >
+                    Register Another Team
+                  </button>
                 </div>
-
-                <div>
-                  <span className="block font-mono text-xs uppercase tracking-wider text-steel mb-3">
-                    Team Members Details (Optional for Registration Initializing)
-                  </span>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {formData.members.map((member, index) => (
-                      <div key={index}>
-                        <label className="block font-mono text-[10px] uppercase tracking-wider text-steel/70 mb-1">
-                          Member {index + 2} Full Name
-                        </label>
-                        <input
-                          type="text"
-                          value={member}
-                          onChange={(e) => handleMemberChange(index, e.target.value)}
-                          placeholder={`Member ${index + 2} Name`}
-                          className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                        />
-                      </div>
-                    ))}
+              </div>
+            ) : (
+              <>
+                <div className="hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6">
+                  <div>
+                    <h2 className="font-display text-3xl text-white">Step 1: Verify Shortlisted Email</h2>
+                    <p className="mt-2 text-sm text-steel">
+                      Only shortlisted teams can continue. We send the OTP to the same email used on Unstop.
+                    </p>
                   </div>
+
+                  <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter shortlisted Unstop email"
+                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                    />
+                    <button
+                      type="button"
+                      disabled={isSubmitting || !email}
+                      onClick={requestOtp}
+                      className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {otpRequested ? 'Resend OTP' : 'Send OTP'}
+                    </button>
+                  </div>
+
+                  {otpRequested && (
+                    <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
+                      <input
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        placeholder="Enter 6-digit OTP"
+                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                      />
+                      <button
+                        type="button"
+                        disabled={isSubmitting || otp.length !== 6}
+                        onClick={verifyOtp}
+                        className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Verify OTP
+                      </button>
+                    </div>
+                  )}
+
+                  {accessToken && (
+                    <div className="p-3 bg-emerald-950/30 border border-emerald-500/30 rounded font-mono text-xs text-emerald-300">
+                      Verified successfully. Continue with team registration.
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
 
-            {error && (
-              <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-400 text-xs font-mono rounded">
-                [SYSTEM ERROR]: {error}
-              </div>
-            )}
+                <form
+                  onSubmit={handleSubmit}
+                  className="hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6"
+                >
+                  <div>
+                    <h2 className="font-display text-3xl text-white">Step 2: Submit Team And Payment Proof</h2>
+                    <p className="mt-2 text-sm text-steel">
+                      Team size must remain 3–5 members. Member 2 and Member 3 are required.
+                    </p>
+                  </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-primary w-full py-4 text-base font-bold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <input
+                      type="text"
+                      value={formData.teamName}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, teamName: e.target.value }))}
+                      placeholder="Team name"
+                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={formData.collegeName}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, collegeName: e.target.value }))}
+                      placeholder="College / Institution name"
+                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                      required
+                    />
+                    <select
+                      value={formData.problemStatement}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, problemStatement: e.target.value }))}
+                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                      required
+                    >
+                      <option value="">Select problem statement</option>
+                      {problemStatements.map((track) => (
+                        <option key={track.value} value={track.value}>
+                          {track.label}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={formData.modePreference}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, modePreference: e.target.value }))}
+                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                    >
+                      <option value="OFFLINE">Offline</option>
+                      <option value="ONLINE_REQUEST">Online Request</option>
+                    </select>
+                  </div>
+
+                  <div className="border-t border-white/10 pt-6 space-y-4">
+                    <h3 className="font-display text-2xl text-white">Leader Details</h3>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <input type="text" value={formData.leader.fullName} onChange={(e) => handleLeaderChange('fullName', e.target.value)} placeholder="Leader full name" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded" required />
+                      <input type="email" value={formData.leader.email} readOnly className="w-full bg-ink/40 border border-white/10 text-steel p-3 font-mono text-sm rounded cursor-not-allowed" required />
+                      <input type="tel" value={formData.leader.phone} onChange={(e) => handleLeaderChange('phone', e.target.value)} placeholder="Leader phone number" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded" required />
+                      <input type="text" value={formData.leader.department} onChange={(e) => handleLeaderChange('department', e.target.value)} placeholder="Leader department" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded" required />
+                      <input type="text" value={formData.leader.year} onChange={(e) => handleLeaderChange('year', e.target.value)} placeholder="Leader year" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded sm:col-span-2" required />
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/10 pt-6 space-y-4">
+                    <h3 className="font-display text-2xl text-white">Team Members</h3>
+                    <div className="grid gap-4">
+                      {formData.members.map((member, index) => (
+                        <div key={index} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+                          <input type="text" value={member.fullName} onChange={(e) => handleMemberChange(index, 'fullName', e.target.value)} placeholder={`Member ${index + 2} full name`} className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
+                          <input type="email" value={member.email} onChange={(e) => handleMemberChange(index, 'email', e.target.value)} placeholder="Email" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
+                          <input type="tel" value={member.phone} onChange={(e) => handleMemberChange(index, 'phone', e.target.value)} placeholder="Phone" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
+                          <input type="text" value={member.department} onChange={(e) => handleMemberChange(index, 'department', e.target.value)} placeholder="Department" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
+                          <input type="text" value={member.year} onChange={(e) => handleMemberChange(index, 'year', e.target.value)} placeholder="Year" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/10 pt-6 space-y-4">
+                    <h3 className="font-display text-2xl text-white">Payment Proof</h3>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <input
+                        type="text"
+                        value={formData.utr}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, utr: e.target.value.toUpperCase() }))}
+                        placeholder="Enter UTR number"
+                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
+                        required
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setFormData((prev) => ({ ...prev, paymentScreenshot: e.target.files?.[0] || null }))}
+                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-300 text-xs font-mono rounded">
+                      {error}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || !accessToken}
+                    className="btn-primary w-full py-4 text-base font-bold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Registration'}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+
+          <div className="space-y-8">
+            <div className="hackathon-panel p-6 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-4">
+              <h2 className="font-display text-3xl text-white">Payment Details</h2>
+              {eventError ? (
+                <p className="text-sm text-red-300 font-mono">{eventError}</p>
+              ) : (
+                <>
+                  <div className="space-y-2 font-mono text-sm text-steel">
+                    <p><strong className="text-white">Fee:</strong> ₹{eventInfo?.feeInINR ?? 599} per team</p>
+                    <p><strong className="text-white">Team Size:</strong> {eventInfo?.teamSize?.min ?? 3} to {eventInfo?.teamSize?.max ?? 5} members</p>
+                    <p><strong className="text-white">UPI ID:</strong> {paymentConfig?.upiId || 'Will be updated'}</p>
+                    <p><strong className="text-white">Payee Name:</strong> {paymentConfig?.payeeName || 'Will be updated'}</p>
+                  </div>
+                  {paymentConfig?.qrImageUrl ? (
+                    <img
+                      src={paymentConfig.qrImageUrl}
+                      alt="Smackathon payment QR"
+                      className="w-full rounded border border-white/10 bg-white p-3"
+                    />
+                  ) : (
+                    <div className="border border-dashed border-white/20 rounded p-6 font-mono text-xs text-steel">
+                      QR code URL is not configured in the backend yet.
+                    </div>
+                  )}
+                  <ul className="space-y-2 text-xs text-steel">
+                    {(paymentConfig?.instructions || []).map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <span className="text-evidence">›</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+
+            <form
+              onSubmit={checkStatus}
+              className="hackathon-panel p-6 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-4"
             >
-              {isSubmitting ? 'Securing Connection...' : 'INITIALIZE REGISTRATION'}
-            </button>
-          </form>
-        )}
+              <h2 className="font-display text-3xl text-white">Check Registration Status</h2>
+              <input
+                type="email"
+                value={statusLookup.email}
+                onChange={(e) => setStatusLookup((prev) => ({ ...prev, email: e.target.value }))}
+                placeholder="Leader email"
+                className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
+              />
+              <input
+                type="text"
+                value={statusLookup.teamCode}
+                onChange={(e) => setStatusLookup((prev) => ({ ...prev, teamCode: e.target.value.toUpperCase() }))}
+                placeholder="Or team code"
+                className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
+              />
+              {statusError && <div className="text-xs font-mono text-red-300">{statusError}</div>}
+              {statusResult && (
+                <div className="space-y-2 font-mono text-sm text-steel">
+                  <p><strong className="text-white">Team:</strong> {statusResult.team.teamName}</p>
+                  <p><strong className="text-white">Team Code:</strong> {statusResult.team.teamCode}</p>
+                  <p><strong className="text-white">Status:</strong> {statusResult.team.status}</p>
+                  <p><strong className="text-white">Payment:</strong> {statusResult.registration?.paymentStatus || '—'}</p>
+                  {statusResult.team.paymentReviewReason && (
+                    <p><strong className="text-white">Review Note:</strong> {statusResult.team.paymentReviewReason}</p>
+                  )}
+                </div>
+              )}
+              <button type="submit" className="btn-secondary w-full">Check Status</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

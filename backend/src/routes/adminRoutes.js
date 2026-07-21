@@ -4,15 +4,15 @@ const { protectAdmin } = require('../middleware/auth');
 const {
   login,
   me,
+  getStats,
   getTeams,
   getTeamById,
-  updateTeamStatus,
-  getStats,
+  updateTeam,
+  reviewPayment,
+  resendConfirmation,
   exportTeams,
-  checkIn,
-  listEventsAdmin,
-  createEvent,
-  updateEvent,
+  importShortlist,
+  getShortlist,
 } = require('../controllers/adminController');
 
 // Public (within admin namespace)
@@ -25,12 +25,11 @@ router.get('/me', me);
 router.get('/stats', getStats);
 router.get('/teams', getTeams);
 router.get('/teams/:id', getTeamById);
-router.patch('/teams/:id/status', updateTeamStatus);
+router.patch('/teams/:id', updateTeam);
+router.patch('/teams/:id/review-payment', reviewPayment);
+router.post('/teams/:id/resend-confirmation', resendConfirmation);
 router.get('/export', exportTeams);
-router.post('/checkin', checkIn);
-
-router.get('/events', listEventsAdmin);
-router.post('/events', createEvent);
-router.patch('/events/:id', updateEvent);
+router.get('/shortlist', getShortlist);
+router.post('/shortlist/import', importShortlist);
 
 module.exports = router;

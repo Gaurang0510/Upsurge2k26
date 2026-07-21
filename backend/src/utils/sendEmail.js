@@ -1,6 +1,10 @@
 const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
-const { confirmationEmailHtml } = require('./emailTemplates');
+const {
+  otpEmailHtml,
+  confirmationEmailHtml,
+  paymentRejectedEmailHtml,
+} = require('./emailTemplates');
 
 let transporter = null;
 
@@ -25,28 +29,61 @@ const getTransporter = () => {
 };
 
 /**
- * Sends the registration confirmation email with an embedded QR code
- * encoding the caseCode (used later for venue check-in).
+ * Sends a shortlist-email OTP.
  */
-const sendConfirmationEmail = async ({ leaderEmail, leaderName, teamName, eventName, caseCode, amount }) => {
-  const qrDataUrl = await QRCode.toDataURL(caseCode, { margin: 1, width: 320 }).catch(() => null);
-  const html = confirmationEmailHtml({ leaderName, teamName, eventName, caseCode, amount, qrDataUrl });
+const sendOtpEmail = async ({ email, otp, eventName }) => {
+  const html = otpEmailHtml({ otp, eventName });
+  const t = getTransporter();
+
+  if (!t) {
+    console.log(`📧 [DEV MODE] OTP email for ${email} | OTP: ${otp}`);
+    return { simulated: true };
+  }
+
+  return t.sendMail({
+    from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+    to: email,
+    subject: `${eventName} — Email Verification OTP`,
+    html,
+  });
+};
+
+const sendConfirmationEmail = async ({ leaderEmail, leaderName, teamName, eventName, registrationCode, amount }) => {
+  const qrDataUrl = await QRCode.toDataURL(registrationCode, { margin: 1, width: 320 }).catch(() => null);
+  const html = confirmationEmailHtml({ leaderName, teamName, eventName, registrationCode, amount, qrDataUrl });
 
   const t = getTransporter();
 
   if (!t) {
-    console.log(`📧 [DEV MODE] Confirmation email for ${leaderEmail} | Case Code: ${caseCode}`);
+    console.log(`📧 [DEV MODE] Confirmation email for ${leaderEmail} | Registration Code: ${registrationCode}`);
     return { simulated: true };
   }
 
   const info = await t.sendMail({
     from: process.env.EMAIL_FROM || process.env.SMTP_USER,
     to: leaderEmail,
-    subject: `UPSURGE 2K26 — Registration Confirmed [${caseCode}]`,
+    subject: `SMACKATHON 2K26 — Registration Confirmed [${registrationCode}]`,
     html,
   });
 
   return info;
 };
 
-module.exports = { sendConfirmationEmail };
+const sendPaymentRejectedEmail = async ({ leaderEmail, leaderName, teamName, eventName, reason }) => {
+  const html = paymentRejectedEmailHtml({ leaderName, teamName, eventName, reason });
+  const t = getTransporter();
+
+  if (!t) {
+    console.log(`📧 [DEV MODE] Payment rejected email for ${leaderEmail} | Reason: ${reason}`);
+    return { simulated: true };
+  }
+
+  return t.sendMail({
+    from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+    to: leaderEmail,
+    subject: `${eventName} — Payment proof needs correction`,
+    html,
+  });
+};
+
+module.exports = { sendOtpEmail, sendConfirmationEmail, sendPaymentRejectedEmail };
