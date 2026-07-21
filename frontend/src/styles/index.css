@@ -103,10 +103,491 @@
 
   /* Case-file card surface used across event/team cards */
   .file-card {
-    @apply relative bg-ink border border-white/5 overflow-hidden;
+    @apply relative border border-white/10 bg-ink backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-evidence/40 hover:shadow-[0_0_20px_rgba(193,18,31,0.2)];
   }
 
   .noise-overlay {
-    @apply pointer-events-none absolute inset-0 bg-noise opacity-[0.4] mix-blend-overlay;
+    @apply pointer-events-none absolute inset-0 bg-noise opacity-30 z-0;
   }
 }
+
+/* ── MARQUEE KEYFRAMES & ANIMATION UTILITIES ── */
+@keyframes marquee-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% - var(--gap, 1rem)));
+  }
+}
+
+@keyframes marquee-horizontal-reverse {
+  0% {
+    transform: translateX(calc(-100% - var(--gap, 1rem)));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(calc(-100% - var(--gap, 1rem)));
+  }
+}
+
+@keyframes marquee-vertical-reverse {
+  0% {
+    transform: translateY(calc(-100% - var(--gap, 1rem)));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-marquee-horizontal {
+  animation: marquee-horizontal var(--duration, 40s) linear infinite;
+}
+
+.animate-marquee-horizontal-reverse {
+  animation: marquee-horizontal-reverse var(--duration, 40s) linear infinite;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration, 40s) linear infinite;
+}
+
+.animate-marquee-vertical-reverse {
+  animation: marquee-vertical-reverse var(--duration, 40s) linear infinite;
+}
+
+/* ── POLICE LIGHT BAR CSS SPECIFICATION ── */
+.lightbar-container {
+  max-width: 945px;
+}
+
+.lightbar-container:after {
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: 100;
+  display: block;
+  content: "";
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.24) 1%, rgba(255,255,255,0.14) 43%, rgba(255,255,255,0) 58%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+.light {
+  position: relative;
+  width: 125px;
+  height: 42px;
+  padding: 4px 6px;
+  background: linear-gradient(180deg, #1c1c24 0%, #0c0c10 100%);
+  border-top: 1.5px solid #3a3a48;
+  border-right: 1.5px solid #22222d;
+  border-bottom: 1.5px solid #111118;
+  border-left: 1.5px solid #22222d;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.5);
+  animation-duration: 800ms;
+  animation-name: light;
+  animation-iteration-count: infinite;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.inner-light {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  top: -1px;
+  left: -1px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#light-1 .inner-light,
+#light-6 .inner-light { z-index: 7; }
+#light-2 .inner-light,
+#light-5 .inner-light { z-index: 8; }
+#light-3 .inner-light,
+#light-4 .inner-light { z-index: 9; }
+
+.bulb {
+  display: inline-block;
+  position: relative;
+  border-radius: 50%;
+  margin: 1px 0px 0;
+  width: 11px;
+  height: 11px;
+  z-index: 10;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.3), 0 1px 3px rgba(0,0,0,0.8);
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.4) 0%, rgba(120,120,120,0.2) 40%, rgba(10,10,10,0.9) 100%);
+}
+
+.btn-control {
+  @apply font-mono text-xs font-bold uppercase tracking-wider px-3 py-2.5 rounded border border-zinc-700 bg-zinc-800 text-zinc-300 transition-all hover:bg-zinc-700 hover:text-white;
+}
+
+.btn-control.active {
+  @apply bg-zinc-200 text-zinc-900 border-white font-extrabold shadow-[0_0_12px_rgba(255,255,255,0.4)];
+}
+
+/* ── SPOTLIGHT MODE ── */
+.spotlight .bulb {
+  background: #fff !important;
+  box-shadow: 0px 0px 45px 10px #fff !important;
+}
+
+.spotlight .inner-light {
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  background-color: rgba(255,255,240,0.85) !important;
+  box-shadow: 0px 0px 100px 25px rgba(255,255,240,0.85) !important;
+  opacity: 1 !important;
+  z-index: 20 !important;
+}
+
+/* ── DELAY MODIFIERS ── */
+.delay .bulb {
+  animation-delay: 400ms !important;
+}
+
+.delay .inner-light {
+  animation-delay: 400ms !important;
+}
+
+/* ── STROBE BULBS ── */
+.strobe .bulb {
+  animation-duration: 800ms;
+  animation-name: bulb-strobe;
+  animation-iteration-count: infinite;
+}
+
+@keyframes bulb-strobe {
+  0%, 25% {
+    background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%);
+    box-shadow: 0px 0px 3px #222;
+  }
+  28%, 50% {
+    background: white;
+    box-shadow: 0px 0px 10px 4px #fff;
+  }
+  52%, 55% {
+    background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%);
+    box-shadow: 0px 0px 3px #222;
+  }
+  57%, 69% {
+    background: white;
+    box-shadow: 0px 0px 10px 4px #fff;
+  }
+  70%, 71% {
+    background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%);
+    box-shadow: 0px 0px 3px #222;
+  }
+  72%, 75% {
+    background: white;
+    box-shadow: 0px 0px 10px 4px #fff;
+  }
+  77%, 100% {
+    background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%);
+    box-shadow: 0px 0px 3px #222;
+  }
+}
+
+/* ── STROBE RED & BLUE LIGHTS ── */
+.strobe.blue .inner-light {
+  animation-duration: 800ms;
+  animation-name: strobe-blue;
+  animation-iteration-count: infinite;
+}
+
+.strobe.red .inner-light {
+  animation-duration: 800ms;
+  animation-name: strobe-red;
+  animation-iteration-count: infinite;
+}
+
+@keyframes strobe-blue {
+  0%, 25% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+  28%, 50% {
+    border: 1px solid #139eff;
+    background-color: #66d2ff;
+    box-shadow: 0px 0px 100px 25px #0078ff;
+    opacity: 1;
+  }
+  52%, 55% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+  57%, 69% {
+    border: 1px solid #139eff;
+    background-color: #66d2ff;
+    box-shadow: 0px 0px 100px 25px #0078ff;
+    opacity: 1;
+  }
+  70%, 71% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+  72%, 75% {
+    border: 1px solid #139eff;
+    background-color: #66d2ff;
+    box-shadow: 0px 0px 100px 25px #0078ff;
+    opacity: 1;
+  }
+  77%, 100% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+}
+
+@keyframes strobe-red {
+  0%, 25% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+  28%, 50% {
+    border: 1px solid #ee2819;
+    background-color: #ff3c2d;
+    box-shadow: 0px 0px 100px 25px #ff4444;
+    opacity: 1;
+  }
+  52%, 55% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+  57%, 69% {
+    border: 1px solid #ee2819;
+    background-color: #ff3c2d;
+    box-shadow: 0px 0px 100px 25px #ff4444;
+    opacity: 1;
+  }
+  70%, 71% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+  72%, 75% {
+    border: 1px solid #ee2819;
+    background-color: #ff3c2d;
+    box-shadow: 0px 0px 100px 25px #ff4444;
+    opacity: 1;
+  }
+  77%, 100% {
+    background-color: #222;
+    box-shadow: 0px 0px 0px 0px #000;
+    border: 1px solid #111;
+    opacity: 0;
+  }
+}
+
+/* ── CAUTION MODE ── */
+.caution .inner-light,
+.caution .bulb {
+  animation-duration: 2000ms !important;
+  animation-iteration-count: infinite !important;
+}
+
+.caution-3.caution .bulb,
+.caution-4.caution .bulb { animation-name: bulb-caution-1 !important; }
+.caution-2.caution .bulb,
+.caution-5.caution .bulb { animation-name: bulb-caution-2 !important; }
+.caution-1.caution .bulb,
+.caution-6.caution .bulb { animation-name: bulb-caution-3 !important; }
+
+@keyframes bulb-caution-1 {
+  0%, 16% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  17%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+}
+
+@keyframes bulb-caution-2 {
+  0%, 36% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  37%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+}
+
+@keyframes bulb-caution-3 {
+  0%, 56% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  57%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+}
+
+.caution-3.caution .inner-light,
+.caution-4.caution .inner-light { animation-name: caution-1 !important; }
+.caution-2.caution .inner-light,
+.caution-5.caution .inner-light { animation-name: caution-2 !important; }
+.caution-1.caution .inner-light,
+.caution-6.caution .inner-light { animation-name: caution-3 !important; }
+
+@keyframes caution-1 {
+  0%, 16% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  17%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+@keyframes caution-2 {
+  0%, 36% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  37%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+@keyframes caution-3 {
+  0%, 56% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  57%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+/* ── TRAFFIC WARN MODE (LEFT / RIGHT) ── */
+.warn .inner-light,
+.warn .bulb {
+  animation-duration: 2000ms !important;
+  animation-iteration-count: infinite !important;
+}
+
+.warn.on .bulb,
+.warn-light-6.warn.right .bulb,
+.warn-light-1.warn.left .bulb {
+  background: #fff7d4 !important;
+  box-shadow: 0px 0px 8px 4px #fff7d1 !important;
+}
+
+.warn-light-5.warn.right .bulb,
+.warn-light-2.warn.left .bulb { animation-name: bulb-warn-2 !important; }
+.warn-light-4.warn.right .bulb,
+.warn-light-3.warn.left .bulb { animation-name: bulb-warn-3 !important; }
+.warn-light-3.warn.right .bulb,
+.warn-light-4.warn.left .bulb { animation-name: bulb-warn-4 !important; }
+.warn-light-2.warn.right .bulb,
+.warn-light-5.warn.left .bulb { animation-name: bulb-warn-5 !important; }
+.warn-light-1.warn.right .bulb,
+.warn-light-6.warn.left .bulb { animation-name: bulb-warn-6 !important; }
+
+@keyframes bulb-warn-2 {
+  0%, 16% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  17%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+}
+
+@keyframes bulb-warn-3 {
+  0%, 30% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  31%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); shadow: 0px 0px 3px #222; }
+}
+
+@keyframes bulb-warn-4 {
+  0%, 46% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  47%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+}
+
+@keyframes bulb-warn-5 {
+  0%, 58% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  59%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+}
+
+@keyframes bulb-warn-6 {
+  0%, 72% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+  73%, 97% { background: #fff7d4; box-shadow: 0px 0px 8px 4px #fff7d1; }
+  99%, 100% { background: linear-gradient(155deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.18) 49%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%); box-shadow: 0px 0px 3px #222; }
+}
+
+.warn.on .inner-light,
+.warn-light-6.warn.right .inner-light,
+.warn-light-1.warn.left .inner-light {
+  border: 1px solid #ffba13 !important;
+  background-color: #ffd368 !important;
+  box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8) !important;
+  opacity: 1 !important;
+}
+
+.warn-light-5.warn.right .inner-light,
+.warn-light-2.warn.left .inner-light { animation-name: warn-2 !important; }
+.warn-light-4.warn.right .inner-light,
+.warn-light-3.warn.left .inner-light { animation-name: warn-3 !important; }
+.warn-light-3.warn.right .inner-light,
+.warn-light-4.warn.left .inner-light { animation-name: warn-4 !important; }
+.warn-light-2.warn.right .inner-light,
+.warn-light-5.warn.left .inner-light { animation-name: warn-5 !important; }
+.warn-light-1.warn.right .inner-light,
+.warn-light-6.warn.left .inner-light { animation-name: warn-6 !important; }
+
+@keyframes warn-2 {
+  0%, 16% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  17%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+@keyframes warn-3 {
+  0%, 30% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  31%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+@keyframes warn-4 {
+  0%, 46% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  47%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+@keyframes warn-5 {
+  0%, 58% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  59%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+@keyframes warn-6 {
+  0%, 72% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+  73%, 97% { border: 1px solid #ffba13; background-color: #ffd368; box-shadow: 0px 0px 100px 25px rgba(255,168,0,0.8); opacity: 1; }
+  99%, 100% { background-color: #222; box-shadow: 0px 0px 0px 0px #000; border: 1px solid #111; opacity: 0; }
+}
+
+/* ── COFFIN VAULT HAPTIC VIBRATION ANIMATION ── */
+@keyframes coffin-vibrate {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-2px, 1px) rotate(-0.5deg); }
+  20% { transform: translate(2px, -1px) rotate(0.5deg); }
+  30% { transform: translate(-3px, -1px) rotate(-1deg); }
+  40% { transform: translate(3px, 1px) rotate(1deg); }
+  50% { transform: translate(-2px, 2px) rotate(-0.5deg); }
+  60% { transform: translate(2px, -2px) rotate(0.5deg); }
+  70% { transform: translate(-1px, 1px) rotate(-0.25deg); }
+  80% { transform: translate(1px, -1px) rotate(0.25deg); }
+  90% { transform: translate(-2px, 0px) rotate(-0.5deg); }
+}
+
+.animate-coffin-vibrate {
+  animation: coffin-vibrate 0.15s linear infinite;
+}
+
+
+

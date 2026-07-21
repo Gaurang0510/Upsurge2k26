@@ -1,6 +1,10 @@
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import Hero from '../../components/home/Hero.jsx';
+import PoliceLightbar from '../../components/home/PoliceLightbar.jsx';
+import CyberCoffinVault from '../../components/home/CyberCoffinVault.jsx';
 import EventsPreview from '../../components/home/EventsPreview.jsx';
+import InvestigationTimeline from '../../components/home/InvestigationTimeline.jsx';
+import SponsorsMarquee from '../../components/home/SponsorsMarquee.jsx';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import ScrollFade, { ScrollStaggerContainer, ScrollStaggerItem } from '../../components/common/ScrollFade.jsx';
@@ -14,11 +18,25 @@ export default function Home() {
     <>
       <Hero />
 
-      <EventsPreview />
+      {/* Police Emergency Lightbar right below Hero */}
+      <PoliceLightbar />
 
-      {/* Flagship spotlight */}
-      <section className="border-y border-white/5 bg-ink overflow-hidden py-28 sm:py-36">
-        <div className="mx-auto grid max-w-7xl gap-12 sm:gap-16 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      {/* Interactive 3D Cyber Coffin Vault (Unseal Brochure & Case File) */}
+      <CyberCoffinVault />
+
+      {/* Flagship spotlight (SMACKATHON 2K26) with Police Ambient Lighting */}
+      <section className="relative border-y border-white/5 bg-ink overflow-hidden py-24 sm:py-32">
+        
+        {/* Ambient Strobe Lighting Cones across Smackathon Section */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          {/* Blue Police Light Ambient Fill (Top-Left) */}
+          <div className="absolute -top-20 -left-20 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(0,102,255,0.22)_0%,rgba(0,50,200,0.08)_50%,transparent_75%)] blur-3xl animate-police-strobe-blue" />
+          
+          {/* Red Police Light Ambient Fill (Top-Right) */}
+          <div className="absolute -top-20 -right-20 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(255,0,51,0.25)_0%,rgba(200,0,30,0.08)_50%,transparent_75%)] blur-3xl animate-police-strobe-red" />
+        </div>
+
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 sm:gap-16 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <ScrollFade direction="left">
             <SectionHeading
               eyebrow={flagshipEvent.caseNumber}
@@ -38,7 +56,7 @@ export default function Home() {
 
           <ScrollStaggerContainer className="grid grid-cols-2 gap-5 self-start">
             <ScrollStaggerItem direction="up">
-              <div className="file-card p-6">
+              <div className="file-card p-6 border-blue-500/20 shadow-[0_0_20px_rgba(0,102,255,0.15)]">
                 <div className="noise-overlay" />
                 <p className="relative font-mono text-xs uppercase tracking-widest text-steel">Format</p>
                 <p className="relative mt-2 font-display text-2xl text-paper">{flagshipEvent.format}</p>
@@ -46,7 +64,7 @@ export default function Home() {
             </ScrollStaggerItem>
 
             <ScrollStaggerItem direction="up">
-              <div className="file-card p-6">
+              <div className="file-card p-6 border-red-500/20 shadow-[0_0_20px_rgba(255,0,51,0.15)]">
                 <div className="noise-overlay" />
                 <p className="relative font-mono text-xs uppercase tracking-widest text-steel">Team Size</p>
                 <p className="relative mt-2 font-display text-2xl text-paper">{flagshipEvent.teamSize}</p>
@@ -54,7 +72,7 @@ export default function Home() {
             </ScrollStaggerItem>
 
             <ScrollStaggerItem direction="up" className="col-span-2">
-              <div className="file-card p-6">
+              <div className="file-card p-6 border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
                 <div className="noise-overlay" />
                 <p className="relative font-mono text-xs uppercase tracking-widest text-steel">Duration</p>
                 <p className="relative mt-2 font-display text-2xl text-paper">{flagshipEvent.duration}</p>
@@ -63,6 +81,13 @@ export default function Home() {
           </ScrollStaggerContainer>
         </div>
       </section>
+
+      <EventsPreview />
+
+      <InvestigationTimeline />
+
+      {/* Sponsors 3D Marquee */}
+      <SponsorsMarquee />
 
       {/* CTA strip */}
       <ScrollFade direction="up" className="mx-auto max-w-7xl px-4 py-32 sm:py-48 text-center sm:px-6 lg:px-8">

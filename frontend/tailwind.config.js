@@ -48,6 +48,14 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        'marquee-horizontal': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(calc(-100% - var(--gap)))' },
+        },
+        'marquee-vertical': {
+          from: { transform: 'translateY(0)' },
+          to: { transform: 'translateY(calc(-100% - var(--gap)))' },
+        },
         'fade-up': {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
@@ -58,6 +66,8 @@ export default {
         blink: 'blink 1s steps(1) infinite',
         glitch: 'glitch 0.25s steps(2) infinite',
         marquee: 'marquee 30s linear infinite',
+        'marquee-horizontal': 'marquee-horizontal var(--duration) linear infinite',
+        'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
         'fade-up': 'fade-up 0.6s ease-out both',
       },
     },
