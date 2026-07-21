@@ -23,6 +23,4 @@ const generateRegistrationCode = (eventSlug = 'SMACK') => {
   return `REG-${tag}-${randomSegment(10)}`;
 };
 
-const generateOtpCode = () => String(Math.floor(100000 + Math.random() * 900000));
-
-module.exports = { generateTeamCode, generateRegistrationCode, generateOtpCode, randomSegment };
+module.exports = { generateTeamCode, generateRegistrationCode, randomSegment };

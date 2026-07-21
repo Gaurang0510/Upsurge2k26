@@ -7,8 +7,10 @@ const connectDB = async () => {
       console.error('❌ MONGO_URI is not set in .env');
       process.exit(1);
     }
-    const conn = await mongoose.connect(uri);
-    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+    const conn = await mongoose.connect(uri, {
+      dbName: process.env.MONGO_DB_NAME || 'smackathon_2k26',
+    });
+    console.log(`✅ MongoDB connected: ${conn.connection.host}/${conn.connection.name}`);
   } catch (err) {
     console.error('❌ MongoDB connection failed:', err.message);
     process.exit(1);

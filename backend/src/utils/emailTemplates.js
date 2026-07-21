@@ -1,4 +1,4 @@
-const otpEmailHtml = ({ otp, eventName }) => `
+const selectedTeamInvitationEmailHtml = ({ eventName, teamCode, registrationUrl }) => `
 <!DOCTYPE html>
 <html>
 <body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,Helvetica,sans-serif;">
@@ -13,13 +13,16 @@ const otpEmailHtml = ({ otp, eventName }) => `
           </tr>
           <tr>
             <td style="padding:24px;color:#e5e5e5;">
+              <p style="font-size:16px;">Congratulations!</p>
               <p style="font-size:14px;line-height:1.6;">
-                Your verification OTP for shortlisted-team registration is:
+                Your team has been selected for the next round of <strong style="color:#C1121F;">${eventName}</strong>.
               </p>
-              <p style="font-size:32px;letter-spacing:8px;font-weight:bold;color:#C1121F;margin:24px 0;text-align:center;">${otp}</p>
+              <p style="font-size:13px;color:#999;line-height:1.6;">Use this team code with this same leader email to complete paid registration:</p>
+              <p style="font-size:24px;letter-spacing:2px;font-weight:bold;color:#C1121F;margin:24px 0;text-align:center;">${teamCode}</p>
               <p style="font-size:12px;color:#999;line-height:1.6;">
-                This OTP expires in 10 minutes. If you did not request this verification, you can ignore this email.
+                Do not share this code. It can be used only once and becomes your permanent team code after registration.
               </p>
+              ${registrationUrl ? `<p style="text-align:center;margin:24px 0;"><a href="${registrationUrl}" style="display:inline-block;background:#C1121F;color:#fff;padding:12px 18px;border-radius:4px;text-decoration:none;font-size:13px;font-weight:bold;">Complete Paid Registration</a></p>` : ''}
             </td>
           </tr>
         </table>
@@ -114,4 +117,4 @@ const paymentRejectedEmailHtml = ({ leaderName, teamName, eventName, reason }) =
 </html>
 `;
 
-module.exports = { otpEmailHtml, confirmationEmailHtml, paymentRejectedEmailHtml };
+module.exports = { selectedTeamInvitationEmailHtml, confirmationEmailHtml, paymentRejectedEmailHtml };

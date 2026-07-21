@@ -57,7 +57,7 @@
           <div class="summary-grid">
             <div class="summary-card">
               <div class="summary-step">1</div>
-              <div class="summary-copy">Import shortlisted Unstop emails, then teams verify access through OTP.</div>
+              <div class="summary-copy">Import selected Unstop leader emails. Each receives a permanent team code for paid registration.</div>
             </div>
             <div class="summary-card">
               <div class="summary-step">2</div>
@@ -206,14 +206,14 @@
       <section id="view-shortlist" style="display:none;">
         <div class="topbar">
           <div>
-            <h1 class="page-title">Shortlisted Email Import</h1>
-            <div class="page-sub">Paste shortlisted Unstop emails to unlock OTP-based registration access</div>
+            <h1 class="page-title">Selected Team Invitations</h1>
+            <div class="page-sub">Paste selected Unstop leader emails to generate and email their one-time registration team codes</div>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-head">
-            <h3>Import Emails</h3>
+            <h3>Import and Send Team Codes</h3>
           </div>
           <div class="shortlist-import">
             <div class="field">
@@ -224,7 +224,7 @@
               <label for="emailsInput">Emails</label>
               <textarea id="emailsInput" rows="10" placeholder="Paste emails separated by commas, spaces, or new lines"></textarea>
             </div>
-            <button class="btn btn-primary" id="importShortlistBtn">Import Shortlist</button>
+            <button class="btn btn-primary" id="importShortlistBtn">Import &amp; Send Codes</button>
           </div>
         </div>
 
@@ -238,13 +238,15 @@
               <thead>
                 <tr>
                   <th>Email</th>
-                  <th>Verified</th>
+                  <th>Team Code</th>
+                  <th>Invitation Sent</th>
+                  <th>Registration Used</th>
                   <th>Batch Label</th>
                   <th>Imported</th>
                 </tr>
               </thead>
               <tbody id="shortlistBody">
-                <tr><td colspan="4" class="empty-state">Loading...</td></tr>
+                <tr><td colspan="6" class="empty-state">Loading...</td></tr>
               </tbody>
             </table>
           </div>
