@@ -216,14 +216,14 @@ function EvidenceCard({ item, index, onHover, onLeave, onClick }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -15, scale: 0.95 }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.35, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       onClick={onClick}
-      className={`group relative cursor-pointer transition-all duration-300 ease-out hover:-translate-y-3 hover:z-40 ${isEven ? 'lg:mt-0' : 'lg:mt-14'}`}
+      className={`group relative cursor-pointer will-change-transform transform-gpu transition-transform duration-300 ease-out hover:-translate-y-3 hover:z-40 ${isEven ? 'lg:mt-0' : 'lg:mt-14'}`}
     >
       {/* ── Pushpin ── */}
       <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30">
@@ -344,23 +344,8 @@ function ThreadLayer({ nodeCount, hoveredNode }) {
       aria-hidden="true"
     >
       <defs>
-        <filter id="neonThread" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="0.6" result="blur1" />
-          <feGaussianBlur stdDeviation="1.2" result="blur2" />
-          <feMerge>
-            <feMergeNode in="blur2" />
-            <feMergeNode in="blur1" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="neonThreadHot" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1" result="b1" />
-          <feGaussianBlur stdDeviation="2" result="b2" />
-          <feMerge>
-            <feMergeNode in="b2" />
-            <feMergeNode in="b1" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <filter id="neonThread" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="0.5" />
         </filter>
       </defs>
 
@@ -377,23 +362,20 @@ function ThreadLayer({ nodeCount, hoveredNode }) {
 
         return (
           <g key={`thread-${i}`}>
-            <path d={d} fill="none" stroke="#000" strokeWidth={isActive ? '0.8' : '0.4'} strokeOpacity="0.5" />
+            <path d={d} fill="none" stroke="#000" strokeWidth={isActive ? '0.6' : '0.3'} strokeOpacity="0.4" />
             <path
               d={d} fill="none"
               stroke={isActive ? '#ff1744' : '#c1121f'}
-              strokeWidth={isActive ? '0.6' : '0.3'}
-              filter={isActive ? 'url(#neonThreadHot)' : 'url(#neonThread)'}
-              className="transition-all duration-300"
+              strokeWidth={isActive ? '0.5' : '0.25'}
+              filter="url(#neonThread)"
             />
-            <path d={d} fill="none" stroke={isActive ? '#ff5252' : '#e53935'} strokeWidth={isActive ? '0.3' : '0.15'} className="transition-all duration-300" />
-            <path d={d} fill="none" stroke="#ffcdd2" strokeWidth="0.05" strokeOpacity="0.6" />
           </g>
         );
       })}
 
       {pinPositions.map((pos, idx) => (
         <g key={`pin-anchor-${idx}`}>
-          <circle cx={pos.x} cy={pos.y} r={hoveredNode === idx ? '1.5' : '0.9'} fill="#ff1744" fillOpacity="0.6" filter="url(#neonThread)" />
+          <circle cx={pos.x} cy={pos.y} r={hoveredNode === idx ? '1.2' : '0.8'} fill="#ff1744" fillOpacity="0.6" />
           <circle cx={pos.x} cy={pos.y} r="0.35" fill="#fff" fillOpacity="0.9" />
         </g>
       ))}
@@ -411,12 +393,12 @@ function MobileTimelineCard({ item, index, allEvents, onClick }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -15, y: 10 }}
-      animate={{ opacity: 1, x: 0, y: 0 }}
-      exit={{ opacity: 0, x: -15 }}
-      transition={{ duration: 0.35, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, x: -15 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
       onClick={onClick}
-      className="relative group cursor-pointer"
+      className="relative group cursor-pointer will-change-transform transform-gpu"
     >
       {/* Pin */}
       <div className="absolute -left-[29px] top-5 z-20">

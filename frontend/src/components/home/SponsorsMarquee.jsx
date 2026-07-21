@@ -43,7 +43,7 @@ const sponsorLogos = [
 function SponsorLogoCard({ name, icon: Icon, color, tag }) {
   return (
     <div
-      className="relative flex flex-col items-center justify-center w-48 h-36 sm:w-56 sm:h-40 lg:w-64 lg:h-44 rounded-2xl border border-white/10 bg-[#0c0d14]/95 backdrop-blur-xl p-4 sm:p-5 transition-all duration-300 hover:scale-105 hover:border-evidence/60 hover:shadow-[0_0_35px_rgba(193,18,31,0.35)] group cursor-pointer will-change-transform"
+      className="relative flex flex-col items-center justify-center w-48 h-36 sm:w-56 sm:h-40 lg:w-64 lg:h-44 rounded-2xl border border-white/10 bg-[#0c0d14] p-4 sm:p-5 transition-[transform,border-color,box-shadow] duration-300 hover:scale-[1.03] hover:border-evidence/60 hover:shadow-[0_0_35px_rgba(193,18,31,0.35)] group cursor-pointer will-change-transform transform-gpu"
     >
       {/* Glow on hover */}
       <div
@@ -110,7 +110,7 @@ export default function SponsorsMarquee() {
       {/* 3D Perspective Marquee Container with 3 Lines */}
       <div className="relative flex h-[550px] sm:h-[650px] lg:h-[720px] w-full flex-row items-center justify-center overflow-hidden [perspective:800px]">
         <div
-          className="flex flex-row items-center gap-8 sm:gap-12 lg:gap-16 w-full justify-center will-change-transform transform-gpu z-20"
+          className="flex flex-row items-center gap-8 sm:gap-12 lg:gap-16 w-full justify-center will-change-transform transform-gpu z-20 [contain:layout_style_paint]"
           style={{
             transform: 'rotateX(14deg) rotateY(-5deg) rotateZ(10deg)',
           }}

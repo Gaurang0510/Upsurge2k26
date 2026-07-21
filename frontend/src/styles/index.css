@@ -150,18 +150,30 @@
 
 .animate-marquee-horizontal {
   animation: marquee-horizontal var(--duration, 40s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .animate-marquee-horizontal-reverse {
   animation: marquee-horizontal-reverse var(--duration, 40s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .animate-marquee-vertical {
   animation: marquee-vertical var(--duration, 40s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .animate-marquee-vertical-reverse {
   animation: marquee-vertical-reverse var(--duration, 40s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* ── POLICE LIGHT BAR CSS SPECIFICATION ── */
@@ -589,5 +601,20 @@
   animation: coffin-vibrate 0.15s linear infinite;
 }
 
+/* ── COFFIN AMBIENT GLOW PULSE (after scroll emergence) ── */
+@keyframes coffin-glow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-coffin-glow-pulse {
+  animation: coffin-glow-pulse 3s ease-in-out infinite;
+}
 
 
