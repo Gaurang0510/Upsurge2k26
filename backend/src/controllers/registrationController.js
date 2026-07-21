@@ -1,32 +1,32 @@
-const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const Registration = require('../models/Registration');
 const ShortlistEntry = require('../models/ShortlistEntry');
 const Team = require('../models/Team');
 const { SMACKATHON_CONFIG } = require('../config/smackathon');
-const { generateOtpCode, generateRegistrationCode, generateTeamCode } = require('../utils/generateCode');
-const { sendOtpEmail } = require('../utils/sendEmail');
-const { uploadPaymentScreenshot } = require('../utils/cloudinary');
+const { generateRegistrationCode } = require('../utils/generateCode');
+const { uploadPaymentScreenshot, deletePaymentScreenshot } = require('../utils/cloudinary');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
 const UTR_REGEX = /^[A-Z0-9-]{8,32}$/;
+const TEAM_CODE_REGEX = /^TEAM-SM26-[A-Z0-9]{8}$/;
 const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{2,120}$/;
 
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
 const normalizePhone = (phone) => String(phone || '').trim();
 const normalizeUtr = (utr) => String(utr || '').trim().toUpperCase();
 
-const signAccessToken = (email) =>
-  jwt.sign({ email, purpose: 'smackathon-registration' }, process.env.JWT_SECRET, {
+const signAccessToken = ({ email, invitationCode }) =>
+  jwt.sign({ email, invitationCode, purpose: 'smackathon-registration' }, process.env.JWT_SECRET, {
     expiresIn: process.env.REGISTRATION_ACCESS_TTL || '2h',
   });
 
 const verifyAccessToken = (token) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded.purpose === 'smackathon-registration' ? decoded.email : null;
+    return decoded.purpose === 'smackathon-registration' && decoded.email && decoded.invitationCode ? decoded : null;
   } catch (error) {
     return null;
   }
@@ -58,83 +58,25 @@ const validatePerson = (person, label) => {
   }
 };
 
-const requestOtp = async (req, res, next) => {
+const verifyInvitation = async (req, res, next) => {
   try {
     const email = normalizeEmail(req.body.email);
-    if (!EMAIL_REGEX.test(email)) {
-      return res.status(400).json({ success: false, message: 'Enter a valid shortlisted email address' });
+    const invitationCode = String(req.body.teamCode || '').trim().toUpperCase();
+    if (!EMAIL_REGEX.test(email) || !TEAM_CODE_REGEX.test(invitationCode)) {
+      return res.status(400).json({ success: false, message: 'Enter the invited leader email and valid team code' });
     }
 
-    const shortlistEntry = await ShortlistEntry.findOne({ email, isActive: true });
-    if (!shortlistEntry) {
-      return res.json({
-        success: true,
-        message: 'If this email is eligible, an OTP has been sent',
-      });
+    const shortlistEntry = await ShortlistEntry.findOne({ email, invitationCode, isActive: true });
+    if (!shortlistEntry || shortlistEntry.registrationSubmittedAt) {
+      return res.status(403).json({ success: false, message: 'This leader email and team code are not eligible for registration' });
     }
-
-    if (shortlistEntry.otpLastSentAt && Date.now() - shortlistEntry.otpLastSentAt.getTime() < 60 * 1000) {
-      return res.status(429).json({
-        success: false,
-        message: 'Please wait at least 60 seconds before requesting another OTP',
-      });
-    }
-
-    const otp = generateOtpCode();
-    shortlistEntry.otpHash = crypto.createHash('sha256').update(otp).digest('hex');
-    shortlistEntry.otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-    shortlistEntry.otpLastSentAt = new Date();
-    shortlistEntry.otpAttempts = 0;
-    await shortlistEntry.save();
-
-    await sendOtpEmail({ email, otp, eventName: SMACKATHON_CONFIG.name });
-
-    res.json({ success: true, message: 'If this email is eligible, an OTP has been sent' });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const verifyOtp = async (req, res, next) => {
-  try {
-    const email = normalizeEmail(req.body.email);
-    const otp = String(req.body.otp || '').trim();
-
-    if (!EMAIL_REGEX.test(email) || otp.length !== 6) {
-      return res.status(400).json({ success: false, message: 'Email and 6-digit OTP are required' });
-    }
-
-    const shortlistEntry = await ShortlistEntry.findOne({ email, isActive: true });
-    if (!shortlistEntry?.otpHash || !shortlistEntry.otpExpiresAt) {
-      return res.status(400).json({ success: false, message: 'OTP not requested for this email' });
-    }
-
-    if (shortlistEntry.otpExpiresAt.getTime() < Date.now()) {
-      return res.status(400).json({ success: false, message: 'OTP has expired. Request a new OTP.' });
-    }
-
-    if (shortlistEntry.otpAttempts >= 5) {
-      return res.status(429).json({ success: false, message: 'Too many invalid attempts. Request a new OTP.' });
-    }
-
-    const incomingHash = crypto.createHash('sha256').update(otp).digest('hex');
-    if (incomingHash !== shortlistEntry.otpHash) {
-      shortlistEntry.otpAttempts += 1;
-      await shortlistEntry.save();
-      return res.status(400).json({ success: false, message: 'Invalid OTP' });
-    }
-
-    shortlistEntry.emailVerifiedAt = new Date();
-    shortlistEntry.otpHash = null;
-    shortlistEntry.otpExpiresAt = null;
-    shortlistEntry.otpAttempts = 0;
-    await shortlistEntry.save();
 
     res.json({
       success: true,
-      accessToken: signAccessToken(email),
+      accessToken: signAccessToken({ email, invitationCode }),
       shortlistedEmail: email,
-      message: 'Email verified successfully',
+      teamCode: invitationCode,
+      message: 'Team invitation verified successfully',
     });
   } catch (err) {
     next(err);
@@ -142,6 +84,7 @@ const verifyOtp = async (req, res, next) => {
 };
 
 const submitRegistration = async (req, res, next) => {
+  let paymentUpload;
   try {
     const {
       accessToken,
@@ -155,14 +98,16 @@ const submitRegistration = async (req, res, next) => {
       paymentScreenshotDataUri,
     } = req.body;
 
-    const verifiedEmail = verifyAccessToken(accessToken);
-    if (!verifiedEmail) {
+    const verifiedInvitation = verifyAccessToken(accessToken);
+    if (!verifiedInvitation) {
       return res.status(401).json({ success: false, message: 'Invalid or expired registration access token' });
     }
+    const verifiedEmail = normalizeEmail(verifiedInvitation.email);
+    const invitationCode = String(verifiedInvitation.invitationCode).trim().toUpperCase();
 
-    const shortlistEntry = await ShortlistEntry.findOne({ email: verifiedEmail, isActive: true });
-    if (!shortlistEntry?.emailVerifiedAt) {
-      return res.status(403).json({ success: false, message: 'Verify the shortlisted email first' });
+    const shortlistEntry = await ShortlistEntry.findOne({ email: verifiedEmail, invitationCode, isActive: true });
+    if (!shortlistEntry || shortlistEntry.registrationSubmittedAt) {
+      return res.status(403).json({ success: false, message: 'This team invitation is not eligible for registration' });
     }
 
     assertRequired(req.body, ['teamName', 'collegeName', 'utr', 'paymentScreenshotDataUri']);
@@ -230,19 +175,20 @@ const submitRegistration = async (req, res, next) => {
       return res.status(409).json({ success: false, message: 'This UTR number is already registered' });
     }
 
-    let teamCode = generateTeamCode();
     let registrationCode = generateRegistrationCode('smackathon');
 
-    while (await Team.exists({ teamCode })) teamCode = generateTeamCode();
+    if (await Team.exists({ teamCode: invitationCode })) {
+      return res.status(409).json({ success: false, message: 'This team code has already been used for registration' });
+    }
     while (await Registration.exists({ registrationCode })) registrationCode = generateRegistrationCode('smackathon');
 
-    const paymentUpload = await uploadPaymentScreenshot({
+    paymentUpload = await uploadPaymentScreenshot({
       dataUri: paymentScreenshotDataUri,
       filename: registrationCode,
     });
 
-    const team = await Team.create({
-      teamCode,
+    const teamData = {
+      teamCode: invitationCode,
       shortlistEmail: verifiedEmail,
       teamName: normalizedTeamName,
       eventSlug: SMACKATHON_CONFIG.slug,
@@ -267,11 +213,10 @@ const submitRegistration = async (req, res, next) => {
       })),
       teamSize,
       status: 'PAYMENT_UNDER_REVIEW',
-    });
+    };
 
-    const registration = await Registration.create({
+    const registrationData = {
       registrationCode,
-      teamId: team._id,
       shortlistedEmail: verifiedEmail,
       paymentStatus: 'UNDER_REVIEW',
       paymentMethod: SMACKATHON_CONFIG.payment.method,
@@ -281,7 +226,26 @@ const submitRegistration = async (req, res, next) => {
         screenshotPublicId: paymentUpload.publicId,
         utr: normalizedUtr,
       },
-    });
+    };
+
+    // Atlas supports transactions. If either document cannot be stored, both
+    // database documents roll back and the uploaded Cloudinary asset is removed.
+    const session = await mongoose.startSession();
+    let team;
+    let registration;
+    try {
+      await session.withTransaction(async () => {
+        [team] = await Team.create([teamData], { session });
+        [registration] = await Registration.create([{ ...registrationData, teamId: team._id }], { session });
+        await ShortlistEntry.updateOne(
+          { _id: shortlistEntry._id, registrationSubmittedAt: null },
+          { $set: { registrationSubmittedAt: new Date() } },
+          { session }
+        );
+      });
+    } finally {
+      await session.endSession();
+    }
 
     res.status(201).json({
       success: true,
@@ -291,6 +255,13 @@ const submitRegistration = async (req, res, next) => {
       paymentStatus: registration.paymentStatus,
     });
   } catch (err) {
+    if (paymentUpload?.publicId) {
+      try {
+        await deletePaymentScreenshot(paymentUpload.publicId);
+      } catch (cleanupError) {
+        console.error('Cloudinary cleanup failed:', cleanupError.message);
+      }
+    }
     if (err.code === 11000) {
       err.statusCode = 409;
       err.message = 'A team with the same unique details already exists';
@@ -339,8 +310,7 @@ const getRegistrationStatus = async (req, res, next) => {
 };
 
 module.exports = {
-  requestOtp,
-  verifyOtp,
+  verifyInvitation,
   submitRegistration,
   getRegistrationStatus,
 };

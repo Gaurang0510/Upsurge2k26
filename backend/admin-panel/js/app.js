@@ -274,12 +274,12 @@ const resendConfirmation = async () => {
 
 const loadShortlist = async () => {
   const body = document.getElementById('shortlistBody');
-  body.innerHTML = '<tr><td colspan="4" class="empty-state">Loading...</td></tr>';
+  body.innerHTML = '<tr><td colspan="6" class="empty-state">Loading...</td></tr>';
 
   try {
     const { entries } = await apiFetch('/admin/shortlist');
     if (!entries.length) {
-      body.innerHTML = '<tr><td colspan="4" class="empty-state">No shortlisted emails imported yet.</td></tr>';
+      body.innerHTML = '<tr><td colspan="6" class="empty-state">No selected-team invitations created yet.</td></tr>';
       return;
     }
 
@@ -287,14 +287,16 @@ const loadShortlist = async () => {
       .map((entry) => `
         <tr>
           <td>${escapeHtml(entry.email)}</td>
-          <td>${entry.emailVerifiedAt ? `<span class="badge badge-VERIFIED">VERIFIED</span>` : '<span class="badge badge-UNDER_REVIEW">PENDING</span>'}</td>
+          <td class="mono">${escapeHtml(entry.invitationCode || '—')}</td>
+          <td>${entry.invitationSentAt ? '<span class="badge badge-VERIFIED">SENT</span>' : '<span class="badge badge-UNDER_REVIEW">NOT SENT</span>'}</td>
+          <td>${entry.registrationSubmittedAt ? '<span class="badge badge-VERIFIED">USED</span>' : '<span class="badge badge-UNDER_REVIEW">AVAILABLE</span>'}</td>
           <td>${escapeHtml(entry.importBatchLabel || '—')}</td>
           <td class="dim small">${new Date(entry.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
         </tr>
       `)
       .join('');
   } catch (error) {
-    body.innerHTML = `<tr><td colspan="4" class="empty-state">${escapeHtml(error.message)}</td></tr>`;
+    body.innerHTML = `<tr><td colspan="6" class="empty-state">${escapeHtml(error.message)}</td></tr>`;
   }
 };
 
@@ -311,7 +313,7 @@ const importShortlist = async () => {
       method: 'POST',
       body: JSON.stringify({ emailsText, batchLabel }),
     });
-    showToast(`${data.processed} shortlisted emails processed`, true);
+    showToast(`${data.invitationsSent}/${data.processed} team-code invitations sent`, true);
     document.getElementById('emailsInput').value = '';
     loadShortlist();
     loadStats();

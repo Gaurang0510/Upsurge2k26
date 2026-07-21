@@ -63,12 +63,12 @@ const authLimiter = rateLimit({
   message: { success: false, message: 'Too many login attempts. Please try again later.' },
 });
 
-const otpLimiter = rateLimit({
+const invitationLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { success: false, message: 'Too many OTP requests. Please try again later.' },
+  message: { success: false, message: 'Too many invitation verification attempts. Please try again later.' },
 });
 
 const statusLimiter = rateLimit({
@@ -80,13 +80,13 @@ const statusLimiter = rateLimit({
 });
 
 // ---- Standard JSON body parsing for everything else ----
-app.use(express.json({ limit: '10mb' }));
+// A 2 MB image becomes roughly 2.7 MB after base64 encoding.
+app.use(express.json({ limit: '3mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ---- API routes ----
 app.use('/api/v1/events', publicLimiter, eventRoutes);
-app.use('/api/v1/registrations/request-otp', otpLimiter);
-app.use('/api/v1/registrations/verify-otp', otpLimiter);
+app.use('/api/v1/registrations/verify-invitation', invitationLimiter);
 app.use('/api/v1/registrations/status', statusLimiter);
 app.use('/api/v1/registrations', publicLimiter, registrationRoutes);
 app.use('/api/v1/admin/login', authLimiter);
@@ -111,8 +111,7 @@ app.get('/api/v1', (req, res) => {
     endpoints: [
       'GET  /api/v1/events',
       'GET  /api/v1/events/:slug',
-      'POST /api/v1/registrations/request-otp',
-      'POST /api/v1/registrations/verify-otp',
+      'POST /api/v1/registrations/verify-invitation',
       'POST /api/v1/registrations/submit',
       'GET  /api/v1/registrations/status',
       'POST /api/v1/admin/login',

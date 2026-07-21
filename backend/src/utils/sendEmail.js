@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
 const {
-  otpEmailHtml,
+  selectedTeamInvitationEmailHtml,
   confirmationEmailHtml,
   paymentRejectedEmailHtml,
 } = require('./emailTemplates');
@@ -28,22 +28,24 @@ const getTransporter = () => {
   return transporter;
 };
 
-/**
- * Sends a shortlist-email OTP.
- */
-const sendOtpEmail = async ({ email, otp, eventName }) => {
-  const html = otpEmailHtml({ otp, eventName });
+const sendSelectedTeamInvitationEmail = async ({ leaderEmail, eventName, teamCode }) => {
+  const frontendBaseUrl = String(process.env.FRONTEND_URL || '').split(',')[0].trim().replace(/\/$/, '');
+  const html = selectedTeamInvitationEmailHtml({
+    eventName,
+    teamCode,
+    registrationUrl: frontendBaseUrl ? `${frontendBaseUrl}/register` : '',
+  });
   const t = getTransporter();
 
   if (!t) {
-    console.log(`📧 [DEV MODE] OTP email for ${email} | OTP: ${otp}`);
+    console.log(`📧 [DEV MODE] Selected-team invitation for ${leaderEmail} | Team Code: ${teamCode}`);
     return { simulated: true };
   }
 
   return t.sendMail({
     from: process.env.EMAIL_FROM || process.env.SMTP_USER,
-    to: email,
-    subject: `${eventName} — Email Verification OTP`,
+    to: leaderEmail,
+    subject: `${eventName} — You are selected for the next round [${teamCode}]`,
     html,
   });
 };
@@ -86,4 +88,4 @@ const sendPaymentRejectedEmail = async ({ leaderEmail, leaderName, teamName, eve
   });
 };
 
-module.exports = { sendOtpEmail, sendConfirmationEmail, sendPaymentRejectedEmail };
+module.exports = { sendSelectedTeamInvitationEmail, sendConfirmationEmail, sendPaymentRejectedEmail };

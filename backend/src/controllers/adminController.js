@@ -5,8 +5,9 @@ const Registration = require('../models/Registration');
 const ShortlistEntry = require('../models/ShortlistEntry');
 const Team = require('../models/Team');
 const { SMACKATHON_CONFIG } = require('../config/smackathon');
+const { generateTeamCode } = require('../utils/generateCode');
 const { buildExcelHtml } = require('../utils/exportWorkbook');
-const { sendConfirmationEmail, sendPaymentRejectedEmail } = require('../utils/sendEmail');
+const { sendSelectedTeamInvitationEmail, sendConfirmationEmail, sendPaymentRejectedEmail } = require('../utils/sendEmail');
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{0,160}$/;
 
@@ -24,6 +25,19 @@ const parseEmails = (value) =>
         .filter((entry) => EMAIL_REGEX.test(entry))
     )
   );
+
+const generateUniqueInvitationCode = async (reservedCodes) => {
+  let invitationCode = generateTeamCode();
+  while (
+    reservedCodes.has(invitationCode) ||
+    (await ShortlistEntry.exists({ invitationCode })) ||
+    (await Team.exists({ teamCode: invitationCode }))
+  ) {
+    invitationCode = generateTeamCode();
+  }
+  reservedCodes.add(invitationCode);
+  return invitationCode;
+};
 
 const login = async (req, res, next) => {
   try {
@@ -341,12 +355,28 @@ const importShortlist = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Import batch is too large' });
     }
 
-    const operations = emails.map((email) => ({
+    const existingEntries = await ShortlistEntry.find({ email: { $in: emails } })
+      .select('email invitationCode')
+      .lean();
+    const existingByEmail = new Map(existingEntries.map((entry) => [entry.email, entry]));
+    const reservedCodes = new Set(existingEntries.map((entry) => entry.invitationCode).filter(Boolean));
+    const invitations = [];
+
+    for (const email of emails) {
+      const existing = existingByEmail.get(email);
+      invitations.push({
+        email,
+        invitationCode: existing?.invitationCode || (await generateUniqueInvitationCode(reservedCodes)),
+      });
+    }
+
+    const operations = invitations.map(({ email, invitationCode }) => ({
       updateOne: {
         filter: { email },
         update: {
           $set: {
             email,
+            invitationCode,
             isActive: true,
             importedBy: req.admin._id,
             importBatchLabel: String(req.body.batchLabel || '').trim(),
@@ -358,11 +388,32 @@ const importShortlist = async (req, res, next) => {
 
     const result = await ShortlistEntry.bulkWrite(operations);
 
+    // Keep SMTP usage gentle (especially Gmail) instead of opening thousands
+    // of connections for a large Unstop shortlist import.
+    const deliveryResults = [];
+    for (let index = 0; index < invitations.length; index += 5) {
+      const batch = invitations.slice(index, index + 5);
+      const batchResults = await Promise.allSettled(
+        batch.map(({ email, invitationCode }) =>
+          sendSelectedTeamInvitationEmail({ leaderEmail: email, eventName: SMACKATHON_CONFIG.name, teamCode: invitationCode })
+        )
+      );
+      deliveryResults.push(...batchResults);
+    }
+    const deliveredEmails = deliveryResults
+      .map((result, index) => (result.status === 'fulfilled' ? invitations[index].email : null))
+      .filter(Boolean);
+    if (deliveredEmails.length) {
+      await ShortlistEntry.updateMany({ email: { $in: deliveredEmails } }, { $set: { invitationSentAt: new Date() } });
+    }
+
     res.json({
       success: true,
-      message: 'Shortlisted emails imported successfully',
+      message: 'Selected-team invitations created and sent',
       processed: emails.length,
       changed: result.modifiedCount + result.upsertedCount,
+      invitationsSent: deliveredEmails.length,
+      invitationFailures: emails.length - deliveredEmails.length,
     });
   } catch (err) {
     next(err);
@@ -374,7 +425,7 @@ const getShortlist = async (req, res, next) => {
     const entries = await ShortlistEntry.find({ isActive: true })
       .sort({ updatedAt: -1 })
       .limit(200)
-      .select('email emailVerifiedAt importBatchLabel createdAt')
+      .select('email invitationCode invitationSentAt registrationSubmittedAt importBatchLabel createdAt')
       .lean();
 
     res.json({ success: true, entries });

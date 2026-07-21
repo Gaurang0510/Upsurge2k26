@@ -6,6 +6,8 @@ import Aurora from '../../components/team/Aurora.jsx';
 import operationBreach from '../../data/events/operation-breach.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const MAX_PAYMENT_SCREENSHOT_BYTES = 2 * 1024 * 1024;
+const PAYMENT_SCREENSHOT_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
 
 const emptyMember = () => ({
   fullName: '',
@@ -30,8 +32,7 @@ export default function Register() {
   const [eventError, setEventError] = useState('');
 
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpRequested, setOtpRequested] = useState(false);
+  const [teamCode, setTeamCode] = useState('');
   const [accessToken, setAccessToken] = useState('');
 
   const [statusLookup, setStatusLookup] = useState({ email: '', teamCode: '' });
@@ -123,46 +124,24 @@ export default function Register() {
     });
   };
 
-  const requestOtp = async () => {
+  const verifyInvitation = async () => {
     setIsSubmitting(true);
     setError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/request-otp`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/verify-invitation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, teamCode }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'OTP request failed');
-      }
-      setOtpRequested(true);
-    } catch (err) {
-      setError(err.message || 'OTP request failed');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const verifyOtp = async () => {
-    setIsSubmitting(true);
-    setError('');
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp }),
-      });
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'OTP verification failed');
+        throw new Error(data.message || 'Invitation verification failed');
       }
       setAccessToken(data.accessToken);
-      setError('');
+      setTeamCode(data.teamCode);
     } catch (err) {
-      setError(err.message || 'OTP verification failed');
+      setError(err.message || 'Invitation verification failed');
     } finally {
       setIsSubmitting(false);
     }
@@ -184,6 +163,12 @@ export default function Register() {
 
       if (!formData.paymentScreenshot) {
         throw new Error('Payment screenshot is required');
+      }
+      if (!PAYMENT_SCREENSHOT_TYPES.has(formData.paymentScreenshot.type)) {
+        throw new Error('Payment screenshot must be a PNG, JPG, or WEBP image');
+      }
+      if (formData.paymentScreenshot.size > MAX_PAYMENT_SCREENSHOT_BYTES) {
+        throw new Error('Payment screenshot must be 2 MB or smaller');
       }
 
       const paymentScreenshotDataUri = await toDataUri(formData.paymentScreenshot);
@@ -259,7 +244,7 @@ export default function Register() {
           <SectionHeading
             eyebrow="Shortlisted Teams Only"
             title="Smackathon Confirmation Registration"
-            description="Verify your shortlisted Unstop email, upload payment proof, and lock your team into the paid round."
+            description="Enter the leader email and team code sent after Unstop selection, then upload payment proof."
             align="center"
           />
         </div>
@@ -293,53 +278,46 @@ export default function Register() {
               <>
                 <div className="hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6">
                   <div>
-                    <h2 className="font-display text-3xl text-white">Step 1: Verify Shortlisted Email</h2>
+                    <h2 className="font-display text-3xl text-white">Step 1: Verify Team Invitation</h2>
                     <p className="mt-2 text-sm text-steel">
-                      Only shortlisted teams can continue. We send the OTP to the same email used on Unstop.
+                      Only selected teams can continue. Enter the leader email and team code from your selection email.
                     </p>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter shortlisted Unstop email"
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setAccessToken('');
+                      }}
+                      placeholder="Leader email used on Unstop"
                       className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
                     />
-                    <button
-                      type="button"
-                      disabled={isSubmitting || !email}
-                      onClick={requestOtp}
-                      className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {otpRequested ? 'Resend OTP' : 'Send OTP'}
-                    </button>
+                    <input
+                      type="text"
+                      value={teamCode}
+                      onChange={(e) => {
+                        setTeamCode(e.target.value.toUpperCase());
+                        setAccessToken('');
+                      }}
+                      placeholder="Team code from selection email"
+                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                    />
                   </div>
-
-                  {otpRequested && (
-                    <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
-                      <input
-                        type="text"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        placeholder="Enter 6-digit OTP"
-                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                      />
-                      <button
-                        type="button"
-                        disabled={isSubmitting || otp.length !== 6}
-                        onClick={verifyOtp}
-                        className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Verify OTP
-                      </button>
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    disabled={isSubmitting || !email || !teamCode}
+                    onClick={verifyInvitation}
+                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Verify Invitation
+                  </button>
 
                   {accessToken && (
                     <div className="p-3 bg-emerald-950/30 border border-emerald-500/30 rounded font-mono text-xs text-emerald-300">
-                      Verified successfully. Continue with team registration.
+                      Invitation verified. Continue with team registration.
                     </div>
                   )}
                 </div>
@@ -434,7 +412,7 @@ export default function Register() {
                       />
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg,image/webp"
                         onChange={(e) => setFormData((prev) => ({ ...prev, paymentScreenshot: e.target.files?.[0] || null }))}
                         className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
                         required
