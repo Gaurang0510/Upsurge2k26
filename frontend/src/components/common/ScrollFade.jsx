@@ -10,7 +10,7 @@ export default function ScrollFade({
   delay = 0,
   duration = 0.6,
   distance = 35,
-  once = false, // false = smooth fade in when entering viewport & fade out when exiting
+  once = true, // true = animate once and stay visible (prevents flicker on re-scroll)
   amount = 0.15,
   viewportMargin = '0px',
   className = '',
@@ -85,7 +85,7 @@ export function ScrollStaggerContainer({
   children,
   staggerChildren = 0.1,
   delayChildren = 0,
-  once = false,
+  once = true,
   amount = 0.15,
   viewportMargin = '0px',
   className = '',

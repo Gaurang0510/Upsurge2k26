@@ -6,7 +6,7 @@ export default function EventCard({ event }) {
   return (
     <Link
       to={detailPath}
-      className="file-card group flex flex-col justify-between p-6 transition-colors hover:border-evidence/40"
+      className="file-card group flex flex-col justify-between p-6 transition-[border-color,color] duration-200 hover:border-evidence/40 will-change-transform transform-gpu"
     >
       <div className="noise-overlay" />
       <div className="relative flex items-start justify-between">
