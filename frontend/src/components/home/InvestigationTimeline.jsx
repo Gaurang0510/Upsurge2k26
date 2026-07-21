@@ -208,7 +208,7 @@ function TypewriterText({ text, className }) {
 }
 
 /* ─────────────────── SINGLE EVIDENCE CARD ─────────────────── */
-function EvidenceCard({ item, index, isHovered, onHover, onLeave, onClick }) {
+function EvidenceCard({ item, index, onHover, onLeave, onClick }) {
   const isEven = index % 2 === 0;
   const stickyBg = item.stickyColor === 'yellow'
     ? 'bg-[#ffe066] text-zinc-900'
@@ -527,7 +527,7 @@ export default function InvestigationTimeline() {
 
         {/* ═══ DAY TABS ═══ */}
         <div className="flex items-center gap-2 mb-8">
-          {DAYS.map((day, di) => {
+          {DAYS.map((day) => {
             const dayEvents = TIMELINE_EVENTS.filter(ev => ev.day === day);
             const isActive = activeDay === day;
             return (
@@ -581,7 +581,7 @@ export default function InvestigationTimeline() {
             {/* Day label stamp */}
             <div className="absolute top-5 left-8 pointer-events-none select-none">
               <span className="font-mono text-lg font-extrabold tracking-[0.2em] text-evidence/20 uppercase">
-                {activeDay} // {filteredEvents.length} Events
+                {`${activeDay} // ${filteredEvents.length} Events`}
               </span>
             </div>
 
