@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -70,7 +70,7 @@ export default function CyberCoffinVault() {
   /* ════════════════════════════════════════════════════════════════
      GSAP SCROLLTRIGGER — PINNED PARALLAX TIMELINE
      ════════════════════════════════════════════════════════════════ */
-  useEffect(() => {
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {

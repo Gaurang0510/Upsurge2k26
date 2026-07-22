@@ -4,6 +4,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import Aurora from '../../components/team/Aurora.jsx';
 import operationBreach from '../../data/events/operation-breach.js';
+import '../Hackathon/hackathon.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 const MAX_PAYMENT_SCREENSHOT_BYTES = 2 * 1024 * 1024;
@@ -57,7 +58,8 @@ export default function Register() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [verificationMessage, setVerificationMessage] = useState(null);
+  const [registrationError, setRegistrationError] = useState('');
   const [success, setSuccess] = useState(null);
 
   const problemStatements = useMemo(
@@ -68,6 +70,25 @@ export default function Register() {
       })),
     []
   );
+
+  const resetRegistrationDetails = () => {
+    setFormData({
+      teamName: '',
+      collegeName: '',
+      problemStatement: '',
+      modePreference: 'OFFLINE',
+      leader: {
+        fullName: '',
+        email: '',
+        phone: '',
+        department: '',
+        year: '',
+      },
+      members: [emptyMember(), emptyMember(), emptyMember(), emptyMember()],
+      utr: '',
+      paymentScreenshot: null,
+    });
+  };
 
   useEffect(() => {
     let active = true;
@@ -126,7 +147,10 @@ export default function Register() {
 
   const verifyInvitation = async () => {
     setIsSubmitting(true);
-    setError('');
+    setVerificationMessage(null);
+    setRegistrationError('');
+    setAccessToken('');
+    resetRegistrationDetails();
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/registrations/verify-invitation`, {
@@ -136,12 +160,19 @@ export default function Register() {
       });
       const data = await response.json();
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Invitation verification failed');
+        throw new Error(data.message || 'We could not verify this shortlisted team. Check the leader email and six-digit team code.');
       }
       setAccessToken(data.accessToken);
       setTeamCode(data.teamCode);
+      setVerificationMessage({
+        type: 'success',
+        text: 'Team verified successfully. You may now complete Step 2 and submit your registration.',
+      });
     } catch (err) {
-      setError(err.message || 'Invitation verification failed');
+      setVerificationMessage({
+        type: 'error',
+        text: err.message || 'This team could not be verified. Check the leader email and six-digit team code.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -149,8 +180,12 @@ export default function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!accessToken) {
+      setRegistrationError('Please verify your shortlisted team in Step 1 before entering registration details.');
+      return;
+    }
     setIsSubmitting(true);
-    setError('');
+    setRegistrationError('');
 
     try {
       const validMembers = formData.members.filter((member) =>
@@ -200,7 +235,7 @@ export default function Register() {
         paymentStatus: data.paymentStatus,
       });
     } catch (err) {
-      setError(err.message || 'Registration submission failed');
+      setRegistrationError(err.message || 'Registration submission failed. Please review your details and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -231,7 +266,7 @@ export default function Register() {
   const paymentConfig = eventInfo?.payment;
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden pb-20">
+    <div className="registration-page relative w-full min-h-screen overflow-hidden pb-20">
       <div className="absolute inset-x-0 top-0 h-[800px] z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 opacity-60">
           <Aurora colorStops={['#C1121F', '#780000', '#000000']} amplitude={1.6} speed={1.0} />
@@ -254,13 +289,13 @@ export default function Register() {
             {success ? (
               <div className="hackathon-panel p-8 border border-evidence/30 bg-black/40 backdrop-blur-md rounded-lg">
                 <span className="case-tag">Submission Logged</span>
-                <h2 className="heading-display mt-4 text-3xl text-white">Registration Sent For Review</h2>
+                <h2 className="heading-display mt-4 text-3xl text-white">Registration Submitted Successfully</h2>
                 <div className="mt-6 space-y-2 font-mono text-sm text-steel">
                   <p><strong className="text-white">Team Code:</strong> {success.teamCode}</p>
                   <p><strong className="text-white">Registration Code:</strong> {success.registrationCode}</p>
                   <p><strong className="text-white">Payment Status:</strong> {success.paymentStatus}</p>
                   <p className="text-steel/80">
-                    Admin will verify your payment manually. You’ll receive a confirmation email after approval.
+                    Your registration has been submitted successfully and your payment is now pending manual verification. Use the status checker on this page to follow the review.
                   </p>
                 </div>
                 <div className="mt-8 flex flex-wrap gap-4">
@@ -280,7 +315,7 @@ export default function Register() {
                   <div>
                     <h2 className="font-display text-3xl text-white">Step 1: Verify Team Invitation</h2>
                     <p className="mt-2 text-sm text-steel">
-                      Only selected teams can continue. Enter the leader email and team code from your selection email.
+                      Only shortlisted teams can continue. Enter the leader email and manually assigned six-digit team code.
                     </p>
                   </div>
 
@@ -291,6 +326,8 @@ export default function Register() {
                       onChange={(e) => {
                         setEmail(e.target.value);
                         setAccessToken('');
+                        setVerificationMessage(null);
+                        resetRegistrationDetails();
                       }}
                       placeholder="Leader email used on Unstop"
                       className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
@@ -301,6 +338,8 @@ export default function Register() {
                       onChange={(e) => {
                         setTeamCode(e.target.value.toUpperCase());
                         setAccessToken('');
+                        setVerificationMessage(null);
+                        resetRegistrationDetails();
                       }}
                       placeholder="Team code from selection email"
                       className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
@@ -315,24 +354,33 @@ export default function Register() {
                     Verify Invitation
                   </button>
 
-                  {accessToken && (
-                    <div className="p-3 bg-emerald-950/30 border border-emerald-500/30 rounded font-mono text-xs text-emerald-300">
-                      Invitation verified. Continue with team registration.
+                  {verificationMessage && (
+                    <div
+                      className={`p-3 border rounded font-mono text-xs ${
+                        verificationMessage.type === 'success'
+                          ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
+                          : 'bg-red-950/40 border-red-500/30 text-red-300'
+                      }`}
+                    >
+                      {verificationMessage.text}
                     </div>
                   )}
                 </div>
 
                 <form
                   onSubmit={handleSubmit}
-                  className="hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6"
+                  className={`hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6 ${!accessToken ? 'opacity-60' : ''}`}
                 >
                   <div>
                     <h2 className="font-display text-3xl text-white">Step 2: Submit Team And Payment Proof</h2>
                     <p className="mt-2 text-sm text-steel">
-                      Team size must remain 3–5 members. Member 2 and Member 3 are required.
+                      {accessToken
+                        ? 'Team size must remain 3–5 members. Member 2 and Member 3 are required.'
+                        : 'Step 2 is locked. Verify your shortlisted team in Step 1 to unlock the registration form.'}
                     </p>
                   </div>
 
+                  <fieldset disabled={!accessToken || isSubmitting} className="space-y-6">
                   <div className="grid gap-6 sm:grid-cols-2">
                     <input
                       type="text"
@@ -388,7 +436,7 @@ export default function Register() {
                     <h3 className="font-display text-2xl text-white">Team Members</h3>
                     <div className="grid gap-4">
                       {formData.members.map((member, index) => (
-                        <div key={index} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+                        <div key={index} className="member-row grid gap-4 sm:grid-cols-2">
                           <input type="text" value={member.fullName} onChange={(e) => handleMemberChange(index, 'fullName', e.target.value)} placeholder={`Member ${index + 2} full name`} className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
                           <input type="email" value={member.email} onChange={(e) => handleMemberChange(index, 'email', e.target.value)} placeholder="Email" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
                           <input type="tel" value={member.phone} onChange={(e) => handleMemberChange(index, 'phone', e.target.value)} placeholder="Phone" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
@@ -420,19 +468,19 @@ export default function Register() {
                     </div>
                   </div>
 
-                  {error && (
+                  {registrationError && (
                     <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-300 text-xs font-mono rounded">
-                      {error}
+                      {registrationError}
                     </div>
                   )}
 
                   <button
                     type="submit"
-                    disabled={isSubmitting || !accessToken}
                     className="btn-primary w-full py-4 text-base font-bold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit Registration'}
                   </button>
+                  </fieldset>
                 </form>
               </>
             )}

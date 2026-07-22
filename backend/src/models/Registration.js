@@ -38,7 +38,6 @@ const registrationSchema = new mongoose.Schema(
     shortlistedEmail: { type: String, required: true, trim: true, lowercase: true, index: true },
     paymentProof: { type: paymentProofSchema, required: true },
     adminReview: { type: reviewSchema, default: () => ({}) },
-    lastConfirmationEmailAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

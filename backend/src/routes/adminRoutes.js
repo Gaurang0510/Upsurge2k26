@@ -27,7 +27,6 @@ router.get('/teams', getTeams);
 router.get('/teams/:id', getTeamById);
 router.patch('/teams/:id', updateTeam);
 router.patch('/teams/:id/review-payment', reviewPayment);
-router.post('/teams/:id/resend-confirmation', resendConfirmation);
 router.get('/export', exportTeams);
 router.get('/shortlist', getShortlist);
 router.post('/shortlist/import', importShortlist);

@@ -11,8 +11,6 @@ const randomSegment = (length = 4) => {
     .slice(0, length);
 };
 
-const generateTeamCode = () => `TEAM-SM26-${randomSegment(8)}`;
-
 const generateRegistrationCode = (eventSlug = 'SMACK') => {
   const tag = eventSlug
     .replace(/[^a-zA-Z0-9-]/g, '')
@@ -23,4 +21,4 @@ const generateRegistrationCode = (eventSlug = 'SMACK') => {
   return `REG-${tag}-${randomSegment(10)}`;
 };
 
-module.exports = { generateTeamCode, generateRegistrationCode, randomSegment };
+module.exports = { generateRegistrationCode, randomSegment };

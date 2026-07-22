@@ -5,10 +5,9 @@ const Registration = require('../models/Registration');
 const ShortlistEntry = require('../models/ShortlistEntry');
 const Team = require('../models/Team');
 const { SMACKATHON_CONFIG } = require('../config/smackathon');
-const { generateTeamCode } = require('../utils/generateCode');
 const { buildExcelHtml } = require('../utils/exportWorkbook');
-const { sendSelectedTeamInvitationEmail, sendConfirmationEmail, sendPaymentRejectedEmail } = require('../utils/sendEmail');
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TEAM_CODE_REGEX = /^\d{6}$/;
 const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{0,160}$/;
 
 const signToken = (admin) =>
@@ -16,27 +15,31 @@ const signToken = (admin) =>
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 
-const parseEmails = (value) =>
-  Array.from(
-    new Set(
-      String(value || '')
-        .split(/[\s,;\n\r]+/)
-        .map((entry) => entry.trim().toLowerCase())
-        .filter((entry) => EMAIL_REGEX.test(entry))
-    )
-  );
+const parseShortlistEntries = (value) => {
+  const entries = String(value || '')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [email, teamCode] = line.split(/[|,;\t]/).map((part) => part.trim());
+      return { email: String(email || '').toLowerCase(), invitationCode: String(teamCode || '') };
+    });
 
-const generateUniqueInvitationCode = async (reservedCodes) => {
-  let invitationCode = generateTeamCode();
-  while (
-    reservedCodes.has(invitationCode) ||
-    (await ShortlistEntry.exists({ invitationCode })) ||
-    (await Team.exists({ teamCode: invitationCode }))
-  ) {
-    invitationCode = generateTeamCode();
+  if (entries.some(({ email, invitationCode }) => !EMAIL_REGEX.test(email) || !TEAM_CODE_REGEX.test(invitationCode))) {
+    const err = new Error('Each line must contain a valid email and six-digit team code separated by |');
+    err.statusCode = 400;
+    throw err;
   }
-  reservedCodes.add(invitationCode);
-  return invitationCode;
+
+  const uniqueEmails = new Set(entries.map(({ email }) => email));
+  const uniqueCodes = new Set(entries.map(({ invitationCode }) => invitationCode));
+  if (uniqueEmails.size !== entries.length || uniqueCodes.size !== entries.length) {
+    const err = new Error('Each shortlisted email and team code must be unique');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  return entries;
 };
 
 const login = async (req, res, next) => {
@@ -234,68 +237,19 @@ const reviewPayment = async (req, res, next) => {
     if (decision === 'VERIFIED') {
       team.status = 'CONFIRMED';
       team.paymentReviewReason = '';
-      const now = new Date();
-      team.confirmationEmailSentAt = now;
-      registration.lastConfirmationEmailAt = now;
-
-      await sendConfirmationEmail({
-        leaderEmail: team.leader.email,
-        leaderName: team.leader.fullName,
-        teamName: team.teamName,
-        eventName: team.eventName,
-        registrationCode: registration.registrationCode,
-        amount: registration.amountInINR,
-      });
     } else {
       team.status = 'PAYMENT_REJECTED';
       team.paymentReviewReason = String(reason || 'Payment proof could not be verified').trim();
-
-      await sendPaymentRejectedEmail({
-        leaderEmail: team.leader.email,
-        leaderName: team.leader.fullName,
-        teamName: team.teamName,
-        eventName: team.eventName,
-        reason: team.paymentReviewReason,
-      });
     }
 
     await Promise.all([team.save(), registration.save()]);
 
     res.json({
       success: true,
-      message: decision === 'VERIFIED' ? 'Payment verified and confirmation sent' : 'Payment rejected',
+      message: decision === 'VERIFIED'
+        ? 'Payment verified successfully. The team can check its status on the registration page.'
+        : 'Payment rejected successfully. The team can check its status on the registration page.',
     });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const resendConfirmation = async (req, res, next) => {
-  try {
-    const team = await Team.findById(req.params.id);
-    if (!team) return res.status(404).json({ success: false, message: 'Team not found' });
-    const registration = await Registration.findOne({ teamId: team._id });
-    if (!registration) return res.status(404).json({ success: false, message: 'Registration not found' });
-
-    if (registration.paymentStatus !== 'VERIFIED') {
-      return res.status(400).json({ success: false, message: 'Only verified teams can receive confirmation mail' });
-    }
-
-    await sendConfirmationEmail({
-      leaderEmail: team.leader.email,
-      leaderName: team.leader.fullName,
-      teamName: team.teamName,
-      eventName: team.eventName,
-      registrationCode: registration.registrationCode,
-      amount: registration.amountInINR,
-    });
-
-    const now = new Date();
-    team.confirmationEmailSentAt = now;
-    registration.lastConfirmationEmailAt = now;
-    await Promise.all([team.save(), registration.save()]);
-
-    res.json({ success: true, message: 'Confirmation email resent successfully' });
   } catch (err) {
     next(err);
   }
@@ -347,30 +301,31 @@ const exportTeams = async (req, res, next) => {
 
 const importShortlist = async (req, res, next) => {
   try {
-    const emails = parseEmails(req.body.emailsText);
-    if (!emails.length) {
-      return res.status(400).json({ success: false, message: 'Provide at least one shortlisted email' });
+    const entries = parseShortlistEntries(req.body.entriesText);
+    if (!entries.length) {
+      return res.status(400).json({ success: false, message: 'Provide at least one email and six-digit team-code pair' });
     }
-    if (emails.length > 5000) {
+    if (entries.length > 5000) {
       return res.status(400).json({ success: false, message: 'Import batch is too large' });
     }
 
-    const existingEntries = await ShortlistEntry.find({ email: { $in: emails } })
+    const emails = entries.map(({ email }) => email);
+    const invitationCodes = entries.map(({ invitationCode }) => invitationCode);
+    const [existingEntries, conflictingCode, conflictingTeam] = await Promise.all([
+      ShortlistEntry.find({ $or: [{ email: { $in: emails } }, { invitationCode: { $in: invitationCodes } }] })
       .select('email invitationCode')
-      .lean();
-    const existingByEmail = new Map(existingEntries.map((entry) => [entry.email, entry]));
-    const reservedCodes = new Set(existingEntries.map((entry) => entry.invitationCode).filter(Boolean));
-    const invitations = [];
-
-    for (const email of emails) {
-      const existing = existingByEmail.get(email);
-      invitations.push({
-        email,
-        invitationCode: existing?.invitationCode || (await generateUniqueInvitationCode(reservedCodes)),
-      });
+      .lean(),
+      ShortlistEntry.findOne({ invitationCode: { $in: invitationCodes }, email: { $nin: emails } }).select('invitationCode').lean(),
+      Team.findOne({ teamCode: { $in: invitationCodes } }).select('teamCode').lean(),
+    ]);
+    if (conflictingCode) {
+      return res.status(409).json({ success: false, message: 'A team code is already assigned to another shortlisted email' });
+    }
+    if (conflictingTeam) {
+      return res.status(409).json({ success: false, message: 'A team code is already used by a registered team' });
     }
 
-    const operations = invitations.map(({ email, invitationCode }) => ({
+    const operations = entries.map(({ email, invitationCode }) => ({
       updateOne: {
         filter: { email },
         update: {
@@ -388,32 +343,11 @@ const importShortlist = async (req, res, next) => {
 
     const result = await ShortlistEntry.bulkWrite(operations);
 
-    // Keep SMTP usage gentle (especially Gmail) instead of opening thousands
-    // of connections for a large Unstop shortlist import.
-    const deliveryResults = [];
-    for (let index = 0; index < invitations.length; index += 5) {
-      const batch = invitations.slice(index, index + 5);
-      const batchResults = await Promise.allSettled(
-        batch.map(({ email, invitationCode }) =>
-          sendSelectedTeamInvitationEmail({ leaderEmail: email, eventName: SMACKATHON_CONFIG.name, teamCode: invitationCode })
-        )
-      );
-      deliveryResults.push(...batchResults);
-    }
-    const deliveredEmails = deliveryResults
-      .map((result, index) => (result.status === 'fulfilled' ? invitations[index].email : null))
-      .filter(Boolean);
-    if (deliveredEmails.length) {
-      await ShortlistEntry.updateMany({ email: { $in: deliveredEmails } }, { $set: { invitationSentAt: new Date() } });
-    }
-
     res.json({
       success: true,
-      message: 'Selected-team invitations created and sent',
-      processed: emails.length,
+      message: 'Shortlisted email and team-code pairs saved successfully',
+      processed: entries.length,
       changed: result.modifiedCount + result.upsertedCount,
-      invitationsSent: deliveredEmails.length,
-      invitationFailures: emails.length - deliveredEmails.length,
     });
   } catch (err) {
     next(err);
@@ -425,7 +359,7 @@ const getShortlist = async (req, res, next) => {
     const entries = await ShortlistEntry.find({ isActive: true })
       .sort({ updatedAt: -1 })
       .limit(200)
-      .select('email invitationCode invitationSentAt registrationSubmittedAt importBatchLabel createdAt')
+      .select('email invitationCode registrationSubmittedAt importBatchLabel createdAt')
       .lean();
 
     res.json({ success: true, entries });
@@ -442,7 +376,6 @@ module.exports = {
   getTeamById,
   updateTeam,
   reviewPayment,
-  resendConfirmation,
   exportTeams,
   importShortlist,
   getShortlist,

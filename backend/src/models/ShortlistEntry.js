@@ -6,7 +6,6 @@ const shortlistEntrySchema = new mongoose.Schema(
     teamName: { type: String, trim: true, default: '' },
     leaderName: { type: String, trim: true, default: '' },
     invitationCode: { type: String, unique: true, sparse: true, trim: true, uppercase: true, index: true },
-    invitationSentAt: { type: Date, default: null },
     registrationSubmittedAt: { type: Date, default: null },
     importedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', default: null },
     importBatchLabel: { type: String, trim: true, default: '' },
