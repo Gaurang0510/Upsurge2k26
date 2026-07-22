@@ -23,6 +23,7 @@ import {
 // Sponsor logo collection with icons & brand colors
 const sponsorLogos = [
   { name: 'NexaCorp', icon: Cpu, color: '#C1121F', tag: 'TITLE SPONSOR' },
+  { name: 'GeeksforGeeks', imgUrl: 'https://media.geeksforgeeks.org/gfg-gg-logo.svg', color: '#2f8d46', tag: 'KNOWLEDGE PARTNER' },
   { name: 'VaultSec', icon: Shield, color: '#ef4444', tag: 'CYBER SECURITY' },
   { name: 'CyberShield', icon: Lock, color: '#f59e0b', tag: 'INFRASTRUCTURE' },
   { name: 'QuantumForge', icon: Binary, color: '#06b6d4', tag: 'QUANTUM LABS' },
@@ -40,7 +41,7 @@ const sponsorLogos = [
   { name: 'RadioWave', icon: Radio, color: '#10b981', tag: 'COMMUNICATIONS' },
 ];
 
-function SponsorLogoCard({ name, icon: Icon, color, tag }) {
+function SponsorLogoCard({ name, icon: Icon, imgUrl, color, tag }) {
   return (
     <div
       className="relative flex flex-col items-center justify-center w-48 h-36 sm:w-56 sm:h-40 lg:w-64 lg:h-44 rounded-2xl border border-white/10 bg-[#0c0d14] p-4 sm:p-5 transition-[transform,border-color,box-shadow] duration-300 hover:scale-[1.03] hover:border-evidence/60 hover:shadow-[0_0_35px_rgba(193,18,31,0.35)] group cursor-pointer will-change-transform transform-gpu"
@@ -56,8 +57,16 @@ function SponsorLogoCard({ name, icon: Icon, color, tag }) {
       <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-white/20 border border-white/10" />
 
       {/* Sponsor Icon Box */}
-      <div className="relative z-10 flex items-center justify-center p-3.5 sm:p-4.5 rounded-xl bg-black/70 border border-white/10 group-hover:border-white/30 transition-colors shadow-inner">
-        <Icon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]" style={{ color }} />
+      <div className="relative z-10 flex items-center justify-center p-3.5 sm:p-4.5 rounded-xl bg-black/70 border border-white/10 group-hover:border-white/30 transition-colors shadow-inner w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 overflow-hidden">
+        {imgUrl ? (
+          <img 
+            src={imgUrl} 
+            alt={name} 
+            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]" 
+          />
+        ) : (
+          <Icon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]" style={{ color }} />
+        )}
       </div>
 
       {/* Name & Tag */}
@@ -72,10 +81,10 @@ function SponsorLogoCard({ name, icon: Icon, color, tag }) {
 }
 
 export default function SponsorsMarquee() {
-  // Distribute 16 logos across 3 lines
-  const colSet1 = sponsorLogos.slice(0, 5);
-  const colSet2 = sponsorLogos.slice(5, 11);
-  const colSet3 = sponsorLogos.slice(11, 16);
+  // Distribute 17 logos across 3 lines
+  const colSet1 = sponsorLogos.slice(0, 6);
+  const colSet2 = sponsorLogos.slice(6, 12);
+  const colSet3 = sponsorLogos.slice(12, 17);
 
   return (
     <section className="relative bg-case-black border-y border-white/5 py-24 sm:py-36 overflow-hidden">

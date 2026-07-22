@@ -179,6 +179,74 @@
 /* ── POLICE LIGHT BAR CSS SPECIFICATION ── */
 .lightbar-container {
   max-width: 945px;
+  --light-width: 125px;
+  --light-height: 42px;
+  --bulb-size: 11px;
+  --speaker-width: 80px;
+  --speaker-height: 48px;
+  --speaker-text-size: 9px;
+  --speaker-slot-height: 12px;
+}
+
+@media (max-width: 850px) {
+  .lightbar-container {
+    --light-width: 90px;
+    --light-height: 34px;
+    --bulb-size: 8px;
+    --speaker-width: 60px;
+    --speaker-height: 40px;
+    --speaker-text-size: 8px;
+    --speaker-slot-height: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .lightbar-container {
+    --light-width: 62px;
+    --light-height: 26px;
+    --bulb-size: 5px;
+    --speaker-width: 44px;
+    --speaker-height: 32px;
+    --speaker-text-size: 7px;
+    --speaker-slot-height: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lightbar-container {
+    --light-width: 42px;
+    --light-height: 20px;
+    --bulb-size: 3.5px;
+    --speaker-width: 32px;
+    --speaker-height: 26px;
+    --speaker-text-size: 6px;
+    --speaker-slot-height: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .lightbar-container {
+    --light-width: 32px;
+    --light-height: 16px;
+    --bulb-size: 2.5px;
+    --speaker-width: 24px;
+    --speaker-height: 22px;
+    --speaker-text-size: 5px;
+    --speaker-slot-height: 3px;
+  }
+}
+
+.lightbar-speaker {
+  width: var(--speaker-width);
+  height: var(--speaker-height);
+}
+
+.speaker-slot {
+  height: var(--speaker-slot-height);
+}
+
+.speaker-text {
+  font-size: var(--speaker-text-size);
 }
 
 .lightbar-container:after {
@@ -197,8 +265,8 @@
 
 .light {
   position: relative;
-  width: 125px;
-  height: 42px;
+  width: var(--light-width);
+  height: var(--light-height);
   padding: 4px 6px;
   background: linear-gradient(180deg, #1c1c24 0%, #0c0c10 100%);
   border-top: 1.5px solid #3a3a48;
@@ -241,8 +309,8 @@
   position: relative;
   border-radius: 50%;
   margin: 1px 0px 0;
-  width: 11px;
-  height: 11px;
+  width: var(--bulb-size);
+  height: var(--bulb-size);
   z-index: 10;
   border: 1px solid rgba(255,255,255,0.18);
   box-shadow: inset 0 1px 2px rgba(255,255,255,0.3), 0 1px 3px rgba(0,0,0,0.8);
@@ -616,5 +684,24 @@
 .animate-coffin-glow-pulse {
   animation: coffin-glow-pulse 3s ease-in-out infinite;
 }
+
+/* ── RADIAL ORBITAL TIMELINE CUSTOM ANIMATIONS ── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes ping {
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 
 
