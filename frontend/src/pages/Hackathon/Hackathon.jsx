@@ -1,16 +1,19 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useScroll } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
+import TrackDetailModal from '../../components/hackathon/TrackDetailModal.jsx';
 import HackerScrollCanvas from '../../components/hackathon/HackerScrollCanvas.jsx';
 import BreachExperience from '../../components/hackathon/BreachExperience.jsx';
 import ScrollFade, { ScrollStaggerContainer, ScrollStaggerItem } from '../../components/common/ScrollFade.jsx';
 import FuzzyText from '../../components/FuzzyText.jsx';
 import JudgedOptionWheel from '../../components/hackathon/JudgedOptionWheel.jsx';
 import RulesSection from '../../components/hackathon/RulesSection.jsx';
+import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import RadialOrbitalTimelineDemo from '../../components/ui/radial-orbital-demo.jsx';
 import { flagshipEvent } from '../../data/events/index.js';
 import './hackathon.css';
 
@@ -53,6 +56,7 @@ const stageTimeline = [
 export default function Hackathon() {
   useDocumentTitle(flagshipEvent.name);
   const event = flagshipEvent;
+  const [selectedTrack, setSelectedTrack] = useState(null);
 
   /* ── Master scroll — 600vh sticky container ── */
   const containerRef = useRef(null);
@@ -155,36 +159,41 @@ export default function Hackathon() {
             </div>
           </ScrollFade>
 
-          <div className="grid gap-12 lg:gap-16 lg:grid-cols-[1fr_0.95fr]">
-            <ScrollFade direction="left" className="hackathon-panel">
-              <SectionHeading eyebrow="Overview" title="What Smackathon Is About" scrollFloat={true} />
-              <div className="mt-6">
-                <RedactedText as="p" className="text-lg leading-8 text-paper/90">
-                  {event.description}
-                </RedactedText>
-              </div>
-              <ScrollStaggerContainer className="mt-8 grid gap-4 sm:grid-cols-2">
-                {event.highlights.map((item) => (
-                  <ScrollStaggerItem key={item} direction="up" className="hackathon-evidence-card">
-                    <span className="hackathon-evidence-index">Highlight</span>
-                    <p className="mt-3 text-sm leading-7 text-paper/85">{item}</p>
-                  </ScrollStaggerItem>
-                ))}
-              </ScrollStaggerContainer>
-            </ScrollFade>
-
-            <ScrollStaggerContainer className="space-y-6">
-              {summaryCards.map((card) => (
-                <ScrollStaggerItem key={card.label} direction="right" className="hackathon-dossier-card">
-                  <span className="hackathon-dossier-label">{card.label}</span>
-                  <h3 className="mt-3 font-display text-3xl uppercase tracking-wide text-paper">
-                    {card.value}
-                  </h3>
-                  <p className="mt-3 text-sm leading-7 text-steel">{card.note}</p>
-                </ScrollStaggerItem>
-              ))}
-            </ScrollStaggerContainer>
+          {/* Overview Section with Container Scroll Animation */}
+          <div className="mt-12">
+            <ContainerScroll
+              titleComponent={
+                <div className="flex flex-col items-center pt-6 pb-6">
+                  <span className="case-tag mb-6 sm:mb-8 inline-block">{"//"} Case Overview</span>
+                  <h2 className="text-3xl sm:text-5xl font-semibold text-paper mt-2">
+                    Unleash the power of <br />
+                    <span className="text-4xl md:text-[5.5rem] font-bold mt-4 block leading-none text-red-500 uppercase tracking-wider">
+                      Smackathon 2K26
+                    </span>
+                  </h2>
+                </div>
+              }
+            >
+              <img
+                src="/images/gallery/smackathon-details-scroll.png"
+                alt="Smackathon Details"
+                className="mx-auto rounded-2xl object-cover h-full w-full object-top"
+                draggable={false}
+              />
+            </ContainerScroll>
           </div>
+
+          <ScrollStaggerContainer className="mt-12 grid gap-6 sm:grid-cols-3">
+            {summaryCards.map((card) => (
+              <ScrollStaggerItem key={card.label} direction="up" className="hackathon-dossier-card">
+                <span className="hackathon-dossier-label">{card.label}</span>
+                <h3 className="mt-3 font-display text-3xl uppercase tracking-wide text-paper">
+                  {card.value}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-steel">{card.note}</p>
+              </ScrollStaggerItem>
+            ))}
+          </ScrollStaggerContainer>
         </section>
 
         <section className="border-y border-white/5 bg-transparent">
@@ -209,8 +218,20 @@ export default function Hackathon() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-28 sm:py-36 sm:px-6 lg:px-8" id="problem-statements">
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:py-28 sm:px-6 lg:px-8" id="problem-statements">
           <ScrollFade direction="up">
+            <SectionHeading
+              eyebrow="Domain Tracks"
+              title="Interactive Orbital Domain Explorer"
+              description="Explore the 7 core innovation domains for Smackathon 2K26. Click on any domain node to inspect connected case tracks and activity telemetry."
+              scrollFloat={true}
+            />
+          </ScrollFade>
+
+          {/* Radial Orbital Domain Explorer */}
+          <RadialOrbitalTimelineDemo />
+
+          <ScrollFade direction="up" className="mt-24">
             <SectionHeading
               eyebrow="Problem Statements"
               title="Choose The Problem Space"
@@ -221,10 +242,14 @@ export default function Hackathon() {
           <ScrollStaggerContainer className="mt-16 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {event.tracks.map((track) => (
               <ScrollStaggerItem key={track.code} direction="up">
-                <TrackCard track={track} />
+                <TrackCard track={track} onAccess={(track) => setSelectedTrack(track)} />
               </ScrollStaggerItem>
             ))}
           </ScrollStaggerContainer>
+
+          {selectedTrack && (
+            <TrackDetailModal track={selectedTrack} onClose={() => setSelectedTrack(null)} />
+          )}
         </section>
 
         <section className="border-y border-white/5 bg-transparent">

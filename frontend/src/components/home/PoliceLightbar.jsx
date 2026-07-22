@@ -117,13 +117,13 @@ export default function PoliceLightbar() {
           </div>
 
           {/* Center Police Speaker / Housing Unit */}
-          <div className="relative z-40 w-12 sm:w-20 h-11 sm:h-12 bg-gradient-to-b from-zinc-800 via-zinc-950 to-zinc-900 border-x-2 border-zinc-700 rounded-sm flex flex-col items-center justify-center shadow-2xl px-1 shrink-0">
-            <div className="w-full flex justify-center gap-1 mb-1">
-              <div className="w-1 h-3 bg-zinc-700 rounded-full" />
-              <div className="w-1 h-3 bg-zinc-700 rounded-full" />
-              <div className="w-1 h-3 bg-zinc-700 rounded-full" />
+          <div className="lightbar-speaker relative z-40 bg-gradient-to-b from-zinc-800 via-zinc-950 to-zinc-900 border-x border-zinc-700 rounded-sm flex flex-col items-center justify-center shadow-2xl px-0.5 shrink-0">
+            <div className="w-full flex justify-center gap-0.5 mb-0.5">
+              <div className="speaker-slot w-0.5 bg-zinc-700 rounded-full" />
+              <div className="speaker-slot w-0.5 bg-zinc-700 rounded-full" />
+              <div className="speaker-slot w-0.5 bg-zinc-700 rounded-full" />
             </div>
-            <span className="font-mono text-[7px] sm:text-[9px] font-black tracking-[0.2em] text-zinc-300 uppercase">
+            <span className="speaker-text font-mono font-black tracking-[0.2em] text-zinc-300 uppercase leading-none">
               POLICE
             </span>
           </div>
