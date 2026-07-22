@@ -11,7 +11,7 @@ const { uploadPaymentScreenshot, deletePaymentScreenshot } = require('../utils/c
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
 const UTR_REGEX = /^[A-Z0-9-]{8,32}$/;
-const TEAM_CODE_REGEX = /^TEAM-SM26-[A-Z0-9]{8}$/;
+const TEAM_CODE_REGEX = /^\d{6}$/;
 const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{2,120}$/;
 
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
@@ -26,7 +26,11 @@ const signAccessToken = ({ email, invitationCode }) =>
 const verifyAccessToken = (token) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded.purpose === 'smackathon-registration' && decoded.email && decoded.invitationCode ? decoded : null;
+    return decoded.purpose === 'smackathon-registration'
+      && EMAIL_REGEX.test(decoded.email)
+      && TEAM_CODE_REGEX.test(decoded.invitationCode)
+      ? decoded
+      : null;
   } catch (error) {
     return null;
   }
@@ -63,7 +67,7 @@ const verifyInvitation = async (req, res, next) => {
     const email = normalizeEmail(req.body.email);
     const invitationCode = String(req.body.teamCode || '').trim().toUpperCase();
     if (!EMAIL_REGEX.test(email) || !TEAM_CODE_REGEX.test(invitationCode)) {
-      return res.status(400).json({ success: false, message: 'Enter the invited leader email and valid team code' });
+      return res.status(400).json({ success: false, message: 'Enter the shortlisted leader email and six-digit team code' });
     }
 
     const shortlistEntry = await ShortlistEntry.findOne({ email, invitationCode, isActive: true });
@@ -100,7 +104,7 @@ const submitRegistration = async (req, res, next) => {
 
     const verifiedInvitation = verifyAccessToken(accessToken);
     if (!verifiedInvitation) {
-      return res.status(401).json({ success: false, message: 'Invalid or expired registration access token' });
+      return res.status(401).json({ success: false, message: 'Please verify your shortlisted team before submitting registration details' });
     }
     const verifiedEmail = normalizeEmail(verifiedInvitation.email);
     const invitationCode = String(verifiedInvitation.invitationCode).trim().toUpperCase();

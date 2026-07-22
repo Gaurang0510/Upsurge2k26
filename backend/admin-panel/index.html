@@ -57,7 +57,7 @@
           <div class="summary-grid">
             <div class="summary-card">
               <div class="summary-step">1</div>
-              <div class="summary-copy">Import selected Unstop leader emails. Each receives a permanent team code for paid registration.</div>
+              <div class="summary-copy">Enter each shortlisted leader email with the six-digit team code assigned manually.</div>
             </div>
             <div class="summary-card">
               <div class="summary-step">2</div>
@@ -145,7 +145,6 @@
               <div class="detail-actions">
                 <button class="btn btn-primary" id="verifyBtn">Verify Payment</button>
                 <button class="btn btn-ghost" id="rejectBtn">Reject Payment</button>
-                <button class="btn btn-ghost" id="resendBtn">Resend Confirmation</button>
               </div>
             </div>
 
@@ -207,13 +206,13 @@
         <div class="topbar">
           <div>
             <h1 class="page-title">Selected Team Invitations</h1>
-            <div class="page-sub">Paste selected Unstop leader emails to generate and email their one-time registration team codes</div>
+            <div class="page-sub">Store manually assigned shortlisted leader emails and six-digit team codes</div>
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-head">
-            <h3>Import and Send Team Codes</h3>
+            <h3>Save Shortlisted Teams</h3>
           </div>
           <div class="shortlist-import">
             <div class="field">
@@ -221,10 +220,10 @@
               <input type="text" id="batchLabelInput" placeholder="Round 0 shortlist - July 29" />
             </div>
             <div class="field">
-              <label for="emailsInput">Emails</label>
-              <textarea id="emailsInput" rows="10" placeholder="Paste emails separated by commas, spaces, or new lines"></textarea>
+              <label for="emailsInput">Email and Team Code Pairs</label>
+              <textarea id="emailsInput" rows="10" placeholder="One per line: leader@example.com | 123456"></textarea>
             </div>
-            <button class="btn btn-primary" id="importShortlistBtn">Import &amp; Send Codes</button>
+            <button class="btn btn-primary" id="importShortlistBtn">Save Shortlist</button>
           </div>
         </div>
 
@@ -239,7 +238,7 @@
                 <tr>
                   <th>Email</th>
                   <th>Team Code</th>
-                  <th>Invitation Sent</th>
+                  <th>Registration Access</th>
                   <th>Registration Used</th>
                   <th>Batch Label</th>
                   <th>Imported</th>

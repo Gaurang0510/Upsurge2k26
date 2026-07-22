@@ -323,6 +323,29 @@ body:has(.hackathon-page) header + div[aria-hidden="true"] {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
   transform: rotate(18deg);
   transition: transform 600ms ease;
+  pointer-events: none;
+}
+
+.registration-page .hackathon-panel:hover {
+  transform: none;
+}
+
+.registration-page input,
+.registration-page select,
+.registration-page button,
+.registration-page a {
+  position: relative;
+  z-index: 1;
+}
+
+.registration-page input,
+.registration-page select {
+  min-height: 3.25rem;
+}
+
+.registration-page .member-row input {
+  min-height: 4rem;
+  font-size: 0.875rem;
 }
 
 .hackathon-signal-card {

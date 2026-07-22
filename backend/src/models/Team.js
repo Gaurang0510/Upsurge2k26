@@ -44,7 +44,6 @@ const teamSchema = new mongoose.Schema(
       index: true,
     },
     paymentReviewReason: { type: String, trim: true, default: '' },
-    confirmationEmailSentAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

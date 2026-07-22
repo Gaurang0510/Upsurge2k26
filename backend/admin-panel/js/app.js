@@ -259,19 +259,6 @@ const reviewPayment = async (decision) => {
   }
 };
 
-const resendConfirmation = async () => {
-  if (!selectedTeamId) return;
-  try {
-    await apiFetch(`/admin/teams/${selectedTeamId}/resend-confirmation`, {
-      method: 'POST',
-      body: JSON.stringify({}),
-    });
-    showToast('Confirmation email resent', true);
-  } catch (error) {
-    showToast(error.message);
-  }
-};
-
 const loadShortlist = async () => {
   const body = document.getElementById('shortlistBody');
   body.innerHTML = '<tr><td colspan="6" class="empty-state">Loading...</td></tr>';
@@ -288,7 +275,7 @@ const loadShortlist = async () => {
         <tr>
           <td>${escapeHtml(entry.email)}</td>
           <td class="mono">${escapeHtml(entry.invitationCode || '—')}</td>
-          <td>${entry.invitationSentAt ? '<span class="badge badge-VERIFIED">SENT</span>' : '<span class="badge badge-UNDER_REVIEW">NOT SENT</span>'}</td>
+          <td>${entry.registrationSubmittedAt ? '<span class="badge badge-VERIFIED">USED</span>' : '<span class="badge badge-UNDER_REVIEW">AVAILABLE</span>'}</td>
           <td>${entry.registrationSubmittedAt ? '<span class="badge badge-VERIFIED">USED</span>' : '<span class="badge badge-UNDER_REVIEW">AVAILABLE</span>'}</td>
           <td>${escapeHtml(entry.importBatchLabel || '—')}</td>
           <td class="dim small">${new Date(entry.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
@@ -301,19 +288,19 @@ const loadShortlist = async () => {
 };
 
 const importShortlist = async () => {
-  const emailsText = document.getElementById('emailsInput').value.trim();
+  const entriesText = document.getElementById('emailsInput').value.trim();
   const batchLabel = document.getElementById('batchLabelInput').value.trim();
-  if (!emailsText) {
-    showToast('Paste shortlisted emails first');
+  if (!entriesText) {
+    showToast('Enter shortlisted email and team-code pairs first');
     return;
   }
 
   try {
     const data = await apiFetch('/admin/shortlist/import', {
       method: 'POST',
-      body: JSON.stringify({ emailsText, batchLabel }),
+      body: JSON.stringify({ entriesText, batchLabel }),
     });
-    showToast(`${data.invitationsSent}/${data.processed} team-code invitations sent`, true);
+    showToast(`${data.processed} shortlisted team-code pairs saved`, true);
     document.getElementById('emailsInput').value = '';
     loadShortlist();
     loadStats();
@@ -336,7 +323,6 @@ document.getElementById('refreshStatsBtn').addEventListener('click', loadStats);
 document.getElementById('saveTeamBtn').addEventListener('click', saveTeamChanges);
 document.getElementById('verifyBtn').addEventListener('click', () => reviewPayment('VERIFIED'));
 document.getElementById('rejectBtn').addEventListener('click', () => reviewPayment('REJECTED'));
-document.getElementById('resendBtn').addEventListener('click', resendConfirmation);
 document.getElementById('closeDetailBtn').addEventListener('click', () => {
   document.getElementById('detailPanel').style.display = 'none';
   selectedTeamId = null;

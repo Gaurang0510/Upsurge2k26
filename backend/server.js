@@ -120,7 +120,6 @@ app.get('/api/v1', (req, res) => {
       'GET  /api/v1/admin/teams/:id',
       'PATCH /api/v1/admin/teams/:id',
       'PATCH /api/v1/admin/teams/:id/review-payment',
-      'POST /api/v1/admin/teams/:id/resend-confirmation',
       'GET  /api/v1/admin/export',
       'GET  /api/v1/admin/shortlist',
       'POST /api/v1/admin/shortlist/import',
