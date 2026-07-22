@@ -3,7 +3,6 @@ import { useScroll } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
-import RedactedText from '../../components/common/RedactedText.jsx';
 import TrackCard from '../../components/hackathon/TrackCard.jsx';
 import TrackDetailModal from '../../components/hackathon/TrackDetailModal.jsx';
 import HackerScrollCanvas from '../../components/hackathon/HackerScrollCanvas.jsx';

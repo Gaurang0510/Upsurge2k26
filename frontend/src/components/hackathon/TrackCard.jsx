@@ -1,5 +1,5 @@
 import React from 'react';
-import { Terminal, ShieldAlert, Cpu, Eye, Binary, Shield, Database, Lock, Code2 } from 'lucide-react';
+import { Terminal, ShieldAlert, Cpu, Eye, Binary, Database, Lock, Code2 } from 'lucide-react';
 
 export default function TrackCard({ track, onAccess }) {
   // Map beautiful cyber-themed icons based on track code/category
@@ -55,7 +55,7 @@ export default function TrackCard({ track, onAccess }) {
         {/* Code lines visual placeholder */}
         <div className="mt-4 flex gap-1 font-mono text-[8px] text-zinc-600">
           <span>[SYS_KEY: 0x{track.code.replace('-', '')}FA]</span>
-          <span>//</span>
+          <span>{"//"}</span>
           <span>INDEX: ACTIVE</span>
         </div>
       </div>

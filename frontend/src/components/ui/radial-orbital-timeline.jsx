@@ -9,11 +9,11 @@ export default function RadialOrbitalTimeline({
   timelineData,
 }) {
   const [expandedItems, setExpandedItems] = useState({});
-  const [viewMode, setViewMode] = useState("orbital");
+  const viewMode = "orbital";
   const [rotationAngle, setRotationAngle] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [pulseEffect, setPulseEffect] = useState({});
-  const [centerOffset, setCenterOffset] = useState({ x: 0, y: 0 });
+  const centerOffset = { x: 0, y: 0 };
   const [activeNodeId, setActiveNodeId] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);

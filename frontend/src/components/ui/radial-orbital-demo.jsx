@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { GraduationCap, HeartPulse, TrendingUp, Cpu, Sprout, Leaf, Sparkles } from "lucide-react";
+import { GraduationCap, HeartPulse, TrendingUp, Cpu, Sprout, Leaf } from "lucide-react";
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 
-export const smackathonDomains = [
+const smackathonDomains = [
   {
     id: 1,
     title: "EDUCATION",
