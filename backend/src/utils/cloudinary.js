@@ -8,6 +8,10 @@ const ALLOWED_MIME_TYPES = new Set(['image/png', 'image/jpeg', 'image/jpg', 'ima
 const PAYMENT_FOLDER = process.env.CLOUDINARY_PAYMENT_FOLDER || 'smackathon/payment-proofs';
 const INCOMING_TRANSFORMATION = 'c_limit,w_1600,h_1600/q_auto:low/f_webp';
 
+// Timeout for external Cloudinary requests (AUD-014, AUD-020)
+const UPLOAD_TIMEOUT_MS = Number(process.env.CLOUDINARY_UPLOAD_TIMEOUT_MS) || 30000;
+const DELETE_TIMEOUT_MS = Number(process.env.CLOUDINARY_DELETE_TIMEOUT_MS) || 15000;
+
 const createUploadError = (message, statusCode = 400) => {
   const err = new Error(message);
   err.statusCode = statusCode;
@@ -72,12 +76,13 @@ const uploadPaymentScreenshot = async ({ dataUri, filename }) => {
 
   // This is an incoming transformation, not an eager derivative: Cloudinary
   // persists the compact WebP asset instead of retaining a large original.
+  // Use overwrite: 'true' to allow re-uploads for rejected payment resubmissions.
   const uploadParams = {
     folder: PAYMENT_FOLDER,
     public_id: publicId,
     timestamp,
     transformation: INCOMING_TRANSFORMATION,
-    overwrite: 'false',
+    overwrite: 'true',
     unique_filename: 'false',
   };
   const form = new FormData();
@@ -89,6 +94,7 @@ const uploadPaymentScreenshot = async ({ dataUri, filename }) => {
   const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
     method: 'POST',
     body: form,
+    signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS),
   });
 
   const payload = await response.json();
@@ -118,6 +124,7 @@ const deletePaymentScreenshot = async (publicId) => {
   await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`, {
     method: 'POST',
     body: form,
+    signal: AbortSignal.timeout(DELETE_TIMEOUT_MS),
   });
 };
 

@@ -16,10 +16,10 @@ export default function Schedule() {
       {/* Glitchy Matrix Backdrop */}
       <div className="absolute inset-0 -z-10 opacity-[0.35] pointer-events-none">
         <LetterGlitch
-          glitchSpeed={80}
+          glitchSpeed={250}
           centerVignette={true}
           outerVignette={true}
-          smooth={true}
+          smooth={false}
           glitchColors={['#2b4539', '#61dca3', '#61b3dc']}
         />
       </div>

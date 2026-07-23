@@ -188,7 +188,7 @@ const openTeamDetail = async (teamId) => {
 
     document.getElementById('proofCard').innerHTML = `
       <div class="mono">Payment proof screenshot</div>
-      <div class="small dim">Cloudinary URL: <a href="${escapeHtml(team.registration?.paymentProof?.screenshotUrl || '#')}" target="_blank">Open original</a></div>
+      <div class="small dim">Cloudinary URL: <a href="${escapeHtml(team.registration?.paymentProof?.screenshotUrl || '#')}" target="_blank" rel="noopener noreferrer">Open original</a></div>
       ${team.registration?.paymentProof?.screenshotUrl ? `<img src="${escapeHtml(team.registration.paymentProof.screenshotUrl)}" alt="Payment proof" />` : '<div class="small dim">No screenshot uploaded</div>'}
     `;
 

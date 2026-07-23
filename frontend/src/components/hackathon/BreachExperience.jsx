@@ -92,15 +92,15 @@ function PhaseDots({ active }) {
   );
 }
 
-function ClassifiedStamp() {
+function ClassifiedStamp({ isMobile }) {
   return (
     <div style={{
-      border: '2px solid #E10600', padding: '1rem 1.5rem',
+      border: '2px solid #E10600', padding: isMobile ? '0.6rem 1rem' : '1rem 1.5rem',
       transform: 'rotate(-6deg)', display: 'inline-flex',
     }}>
       <span style={{
         fontFamily: '"JetBrains Mono", monospace',
-        fontSize: '1.5rem', fontWeight: 700, letterSpacing: '0.4em',
+        fontSize: isMobile ? '1rem' : '1.5rem', fontWeight: 700, letterSpacing: '0.4em',
         color: '#E10600', textShadow: '0 0 16px rgba(225,6,0,0.4)',
       }}>
         CLASSIFIED
@@ -109,38 +109,40 @@ function ClassifiedStamp() {
   );
 }
 
-function RadarSweep() {
+function RadarSweep({ isMobile }) {
+  const size = isMobile ? 90 : 130;
+  const c = size / 2;
   return (
-    <div style={{ position: 'relative', width: 130, height: 130 }}>
-      <svg width="130" height="130" viewBox="0 0 130 130" fill="none" style={{ position: 'absolute', inset: 0 }}>
-        {[65, 48, 30].map(r => (
-          <circle key={r} cx="65" cy="65" r={r} stroke="#E10600" strokeOpacity="0.25" strokeWidth="1"/>
+    <div style={{ position: 'relative', width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" style={{ position: 'absolute', inset: 0 }}>
+        {[c, c * 0.74, c * 0.46].map(r => (
+          <circle key={r} cx={c} cy={c} r={r} stroke="#E10600" strokeOpacity="0.25" strokeWidth="1"/>
         ))}
-        <line x1="65" y1="0" x2="65" y2="130" stroke="#E10600" strokeOpacity="0.12" strokeWidth="0.5"/>
-        <line x1="0" y1="65" x2="130" y2="65" stroke="#E10600" strokeOpacity="0.12" strokeWidth="0.5"/>
-        <line x1="65" y1="65" x2="65" y2="0" stroke="#E10600" strokeWidth="1.5"
-          style={{ transformOrigin: '65px 65px', animation: 'radar-sweep 3s linear infinite' }}
+        <line x1={c} y1="0" x2={c} y2={size} stroke="#E10600" strokeOpacity="0.12" strokeWidth="0.5"/>
+        <line x1="0" y1={c} x2={size} y2={c} stroke="#E10600" strokeOpacity="0.12" strokeWidth="0.5"/>
+        <line x1={c} y1={c} x2={c} y2="0" stroke="#E10600" strokeWidth="1.5"
+          style={{ transformOrigin: `${c}px ${c}px`, animation: 'radar-sweep 3s linear infinite' }}
         />
-        <circle cx="88" cy="38" r="2.5" fill="#FF3B30" style={{ animation: 'hud-blink 0.8s steps(1) infinite' }}/>
+        <circle cx={c * 1.35} cy={c * 0.58} r="2.5" fill="#FF3B30" style={{ animation: 'hud-blink 0.8s steps(1) infinite' }}/>
       </svg>
       <div style={{
-        position: 'absolute', bottom: -22, left: '50%', transform: 'translateX(-50%)',
-        fontFamily: '"JetBrains Mono", monospace', fontSize: '0.6rem',
+        position: 'absolute', bottom: -18, left: '50%', transform: 'translateX(-50%)',
+        fontFamily: '"JetBrains Mono", monospace', fontSize: isMobile ? '0.5rem' : '0.6rem',
         letterSpacing: '0.3em', color: '#E10600', whiteSpace: 'nowrap',
       }}>TRACKING</div>
     </div>
   );
 }
 
-function StatsBlock() {
+function StatsBlock({ isMobile }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: isMobile ? '1.5rem' : '1rem' }}>
       {[['TEAMS','OPEN'],['PRIZE POOL','₹40K'],['HOURS','24']].map(([label, value]) => (
-        <div key={label} style={{ borderBottom: '1px solid #E10600', paddingBottom: '0.5rem' }}>
-          <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.6rem', letterSpacing: '0.3em', color: '#A0A0A0' }}>
+        <div key={label} style={{ borderBottom: isMobile ? 'none' : '1px solid #E10600', borderRight: isMobile ? '1px solid #E10600' : 'none', paddingBottom: isMobile ? 0 : '0.5rem', paddingRight: isMobile ? '1.5rem' : 0 }}>
+          <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: isMobile ? '0.5rem' : '0.6rem', letterSpacing: '0.3em', color: '#A0A0A0' }}>
             {label}
           </div>
-          <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '1.7rem', fontWeight: 700, color: '#E5E5E5', lineHeight: 1, marginTop: 4 }}>
+          <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: isMobile ? '1.2rem' : '1.7rem', fontWeight: 700, color: '#E5E5E5', lineHeight: 1, marginTop: 4 }}>
             {value}
           </div>
         </div>
@@ -221,30 +223,30 @@ export default function BreachExperience({ scrollYProgress }) {
       </div>
 
       {/* Top-left brand */}
-      <div style={{ position: 'absolute', top: 20, left: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ position: 'absolute', top: isMobile ? 10 : 20, left: isMobile ? 12 : 20, display: 'flex', alignItems: 'center', gap: isMobile ? 6 : 10 }}>
         <div style={{
-          border: '1px solid #E10600', padding: '4px 8px',
-          fontFamily: '"JetBrains Mono", monospace', fontSize: '0.7rem', color: '#E10600', letterSpacing: '0.2em',
+          border: '1px solid #E10600', padding: isMobile ? '2px 5px' : '4px 8px',
+          fontFamily: '"JetBrains Mono", monospace', fontSize: isMobile ? '0.55rem' : '0.7rem', color: '#E10600', letterSpacing: '0.2em',
         }}>U</div>
         <span style={{
-          fontFamily: '"JetBrains Mono", monospace', fontSize: '0.6rem',
+          fontFamily: '"JetBrains Mono", monospace', fontSize: isMobile ? '0.45rem' : '0.6rem',
           letterSpacing: '0.22em', color: '#A0A0A0', textTransform: 'uppercase',
-        }}>UPSURGE / SMACKATHON 2K26</span>
+        }}>{isMobile ? 'SMACKATHON 2K26' : 'UPSURGE / SMACKATHON 2K26'}</span>
       </div>
 
       {/* Top-right phase dots */}
-      <div style={{ position: 'absolute', top: 24, right: 20 }}>
+      <div style={{ position: 'absolute', top: isMobile ? 14 : 24, right: isMobile ? 12 : 20 }}>
         <PhaseDots active={phaseIndex} />
       </div>
 
-      {/* Bottom-right credit */}
+      {/* Bottom-right credit — pushed above mobile navbar safe area */}
       <div style={{
         position: 'absolute',
-        bottom: isMobile ? 12 : 20,
+        bottom: isMobile ? 72 : 20,
         left: isMobile ? '50%' : 'auto',
         right: isMobile ? 'auto' : 20,
         transform: isMobile ? 'translateX(-50%)' : 'none',
-        fontFamily: '"JetBrains Mono", monospace', fontSize: '0.58rem',
+        fontFamily: '"JetBrains Mono", monospace', fontSize: isMobile ? '0.48rem' : '0.58rem',
         letterSpacing: '0.18em', color: '#A0A0A0', textTransform: 'uppercase',
         whiteSpace: 'nowrap',
       }}>
@@ -263,14 +265,15 @@ export default function BreachExperience({ scrollYProgress }) {
             style={{
               position: 'absolute', inset: 0,
               display: 'flex',
-              flexDirection: isMobile ? 'column-reverse' : 'row',
-              alignItems: isMobile ? 'stretch' : 'flex-end',
-              padding: isMobile ? '0 24px 88px 24px' : '0 40px 88px 40px',
+              flexDirection: isMobile ? 'column' : 'row',
+              alignItems: isMobile ? 'flex-start' : 'flex-end',
+              justifyContent: isMobile ? 'flex-end' : 'flex-start',
+              padding: isMobile ? '0 16px 120px 16px' : '0 40px 88px 40px',
               boxSizing: 'border-box',
             }}
           >
             {/* Left */}
-            <div style={{ flex: isMobile ? 'none' : 1, width: '100%', maxWidth: 500 }}>
+            <div style={{ flex: isMobile ? 'none' : 1, width: '100%', maxWidth: isMobile ? '100%' : 500 }}>
               <motion.div variants={childVariants} style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
                 <BlinkDot />
                 <span style={{
@@ -338,46 +341,50 @@ export default function BreachExperience({ scrollYProgress }) {
             </div>
 
             {/* Right — phase-specific */}
-            <div style={{
-              flex: isMobile ? 'none' : 1,
-              width: '100%',
-              display: 'flex',
-              justifyContent: isMobile ? 'center' : 'flex-end',
-              alignItems: 'center',
-              paddingBottom: isMobile ? 32 : 16
-            }}>
-              {phaseIndex === 1 && <ClassifiedStamp />}
-              {phaseIndex === 2 && <RadarSweep />}
-              {phaseIndex === 3 && <StatsBlock />}
-            </div>
+            {!isMobile && (
+              <div style={{
+                flex: 1,
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                paddingBottom: 16
+              }}>
+                {phaseIndex === 1 && <ClassifiedStamp isMobile={false} />}
+                {phaseIndex === 2 && <RadarSweep isMobile={false} />}
+                {phaseIndex === 3 && <StatsBlock isMobile={false} />}
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Scroll hint */}
-      <AnimatePresence>
-        {showScroll && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.3 } }}
-            style={{
-              position: 'absolute', bottom: 38, left: '50%',
-              transform: 'translateX(-50%)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-            }}
-          >
-            <div style={{
-              width: 1, height: 36,
-              background: 'linear-gradient(to bottom, #E10600, transparent)',
-              animation: 'scrl-pulse 1.4s ease-in-out infinite',
-            }} />
-            <span style={{
-              fontFamily: '"JetBrains Mono", monospace', fontSize: '0.58rem',
-              letterSpacing: '0.28em', color: '#E10600', textTransform: 'uppercase',
-            }}>SCROLL TO DECRYPT</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Scroll hint — hidden on mobile to avoid navbar overlap */}
+      {!isMobile && (
+        <AnimatePresence>
+          {showScroll && (
+            <motion.div
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.3 } }}
+              style={{
+                position: 'absolute', bottom: 38, left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+              }}
+            >
+              <div style={{
+                width: 1, height: 36,
+                background: 'linear-gradient(to bottom, #E10600, transparent)',
+                animation: 'scrl-pulse 1.4s ease-in-out infinite',
+              }} />
+              <span style={{
+                fontFamily: '"JetBrains Mono", monospace', fontSize: '0.58rem',
+                letterSpacing: '0.28em', color: '#E10600', textTransform: 'uppercase',
+              }}>SCROLL TO DECRYPT</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 }

@@ -1,9 +1,27 @@
+/**
+ * Characters that trigger formula execution in spreadsheet applications.
+ * Prefixing with an apostrophe forces the cell to be treated as a text literal.
+ */
+const FORMULA_TRIGGERS = new Set(['=', '+', '-', '@', '\t', '\r', '\n']);
+
 const escapeHtml = (value) =>
   String(value ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+
+/**
+ * Escape a cell value for safe spreadsheet rendering (AUD-013).
+ * Prefixes values starting with formula-trigger characters with an apostrophe.
+ */
+const escapeCellValue = (value) => {
+  const str = String(value ?? '');
+  if (str.length > 0 && FORMULA_TRIGGERS.has(str[0])) {
+    return escapeHtml(`'${str}`);
+  }
+  return escapeHtml(str);
+};
 
 const buildExcelHtml = (rows) => {
   const header = `
@@ -35,26 +53,26 @@ const buildExcelHtml = (rows) => {
     .map(
       (row) => `
       <tr>
-        <td>${escapeHtml(row.teamCode)}</td>
-        <td>${escapeHtml(row.registrationCode)}</td>
-        <td>${escapeHtml(row.teamName)}</td>
-        <td>${escapeHtml(row.teamStatus)}</td>
-        <td>${escapeHtml(row.paymentStatus)}</td>
-        <td>${escapeHtml(row.paymentReviewReason)}</td>
-        <td>${escapeHtml(row.leaderName)}</td>
-        <td>${escapeHtml(row.leaderEmail)}</td>
-        <td>${escapeHtml(row.leaderPhone)}</td>
-        <td>${escapeHtml(row.leaderDepartment)}</td>
-        <td>${escapeHtml(row.leaderYear)}</td>
-        <td>${escapeHtml(row.collegeName)}</td>
-        <td>${escapeHtml(row.modePreference)}</td>
-        <td>${escapeHtml(row.problemStatement)}</td>
-        <td>${escapeHtml(row.githubRepositoryUrl)}</td>
-        <td>${escapeHtml(row.utr)}</td>
-        <td>${escapeHtml(row.paymentScreenshotUrl)}</td>
-        <td>${escapeHtml(row.members)}</td>
-        <td>${escapeHtml(row.createdAt)}</td>
-        <td>${escapeHtml(row.updatedAt)}</td>
+        <td>${escapeCellValue(row.teamCode)}</td>
+        <td>${escapeCellValue(row.registrationCode)}</td>
+        <td>${escapeCellValue(row.teamName)}</td>
+        <td>${escapeCellValue(row.teamStatus)}</td>
+        <td>${escapeCellValue(row.paymentStatus)}</td>
+        <td>${escapeCellValue(row.paymentReviewReason)}</td>
+        <td>${escapeCellValue(row.leaderName)}</td>
+        <td>${escapeCellValue(row.leaderEmail)}</td>
+        <td>${escapeCellValue(row.leaderPhone)}</td>
+        <td>${escapeCellValue(row.leaderDepartment)}</td>
+        <td>${escapeCellValue(row.leaderYear)}</td>
+        <td>${escapeCellValue(row.collegeName)}</td>
+        <td>${escapeCellValue(row.modePreference)}</td>
+        <td>${escapeCellValue(row.problemStatement)}</td>
+        <td>${escapeCellValue(row.githubRepositoryUrl)}</td>
+        <td>${escapeCellValue(row.utr)}</td>
+        <td>${escapeCellValue(row.paymentScreenshotUrl)}</td>
+        <td>${escapeCellValue(row.members)}</td>
+        <td>${escapeCellValue(row.createdAt)}</td>
+        <td>${escapeCellValue(row.updatedAt)}</td>
       </tr>
     `
     )

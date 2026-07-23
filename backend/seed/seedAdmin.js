@@ -15,15 +15,17 @@ const Admin = require('../src/models/Admin');
       existing.email = email;
       existing.passwordHash = await Admin.hashPassword(password);
       existing.role = 'ADMIN';
+      existing.passwordChangedAt = new Date();
       await existing.save();
       console.log(`✅ Admin '${username}' already existed. Password reset from current .env value.`);
       console.log(`   Username: ${username}`);
       console.log(`   Password: ${password}`);
+      console.log(`   ⚠️  All existing admin tokens have been invalidated.`);
       process.exit(0);
     }
 
     const passwordHash = await Admin.hashPassword(password);
-    await Admin.create({ username, email, passwordHash, role: 'ADMIN' });
+    await Admin.create({ username, email, passwordHash, role: 'ADMIN', passwordChangedAt: new Date() });
 
     console.log(`✅ Admin account created.`);
     console.log(`   Username: ${username}`);
