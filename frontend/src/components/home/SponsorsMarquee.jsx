@@ -44,11 +44,11 @@ const sponsorLogos = [
 function SponsorLogoCard({ name, icon: Icon, imgUrl, color, tag }) {
   return (
     <div
-      className="relative flex flex-col items-center justify-center w-48 h-36 sm:w-56 sm:h-40 lg:w-64 lg:h-44 rounded-2xl border border-white/10 bg-[#0c0d14] p-4 sm:p-5 transition-[transform,border-color,box-shadow] duration-300 hover:scale-[1.03] hover:border-evidence/60 hover:shadow-[0_0_35px_rgba(193,18,31,0.35)] group cursor-pointer will-change-transform transform-gpu"
+      className="relative flex flex-col items-center justify-center w-36 h-28 sm:w-56 sm:h-40 lg:w-64 lg:h-44 rounded-xl sm:rounded-2xl border border-white/10 bg-[#0c0d14] p-3 sm:p-5 transition-[transform,border-color,box-shadow] duration-300 hover:scale-[1.03] hover:border-evidence/60 hover:shadow-[0_0_35px_rgba(193,18,31,0.35)] group cursor-pointer will-change-transform transform-gpu"
     >
       {/* Glow on hover */}
       <div
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
+        className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
         style={{ backgroundColor: color }}
       />
 
@@ -57,7 +57,7 @@ function SponsorLogoCard({ name, icon: Icon, imgUrl, color, tag }) {
       <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-white/20 border border-white/10" />
 
       {/* Sponsor Icon Box */}
-      <div className="relative z-10 flex items-center justify-center p-3.5 sm:p-4.5 rounded-xl bg-black/70 border border-white/10 group-hover:border-white/30 transition-colors shadow-inner w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 overflow-hidden">
+      <div className="relative z-10 flex items-center justify-center p-2.5 sm:p-4.5 rounded-lg sm:rounded-xl bg-black/70 border border-white/10 group-hover:border-white/30 transition-colors shadow-inner w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 overflow-hidden">
         {imgUrl ? (
           <img 
             src={imgUrl} 
@@ -65,15 +65,15 @@ function SponsorLogoCard({ name, icon: Icon, imgUrl, color, tag }) {
             className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]" 
           />
         ) : (
-          <Icon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]" style={{ color }} />
+          <Icon className="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]" style={{ color }} />
         )}
       </div>
 
       {/* Name & Tag */}
-      <span className="relative z-10 font-mono text-xs sm:text-sm font-bold text-white uppercase tracking-wider mt-3 group-hover:text-rose-400 transition-colors">
+      <span className="relative z-10 font-mono text-[10px] sm:text-sm font-bold text-white uppercase tracking-wider mt-2 sm:mt-3 group-hover:text-rose-400 transition-colors text-center px-1 truncate w-full">
         {name}
       </span>
-      <span className="relative z-10 font-mono text-[8px] sm:text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5" style={{ color }}>
+      <span className="relative z-10 font-mono text-[7px] sm:text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5 text-center px-1 truncate w-full" style={{ color }}>
         {tag}
       </span>
     </div>
@@ -117,11 +117,11 @@ export default function SponsorsMarquee() {
       </div>
 
       {/* 3D Perspective Marquee Container with 3 Lines */}
-      <div className="relative flex h-[550px] sm:h-[650px] lg:h-[720px] w-full flex-row items-center justify-center overflow-hidden [perspective:800px]">
+      <div className="relative flex h-[500px] sm:h-[650px] lg:h-[720px] w-full flex-row items-center justify-center overflow-hidden [perspective:800px]">
         <div
-          className="flex flex-row items-center gap-8 sm:gap-12 lg:gap-16 w-full justify-center will-change-transform transform-gpu z-20 [contain:layout_style_paint]"
+          className="flex flex-row items-center gap-4 sm:gap-12 lg:gap-16 w-full justify-center will-change-transform transform-gpu z-20 [contain:layout_style_paint] scale-90 sm:scale-100 [--rotate-x:10deg] sm:[--rotate-x:14deg] [--rotate-y:-3deg] sm:[--rotate-y:-5deg] [--rotate-z:6deg] sm:[--rotate-z:10deg]"
           style={{
-            transform: 'rotateX(14deg) rotateY(-5deg) rotateZ(10deg)',
+            transform: 'rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) rotateZ(var(--rotate-z))',
           }}
         >
           {/* Line 1 — Moves DOWNWARD */}
@@ -129,8 +129,8 @@ export default function SponsorsMarquee() {
             vertical
             pauseOnHover
             repeat={4}
-            style={{ '--duration': '25s', '--gap': '1.75rem' }}
-            className="z-20"
+            style={{ '--duration': '25s' }}
+            className="z-20 [--gap:1rem] sm:[--gap:1.75rem]"
           >
             {colSet1.map((s) => (
               <SponsorLogoCard key={s.name + '-line1'} {...s} />
@@ -143,8 +143,8 @@ export default function SponsorsMarquee() {
             pauseOnHover
             reverse
             repeat={4}
-            style={{ '--duration': '28s', '--gap': '1.75rem' }}
-            className="z-20"
+            style={{ '--duration': '28s' }}
+            className="z-20 [--gap:1rem] sm:[--gap:1.75rem]"
           >
             {colSet2.map((s) => (
               <SponsorLogoCard key={s.name + '-line2'} {...s} />
@@ -156,8 +156,8 @@ export default function SponsorsMarquee() {
             vertical
             pauseOnHover
             repeat={4}
-            style={{ '--duration': '30s', '--gap': '1.75rem' }}
-            className="z-20"
+            style={{ '--duration': '30s' }}
+            className="z-20 [--gap:1rem] sm:[--gap:1.75rem]"
           >
             {colSet3.map((s) => (
               <SponsorLogoCard key={s.name + '-line3'} {...s} />
@@ -166,16 +166,16 @@ export default function SponsorsMarquee() {
         </div>
 
         {/* ── Top, Bottom, Left, Right Edge Gradient Fades ── */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-case-black via-case-black/90 to-transparent z-30" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-case-black via-case-black/90 to-transparent z-30" />
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-36 bg-gradient-to-r from-case-black via-case-black/90 to-transparent z-30" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-36 bg-gradient-to-l from-case-black via-case-black/90 to-transparent z-30" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 sm:h-36 bg-gradient-to-b from-case-black via-case-black/90 to-transparent z-30" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 sm:h-36 bg-gradient-to-t from-case-black via-case-black/90 to-transparent z-30" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-36 bg-gradient-to-r from-case-black via-case-black/90 to-transparent z-30" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-36 bg-gradient-to-l from-case-black via-case-black/90 to-transparent z-30" />
 
         {/* ── Corner Radial Vignettes for Smooth Radial Corner Fading ── */}
-        <div className="pointer-events-none absolute top-0 left-0 w-80 h-80 bg-[radial-gradient(circle_at_top_left,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
-        <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 bg-[radial-gradient(circle_at_top_right,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
-        <div className="pointer-events-none absolute bottom-0 left-0 w-80 h-80 bg-[radial-gradient(circle_at_bottom_left,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
-        <div className="pointer-events-none absolute bottom-0 right-0 w-80 h-80 bg-[radial-gradient(circle_at_bottom_right,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
+        <div className="pointer-events-none absolute top-0 left-0 w-28 h-28 sm:w-80 sm:h-80 bg-[radial-gradient(circle_at_top_left,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
+        <div className="pointer-events-none absolute top-0 right-0 w-28 h-28 sm:w-80 sm:h-80 bg-[radial-gradient(circle_at_top_right,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
+        <div className="pointer-events-none absolute bottom-0 left-0 w-28 h-28 sm:w-80 sm:h-80 bg-[radial-gradient(circle_at_bottom_left,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
+        <div className="pointer-events-none absolute bottom-0 right-0 w-28 h-28 sm:w-80 sm:h-80 bg-[radial-gradient(circle_at_bottom_right,rgba(5,5,5,1)_0%,rgba(5,5,5,0.85)_40%,transparent_100%)] z-30" />
       </div>
     </section>
   );

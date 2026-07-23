@@ -5,7 +5,7 @@ import CCTVCamera from './CCTVCamera.jsx';
 
 export default function Hero() {
   return (
-    <section className="relative w-full aspect-video sm:aspect-auto sm:h-[80vh] lg:h-[calc(100vh-64px)] sm:min-h-[620px] lg:min-h-[720px] max-h-[1050px] overflow-hidden bg-case-black">
+    <section className="relative w-full min-h-[560px] h-[85vh] sm:aspect-auto sm:h-[80vh] lg:h-[calc(100vh-64px)] sm:min-h-[620px] lg:min-h-[720px] max-h-[1050px] overflow-hidden bg-case-black">
       
       {/* ── PINNED 3D SURVEILLANCE CCTV CAMERA (FLIPPED BASE DIRECTION OPPOSITE TO 0.8) ── */}
       <CCTVCamera
@@ -63,7 +63,7 @@ export default function Hero() {
           </p>
 
           {/* Main headline */}
-          <h1 className="font-display text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black uppercase tracking-wider leading-[0.9] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">
+          <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-black uppercase tracking-wider leading-[0.9] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">
             UPSURGE
             <br />
             <span className="text-evidence drop-shadow-[0_0_40px_rgba(193,18,31,0.8)]">2K26</span>
