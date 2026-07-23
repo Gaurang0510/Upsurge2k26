@@ -10,6 +10,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 const MAX_PAYMENT_SCREENSHOT_BYTES = 2 * 1024 * 1024;
 const PAYMENT_SCREENSHOT_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
 const REQUIRED_PERSON_FIELDS = ['fullName', 'email', 'phone', 'department', 'year'];
+const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/?$/;
 
 const emptyMember = () => ({
   fullName: '',
@@ -46,6 +47,7 @@ export default function Register() {
     collegeName: '',
     problemStatement: '',
     modePreference: 'OFFLINE',
+    githubRepositoryUrl: '',
     leader: {
       fullName: '',
       email: '',
@@ -78,6 +80,7 @@ export default function Register() {
       collegeName: '',
       problemStatement: '',
       modePreference: 'OFFLINE',
+      githubRepositoryUrl: '',
       leader: {
         fullName: '',
         email: '',
@@ -216,6 +219,11 @@ export default function Register() {
         throw new Error(`Complete all details for member ${incompleteOptionalMember.index + 2} or leave the row empty`);
       }
 
+      const githubRepositoryUrl = formData.githubRepositoryUrl.trim().replace(/\/$/, '');
+      if (!GITHUB_REPOSITORY_REGEX.test(`${githubRepositoryUrl}/`)) {
+        throw new Error('Enter a valid GitHub repository link, for example https://github.com/username/project-repository');
+      }
+
       const validMembers = memberRows
         .filter(({ hasAnyDetails }) => hasAnyDetails)
         .map(({ member }) => member);
@@ -244,6 +252,7 @@ export default function Register() {
           collegeName: formData.collegeName,
           problemStatement: formData.problemStatement,
           modePreference: formData.modePreference,
+          githubRepositoryUrl: formData.githubRepositoryUrl,
           leader: formData.leader,
           members: validMembers,
           utr: formData.utr,
@@ -446,6 +455,24 @@ export default function Register() {
                       <option value="OFFLINE">Offline</option>
                       <option value="ONLINE_REQUEST">Online Request</option>
                     </select>
+                    <div className="sm:col-span-2 space-y-2">
+                      <label htmlFor="githubRepositoryUrl" className="block text-xs font-mono uppercase tracking-wider text-steel">
+                        GitHub Repository Link
+                      </label>
+                      <p className="text-xs text-steel">
+                        Create a GitHub repository for your project and paste its link here. Push your project code to this repository.
+                      </p>
+                      <input
+                        id="githubRepositoryUrl"
+                        type="url"
+                        value={formData.githubRepositoryUrl}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, githubRepositoryUrl: e.target.value }))}
+                        placeholder="https://github.com/username/project-repository"
+                        pattern="https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/?"
+                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="border-t border-white/10 pt-6 space-y-4">

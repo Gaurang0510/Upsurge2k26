@@ -34,6 +34,7 @@ const teamSchema = new mongoose.Schema(
     collegeName: { type: String, required: true, trim: true },
     problemStatement: { type: String, trim: true, default: '' },
     modePreference: { type: String, enum: MODE_PREFERENCES, default: 'OFFLINE' },
+    githubRepositoryUrl: { type: String, trim: true, default: '' },
     leader: { type: leaderSchema, required: true },
     members: { type: [memberSchema], default: [] },
     teamSize: { type: Number, required: true },

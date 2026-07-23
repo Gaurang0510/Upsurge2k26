@@ -197,6 +197,7 @@ const openTeamDetail = async (teamId) => {
     document.getElementById('collegeNameInput').value = team.collegeName || '';
     document.getElementById('problemStatementInput').value = team.problemStatement || '';
     document.getElementById('modePreferenceInput').value = team.modePreference || 'OFFLINE';
+    document.getElementById('githubRepositoryUrlInput').value = team.githubRepositoryUrl || '';
     document.getElementById('leaderNameInput').value = team.leader?.fullName || '';
     document.getElementById('leaderEmailInput').value = team.leader?.email || '';
     document.getElementById('leaderPhoneInput').value = team.leader?.phone || '';
@@ -218,6 +219,7 @@ const saveTeamChanges = async () => {
     collegeName: document.getElementById('collegeNameInput').value.trim(),
     problemStatement: document.getElementById('problemStatementInput').value.trim(),
     modePreference: document.getElementById('modePreferenceInput').value,
+    githubRepositoryUrl: document.getElementById('githubRepositoryUrlInput').value.trim(),
     leader: {
       fullName: document.getElementById('leaderNameInput').value.trim(),
       email: document.getElementById('leaderEmailInput').value.trim(),

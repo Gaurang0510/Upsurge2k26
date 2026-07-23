@@ -13,10 +13,12 @@ const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
 const UTR_REGEX = /^[A-Z0-9-]{8,32}$/;
 const TEAM_CODE_REGEX = /^\d{6}$/;
 const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{2,120}$/;
+const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/?$/;
 
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
 const normalizePhone = (phone) => String(phone || '').trim();
 const normalizeUtr = (utr) => String(utr || '').trim().toUpperCase();
+const normalizeGithubRepositoryUrl = (url) => String(url || '').trim().replace(/\/$/, '');
 
 const signAccessToken = ({ email, invitationCode }) =>
   jwt.sign({ email, invitationCode, purpose: 'smackathon-registration' }, process.env.JWT_SECRET, {
@@ -107,6 +109,7 @@ const submitRegistration = async (req, res, next) => {
       collegeName,
       problemStatement,
       modePreference,
+      githubRepositoryUrl,
       leader,
       members,
       utr,
@@ -136,7 +139,7 @@ const submitRegistration = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'This team invitation is not eligible for registration' });
     }
 
-    assertRequired(req.body, ['teamName', 'collegeName', 'utr', 'paymentScreenshotDataUri']);
+    assertRequired(req.body, ['teamName', 'collegeName', 'utr', 'paymentScreenshotDataUri', 'githubRepositoryUrl']);
 
     if (!leader || typeof leader !== 'object') {
       return res.status(400).json({ success: false, message: 'Leader details are required' });
@@ -165,6 +168,7 @@ const submitRegistration = async (req, res, next) => {
     const normalizedTeamName = String(teamName).trim();
     const normalizedCollegeName = String(collegeName).trim();
     const normalizedProblemStatement = String(problemStatement || '').trim();
+    const normalizedGithubRepositoryUrl = normalizeGithubRepositoryUrl(githubRepositoryUrl);
     const normalizedLeaderPhone = normalizePhone(leader.phone);
     const normalizedUtr = normalizeUtr(utr);
 
@@ -176,6 +180,9 @@ const submitRegistration = async (req, res, next) => {
     }
     if (normalizedProblemStatement && normalizedProblemStatement.length > 120) {
       return res.status(400).json({ success: false, message: 'Problem statement is too long' });
+    }
+    if (!GITHUB_REPOSITORY_REGEX.test(`${normalizedGithubRepositoryUrl}/`)) {
+      return res.status(400).json({ success: false, message: 'GitHub repository link must be a valid https://github.com/owner/repository URL' });
     }
     if (!UTR_REGEX.test(normalizedUtr)) {
       return res.status(400).json({ success: false, message: 'UTR format is invalid' });
@@ -222,6 +229,7 @@ const submitRegistration = async (req, res, next) => {
       collegeName: normalizedCollegeName,
       problemStatement: normalizedProblemStatement,
       modePreference: modePreference === 'ONLINE_REQUEST' ? 'ONLINE_REQUEST' : 'OFFLINE',
+      githubRepositoryUrl: normalizedGithubRepositoryUrl,
       leader: {
         fullName: String(leader.fullName).trim(),
         email: normalizedLeaderEmail,

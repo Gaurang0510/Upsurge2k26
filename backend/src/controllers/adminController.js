@@ -9,6 +9,7 @@ const { buildExcelHtml } = require('../utils/exportWorkbook');
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TEAM_CODE_REGEX = /^\d{6}$/;
 const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{0,160}$/;
+const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/?$/;
 
 const signToken = (admin) =>
   jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, {
@@ -170,13 +171,17 @@ const updateTeam = async (req, res, next) => {
     const team = await Team.findById(req.params.id);
     if (!team) return res.status(404).json({ success: false, message: 'Team not found' });
 
-    for (const field of ['teamName', 'collegeName', 'problemStatement', 'modePreference', 'paymentReviewReason']) {
+    for (const field of ['teamName', 'collegeName', 'problemStatement', 'modePreference', 'githubRepositoryUrl', 'paymentReviewReason']) {
       if (field in req.body) team[field] = req.body[field];
     }
 
     if (!SAFE_TEXT_REGEX.test(String(team.teamName || '')) || !SAFE_TEXT_REGEX.test(String(team.collegeName || ''))) {
       return res.status(400).json({ success: false, message: 'Team details contain unsupported characters' });
     }
+    if (team.githubRepositoryUrl && !GITHUB_REPOSITORY_REGEX.test(String(team.githubRepositoryUrl).trim())) {
+      return res.status(400).json({ success: false, message: 'GitHub repository link must be a valid https://github.com/owner/repository URL' });
+    }
+    if (team.githubRepositoryUrl) team.githubRepositoryUrl = String(team.githubRepositoryUrl).trim().replace(/\/$/, '');
 
     if (req.body.leader && typeof req.body.leader === 'object') {
       for (const field of ['fullName', 'email', 'phone', 'department', 'year']) {
@@ -280,6 +285,7 @@ const exportTeams = async (req, res, next) => {
         collegeName: team.collegeName,
         modePreference: team.modePreference,
         problemStatement: team.problemStatement,
+        githubRepositoryUrl: team.githubRepositoryUrl,
         utr: registration?.paymentProof?.utr || '',
         paymentScreenshotUrl: registration?.paymentProof?.screenshotUrl || '',
         members: (team.members || [])
