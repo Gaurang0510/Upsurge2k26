@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { GraduationCap, HeartPulse, TrendingUp, Cpu, Sprout, Leaf } from "lucide-react";
+import { GraduationCap, HeartPulse, TrendingUp, Cpu, Sprout, Leaf, Lightbulb } from "lucide-react";
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 
 const smackathonDomains = [
@@ -13,7 +13,7 @@ const smackathonDomains = [
     category: "Education",
     icon: GraduationCap,
     image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&q=80",
-    relatedIds: [2, 6],
+    relatedIds: [2, 7],
     status: "completed",
     energy: 95,
   },
@@ -73,9 +73,21 @@ const smackathonDomains = [
     category: "Sustainability",
     icon: Leaf,
     image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&q=80",
-    relatedIds: [5, 1],
+    relatedIds: [5, 7],
     status: "completed",
     energy: 92,
+  },
+  {
+    id: 7,
+    title: "OPEN INNOVATIVE",
+    date: "TRACK-07",
+    content: "Have a unique idea that doesn't fit standard domains? Build any impactful software or hardware solution under open innovation.",
+    category: "Open Track",
+    icon: Lightbulb,
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&q=80",
+    relatedIds: [6, 1],
+    status: "completed",
+    energy: 90,
   },
 ];
 

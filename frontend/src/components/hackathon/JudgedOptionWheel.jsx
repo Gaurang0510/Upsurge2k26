@@ -10,7 +10,7 @@ function CriteriaWheel({ items, selectedIndex, onSelect }) {
   const VISIBLE_ITEMS = 7;
 
   return (
-    <div className="relative flex flex-col items-start gap-4">
+    <div className="relative flex flex-col w-full items-start gap-4">
       {/* 3D Wheel Container */}
       <div
         className="relative w-full select-none"
@@ -54,10 +54,10 @@ function CriteriaWheel({ items, selectedIndex, onSelect }) {
               onClick={() => onSelect(index)}
             >
               <span
-                className={`truncate max-w-[240px] sm:max-w-[320px] lg:max-w-[400px] font-display uppercase tracking-wider transition-all duration-300 ${
+                className={`truncate max-w-[280px] sm:max-w-[320px] lg:max-w-[400px] font-display uppercase tracking-wider transition-all duration-300 ${
                   index === selectedIndex
-                    ? 'text-white text-xl sm:text-2xl lg:text-3xl font-bold'
-                    : 'text-zinc-500 text-base sm:text-lg font-medium hover:text-zinc-300'
+                    ? 'text-white text-lg sm:text-2xl lg:text-3xl font-bold'
+                    : 'text-zinc-500 text-sm sm:text-lg font-medium hover:text-zinc-300'
                 }`}
               >
                 {label}
@@ -120,7 +120,7 @@ export default function JudgedOptionWheel({ criteria }) {
 
           <div className="grid gap-8 lg:grid-cols-12 items-center mt-2">
             {/* Left Column: 3D Criteria Wheel */}
-            <div className="lg:col-span-6 relative flex flex-col items-center lg:items-start">
+            <div className="lg:col-span-6 w-full relative flex flex-col items-stretch lg:items-start">
               <CriteriaWheel
                 items={wheelLabels}
                 selectedIndex={selectedIndex}

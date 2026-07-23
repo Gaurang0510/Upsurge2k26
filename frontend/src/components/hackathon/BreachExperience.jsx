@@ -34,8 +34,8 @@ const PHASES = [
     id: 'reveal',
     range: [0.75, 1.0],
     label: 'SIG_04 / IDENTIFIED',
-    title: 'REGISTER NOW',
-    subtitle: 'THE BREACH IS YOURS TO COMMIT',
+    title: '',
+    subtitle: '',
     description:
       'Shortlisted teams complete the next step after selection. Round 2 is free for all teams. The breach window is open.',
   },
@@ -135,7 +135,7 @@ function RadarSweep() {
 function StatsBlock() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {[['TEAMS','OPEN'],['PRIZE POOL','TBD'],['HOURS','24']].map(([label, value]) => (
+      {[['TEAMS','OPEN'],['PRIZE POOL','₹40K'],['HOURS','24']].map(([label, value]) => (
         <div key={label} style={{ borderBottom: '1px solid #E10600', paddingBottom: '0.5rem' }}>
           <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.6rem', letterSpacing: '0.3em', color: '#A0A0A0' }}>
             {label}
@@ -154,10 +154,20 @@ export default function BreachExperience({ scrollYProgress }) {
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [showScroll, setShowScroll] = useState(true);
   const [glitch, setGlitch]         = useState(false);
+  const [isMobile, setIsMobile]     = useState(false);
 
   /* DOM refs for zero-React-state updates */
   const progressBarRef = useRef(null);
   const prevPhaseRef   = useRef(0);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!scrollYProgress) return;
@@ -229,9 +239,14 @@ export default function BreachExperience({ scrollYProgress }) {
 
       {/* Bottom-right credit */}
       <div style={{
-        position: 'absolute', bottom: 20, right: 20,
+        position: 'absolute',
+        bottom: isMobile ? 12 : 20,
+        left: isMobile ? '50%' : 'auto',
+        right: isMobile ? 'auto' : 20,
+        transform: isMobile ? 'translateX(-50%)' : 'none',
         fontFamily: '"JetBrains Mono", monospace', fontSize: '0.58rem',
         letterSpacing: '0.18em', color: '#A0A0A0', textTransform: 'uppercase',
+        whiteSpace: 'nowrap',
       }}>
         CSE DEPARTMENT · YCCE, NAGPUR
       </div>
@@ -247,12 +262,15 @@ export default function BreachExperience({ scrollYProgress }) {
             exit="exit"
             style={{
               position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'flex-end',
-              padding: '0 40px 88px 40px',
+              display: 'flex',
+              flexDirection: isMobile ? 'column-reverse' : 'row',
+              alignItems: isMobile ? 'stretch' : 'flex-end',
+              padding: isMobile ? '0 24px 88px 24px' : '0 40px 88px 40px',
+              boxSizing: 'border-box',
             }}
           >
             {/* Left */}
-            <div style={{ flex: 1, maxWidth: 500 }}>
+            <div style={{ flex: isMobile ? 'none' : 1, width: '100%', maxWidth: 500 }}>
               <motion.div variants={childVariants} style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
                 <BlinkDot />
                 <span style={{
@@ -267,58 +285,67 @@ export default function BreachExperience({ scrollYProgress }) {
                 marginBottom: 10, boxShadow: '0 0 5px #E10600',
               }} />
 
-              <motion.div variants={childVariants} className="my-2">
-                <FuzzyText
-                  fontSize="clamp(1.8rem, 4.5vw, 3.2rem)"
-                  fontWeight={900}
-                  color="#E5E5E5"
-                  baseIntensity={0.15}
-                  hoverIntensity={0.5}
-                  fuzzRange={25}
-                  glitchMode={true}
-                  glitchInterval={3000}
-                >
-                  {phase.title}
-                </FuzzyText>
-              </motion.div>
+              {phase.title && (
+                <motion.div variants={childVariants} className="my-2">
+                  <FuzzyText
+                    fontSize="clamp(1.3rem, 5vw, 3.2rem)"
+                    fontWeight={900}
+                    color="#E5E5E5"
+                    baseIntensity={0.15}
+                    hoverIntensity={0.5}
+                    fuzzRange={25}
+                    glitchMode={true}
+                    glitchInterval={3000}
+                  >
+                    {phase.title}
+                  </FuzzyText>
+                </motion.div>
+              )}
 
-              <motion.p variants={childVariants} style={{
-                fontFamily: '"Inter", sans-serif',
-                fontSize: '0.75rem', letterSpacing: '0.28em',
-                color: '#E10600', textTransform: 'uppercase', marginTop: 8,
-              }}>{phase.subtitle}</motion.p>
-
-              <motion.p variants={childVariants} style={{
-                fontFamily: '"Inter", sans-serif', fontSize: '0.88rem',
-                lineHeight: 1.7, color: '#A0A0A0', marginTop: 10, maxWidth: 420,
-              }}>{phase.description}</motion.p>
+              {phase.subtitle && (
+                <motion.p variants={childVariants} style={{
+                  fontFamily: '"Inter", sans-serif',
+                  fontSize: '0.75rem', letterSpacing: '0.28em',
+                  color: '#E10600', textTransform: 'uppercase', marginTop: 8,
+                }}>{phase.subtitle}</motion.p>
+              )}
 
               {(phaseIndex === 0 || phaseIndex === 3) && (
                 <motion.div variants={childVariants} style={{
                   display: 'flex', gap: 12, marginTop: 22, pointerEvents: 'auto',
                 }}>
-                  <a href="#" style={{
-                    background: '#E10600', color: '#E5E5E5',
-                    fontFamily: '"Space Grotesk", sans-serif',
-                    fontWeight: 700, fontSize: '0.72rem',
-                    letterSpacing: '0.18em', textTransform: 'uppercase',
-                    padding: '9px 18px', textDecoration: 'none',
-                    display: 'inline-block',
-                  }}>REGISTER NOW</a>
-                  <a href="#tracks" style={{
-                    background: 'transparent', color: '#E5E5E5',
-                    fontFamily: '"Space Grotesk", sans-serif',
-                    fontWeight: 600, fontSize: '0.72rem',
-                    letterSpacing: '0.18em', textTransform: 'uppercase',
-                    padding: '9px 18px', textDecoration: 'none',
-                    border: '1px solid #E5E5E5', display: 'inline-block',
-                  }}>VIEW TRACKS</a>
+                  <a
+                    href="#problem-statements"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById("problem-statements")?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }}
+                    style={{
+                      background: 'transparent', color: '#E5E5E5',
+                      fontFamily: '"Space Grotesk", sans-serif',
+                      fontWeight: 600, fontSize: '0.72rem',
+                      letterSpacing: '0.18em', textTransform: 'uppercase',
+                      padding: '9px 18px', textDecoration: 'none',
+                      border: '1px solid #E5E5E5', display: 'inline-block',
+                      cursor: 'pointer',
+                    }}
+                  >VIEW TRACKS</a>
                 </motion.div>
               )}
             </div>
 
             {/* Right — phase-specific */}
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 16 }}>
+            <div style={{
+              flex: isMobile ? 'none' : 1,
+              width: '100%',
+              display: 'flex',
+              justifyContent: isMobile ? 'center' : 'flex-end',
+              alignItems: 'center',
+              paddingBottom: isMobile ? 32 : 16
+            }}>
               {phaseIndex === 1 && <ClassifiedStamp />}
               {phaseIndex === 2 && <RadarSweep />}
               {phaseIndex === 3 && <StatsBlock />}

@@ -35,17 +35,28 @@ export default function RadialOrbitalTimeline({
   const centerOffset = { x: 0, y: 0 };
   const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [radius, setRadius] = useState<number>(330);
   const containerRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      const w = window.innerWidth;
+      setIsMobile(w <= 768);
+      if (w < 480) {
+        setRadius(110);
+      } else if (w < 768) {
+        setRadius(160);
+      } else if (w < 1024) {
+        setRadius(240);
+      } else {
+        setRadius(330);
+      }
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -121,7 +132,6 @@ export default function RadialOrbitalTimeline({
 
   const calculateNodePosition = (index: number, total: number) => {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius = isMobile ? 210 : 330;
     const radian = (angle * Math.PI) / 180;
 
     const x = radius * Math.cos(radian) + centerOffset.x;
@@ -162,7 +172,7 @@ export default function RadialOrbitalTimeline({
 
   return (
     <div
-      className="w-full min-h-[750px] md:min-h-[920px] h-[800px] md:h-[980px] flex flex-col items-center justify-center bg-black/90 rounded-3xl border border-red-500/20 shadow-2xl relative overflow-hidden my-12"
+      className="w-full min-h-[580px] sm:min-h-[750px] md:min-h-[920px] h-[640px] sm:h-[800px] md:h-[980px] flex flex-col items-center justify-center bg-black/90 rounded-3xl border border-red-500/20 shadow-2xl relative overflow-hidden my-12"
       ref={containerRef}
       onClick={handleContainerClick}
     >
@@ -188,7 +198,13 @@ export default function RadialOrbitalTimeline({
           </div>
 
           {/* Large Orbital Ring Track */}
-          <div className="absolute w-[420px] h-[420px] md:w-[660px] md:h-[660px] rounded-full border-2 border-red-500/20 pointer-events-none shadow-[0_0_30px_rgba(239,68,68,0.1)]"></div>
+          <div
+            className="absolute rounded-full border-2 border-red-500/20 pointer-events-none shadow-[0_0_30px_rgba(239,68,68,0.1)] transition-all duration-300"
+            style={{
+              width: radius * 2,
+              height: radius * 2,
+            }}
+          />
 
           {timelineData.map((item, index) => {
             const position = calculateNodePosition(index, timelineData.length);
@@ -262,8 +278,8 @@ export default function RadialOrbitalTimeline({
 
                 <div
                   className={`
-                  absolute top-20 md:top-28 left-1/2 -translate-x-1/2 whitespace-nowrap
-                  text-xs md:text-sm font-bold tracking-widest uppercase
+                  absolute top-18 md:top-28 left-1/2 -translate-x-1/2 whitespace-nowrap
+                  text-[10px] md:text-sm font-bold tracking-widest uppercase
                   transition-all duration-300
                   ${isExpanded ? "text-red-400 scale-125 font-mono" : "text-white/90 font-mono drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"}
                 `}
@@ -272,8 +288,18 @@ export default function RadialOrbitalTimeline({
                 </div>
 
                 {isExpanded && (
-                  <Card className="absolute top-28 md:top-36 left-1/2 -translate-x-1/2 w-80 md:w-96 bg-black/95 backdrop-blur-2xl border-red-500/50 shadow-2xl shadow-red-950/60 overflow-visible z-[250] p-1">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-red-500/80"></div>
+                  <Card className={`absolute left-1/2 -translate-x-1/2 w-72 xs:w-80 md:w-96 bg-black/95 backdrop-blur-2xl border-red-500/50 shadow-2xl shadow-red-950/60 overflow-visible z-[250] p-1
+                    ${position.angle > 0 && position.angle < 180 
+                      ? "bottom-20 md:bottom-28" 
+                      : "top-20 md:top-28"
+                    }
+                  `}>
+                    <div className={`absolute left-1/2 -translate-x-1/2 w-px h-3 bg-red-500/80
+                      ${position.angle > 0 && position.angle < 180 
+                        ? "-bottom-3" 
+                        : "-top-3"
+                      }
+                    `}></div>
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-center">
                         <Badge

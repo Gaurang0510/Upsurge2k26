@@ -122,7 +122,7 @@ export default function Hackathon() {
               <span className="case-tag mb-3 inline-block">{"//"} Flagship Build Challenge</span>
               <div className="my-2">
                 <FuzzyText
-                  fontSize="clamp(2.2rem, 6vw, 4.5rem)"
+                  fontSize="clamp(1.4rem, 6vw, 4.5rem)"
                   fontWeight={900}
                   color="#E5E5E5"
                   baseIntensity={0.18}
@@ -176,7 +176,7 @@ export default function Hackathon() {
               <img
                 src="/images/gallery/smackathon-details-scroll.png"
                 alt="Smackathon Details"
-                className="mx-auto rounded-2xl object-cover h-full w-full object-top"
+                className="mx-auto rounded-2xl object-contain h-full w-full bg-black"
                 draggable={false}
               />
             </ContainerScroll>

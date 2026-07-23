@@ -118,7 +118,7 @@ export default {
       a: 'No. A participant may be part of only one team.',
     },
   ],
-  prize: { first: 'TBD', second: 'TBD', third: 'TBD', currency: '₹' },
+  prize: { first: '20,000', second: '12,000', third: '8,000', currency: '₹' },
   coordinators: [
     { name: 'TBD', phone: 'TBD' },
     { name: 'TBD', phone: 'TBD' },
