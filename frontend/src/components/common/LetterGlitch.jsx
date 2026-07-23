@@ -18,9 +18,9 @@ const LetterGlitch = ({
 
   const lettersAndSymbols = Array.from(characters);
 
-  const fontSize = 16;
-  const charWidth = 10;
-  const charHeight = 20;
+  const fontSize = 22;
+  const charWidth = 14;
+  const charHeight = 28;
 
   const getRandomChar = () => {
     return lettersAndSymbols[Math.floor(Math.random() * lettersAndSymbols.length)];

@@ -20,14 +20,21 @@ const normalizePhone = (phone) => String(phone || '').trim();
 const normalizeUtr = (utr) => String(utr || '').trim().toUpperCase();
 const normalizeGithubRepositoryUrl = (url) => String(url || '').trim().replace(/\/$/, '');
 
+/**
+ * Use the dedicated REGISTRATION_JWT_SECRET for registration access tokens,
+ * falling back to JWT_SECRET only if the dedicated secret is not set.
+ * This ensures admin and registration tokens use separate signing secrets.
+ */
+const REGISTRATION_SECRET = () => process.env.REGISTRATION_JWT_SECRET || process.env.JWT_SECRET;
+
 const signAccessToken = ({ email, invitationCode }) =>
-  jwt.sign({ email, invitationCode, purpose: 'smackathon-registration' }, process.env.JWT_SECRET, {
+  jwt.sign({ email, invitationCode, purpose: 'smackathon-registration' }, REGISTRATION_SECRET(), {
     expiresIn: process.env.REGISTRATION_ACCESS_TTL || '2h',
   });
 
 const verifyAccessToken = (token) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, REGISTRATION_SECRET());
     return decoded.purpose === 'smackathon-registration'
       && EMAIL_REGEX.test(decoded.email)
       && TEAM_CODE_REGEX.test(decoded.invitationCode)
@@ -188,6 +195,20 @@ const submitRegistration = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'UTR format is invalid' });
     }
 
+    // Validate mode preference against allowed enum values
+    const validatedModePreference = modePreference === 'ONLINE_REQUEST' ? 'ONLINE_REQUEST' : 'OFFLINE';
+
+    // Check for duplicate emails/phones across leader and all members (AUD-015)
+    const allEmails = [normalizedLeaderEmail, ...memberList.map((m) => normalizeEmail(m.email))];
+    const allPhones = [normalizedLeaderPhone, ...memberList.map((m) => normalizePhone(m.phone))];
+
+    if (new Set(allEmails).size !== allEmails.length) {
+      return res.status(400).json({ success: false, message: 'Each team member must have a unique email address' });
+    }
+    if (new Set(allPhones).size !== allPhones.length) {
+      return res.status(400).json({ success: false, message: 'Each team member must have a unique phone number' });
+    }
+
     const [nameConflict, emailConflict, phoneConflict, utrConflict] = await Promise.all([
       Team.findOne({ teamName: normalizedTeamName, ...(existingTeam ? { _id: { $ne: existingTeam._id } } : {}) }),
       Team.findOne({ 'leader.email': normalizedLeaderEmail, ...(existingTeam ? { _id: { $ne: existingTeam._id } } : {}) }),
@@ -228,7 +249,7 @@ const submitRegistration = async (req, res, next) => {
       eventName: SMACKATHON_CONFIG.name,
       collegeName: normalizedCollegeName,
       problemStatement: normalizedProblemStatement,
-      modePreference: modePreference === 'ONLINE_REQUEST' ? 'ONLINE_REQUEST' : 'OFFLINE',
+      modePreference: validatedModePreference,
       githubRepositoryUrl: normalizedGithubRepositoryUrl,
       leader: {
         fullName: String(leader.fullName).trim(),
@@ -322,16 +343,27 @@ const submitRegistration = async (req, res, next) => {
   }
 };
 
+/**
+ * Public status endpoint. Requires BOTH email AND teamCode to prevent
+ * enumeration attacks on six-digit codes (AUD-004 IDOR fix).
+ * Returns minimal information without internal rejection reasons.
+ */
 const getRegistrationStatus = async (req, res, next) => {
   try {
     const email = normalizeEmail(req.query.email);
     const teamCode = String(req.query.teamCode || '').trim().toUpperCase();
 
-    if (!email && !teamCode) {
-      return res.status(400).json({ success: false, message: 'Provide either email or team code' });
+    // Require both fields to prevent IDOR (AUD-004)
+    if (!email || !teamCode) {
+      return res.status(400).json({ success: false, message: 'Both email and team code are required' });
     }
 
-    const team = await Team.findOne(teamCode ? { teamCode } : { shortlistEmail: email }).lean();
+    if (!EMAIL_REGEX.test(email) || !TEAM_CODE_REGEX.test(teamCode)) {
+      return res.status(400).json({ success: false, message: 'Invalid email or team code format' });
+    }
+
+    // Require both email AND teamCode to match the same team
+    const team = await Team.findOne({ teamCode, shortlistEmail: email }).lean();
     if (!team) {
       return res.status(404).json({ success: false, message: 'No registration found for the provided details' });
     }
@@ -344,7 +376,6 @@ const getRegistrationStatus = async (req, res, next) => {
         teamCode: team.teamCode,
         teamName: team.teamName,
         status: team.status,
-        paymentReviewReason: team.paymentReviewReason,
         modePreference: team.modePreference,
       },
       registration: registration

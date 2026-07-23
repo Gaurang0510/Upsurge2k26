@@ -4,12 +4,12 @@ const TOTAL_FRAMES = 120;
 const FOLDER = '/images/webp scrolling images';
 
 export default function HackerScrollCanvas({ scrollYProgress }) {
-  const canvasRef    = useRef(null);
-  const imagesRef    = useRef(new Array(TOTAL_FRAMES).fill(null));
-  const currentRef   = useRef(-1);
-  const pendingRef   = useRef(0);
-  const rafRef       = useRef(null);
-  const overlayRef   = useRef(null);
+  const canvasRef = useRef(null);
+  const imagesRef = useRef(new Array(TOTAL_FRAMES).fill(null));
+  const currentRef = useRef(-1);
+  const pendingRef = useRef(0);
+  const rafRef = useRef(null);
+  const overlayRef = useRef(null);
 
   /* ── Draw one frame ── */
   function draw(idx) {
@@ -22,7 +22,7 @@ export default function HackerScrollCanvas({ scrollYProgress }) {
     ctx.fillStyle = '#0A0A0B';
     ctx.fillRect(0, 0, W, H);
 
-    const s  = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+    const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
     const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
     ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
     currentRef.current = idx;
@@ -55,7 +55,7 @@ export default function HackerScrollCanvas({ scrollYProgress }) {
 
     /* Size canvas — cap DPR at 1.5 to halve pixel budget on retina */
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    canvas.width  = Math.round(canvas.clientWidth  * dpr);
+    canvas.width = Math.round(canvas.clientWidth * dpr);
     canvas.height = Math.round(canvas.clientHeight * dpr);
 
     const imgs = imagesRef.current;
@@ -114,7 +114,7 @@ export default function HackerScrollCanvas({ scrollYProgress }) {
     const ro = new ResizeObserver(entries => {
       const { width, height } = entries[0].contentRect;
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width  = Math.round(width  * dpr);
+      canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       draw(currentRef.current < 0 ? 0 : currentRef.current);
     });

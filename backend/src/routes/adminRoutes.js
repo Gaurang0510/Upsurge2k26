@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protectAdmin } = require('../middleware/auth');
+const { protectAdmin, requireRole } = require('../middleware/auth');
 const {
   login,
   me,
@@ -9,7 +9,6 @@ const {
   getTeamById,
   updateTeam,
   reviewPayment,
-  resendConfirmation,
   exportTeams,
   importShortlist,
   getShortlist,
@@ -18,17 +17,20 @@ const {
 // Public (within admin namespace)
 router.post('/login', login);
 
-// Protected below this line
+// Protected below this line — all routes require valid admin token
 router.use(protectAdmin);
 
+// Read-only routes — accessible by both ADMIN and STAFF
 router.get('/me', me);
 router.get('/stats', getStats);
 router.get('/teams', getTeams);
 router.get('/teams/:id', getTeamById);
-router.patch('/teams/:id', updateTeam);
-router.patch('/teams/:id/review-payment', reviewPayment);
-router.get('/export', exportTeams);
 router.get('/shortlist', getShortlist);
-router.post('/shortlist/import', importShortlist);
+
+// Mutation routes — ADMIN only (AUD-003 fix)
+router.patch('/teams/:id', requireRole('ADMIN'), updateTeam);
+router.patch('/teams/:id/review-payment', requireRole('ADMIN'), reviewPayment);
+router.get('/export', requireRole('ADMIN'), exportTeams);
+router.post('/shortlist/import', requireRole('ADMIN'), importShortlist);
 
 module.exports = router;

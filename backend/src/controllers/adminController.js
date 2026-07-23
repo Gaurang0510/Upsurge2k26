@@ -1,15 +1,25 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const Admin = require('../models/Admin');
 const Registration = require('../models/Registration');
 const ShortlistEntry = require('../models/ShortlistEntry');
 const Team = require('../models/Team');
-const { SMACKATHON_CONFIG } = require('../config/smackathon');
+const { SMACKATHON_CONFIG, MODE_PREFERENCES } = require('../config/smackathon');
 const { buildExcelHtml } = require('../utils/exportWorkbook');
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
 const TEAM_CODE_REGEX = /^\d{6}$/;
 const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{0,160}$/;
 const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/?$/;
+const MAX_SEARCH_LENGTH = 100;
+const MAX_BATCH_LABEL_LENGTH = 120;
+
+/**
+ * Escape regex metacharacters to prevent ReDoS (AUD-008).
+ */
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const signToken = (admin) =>
   jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, {
@@ -41,6 +51,37 @@ const parseShortlistEntries = (value) => {
   }
 
   return entries;
+};
+
+/**
+ * Validate a person (leader or member) for admin edits (AUD-005).
+ */
+const validatePerson = (person, label) => {
+  if (!person.fullName || String(person.fullName).trim().length < 2) {
+    const err = new Error(`${label} must have a valid full name`);
+    err.statusCode = 400;
+    throw err;
+  }
+  if (!EMAIL_REGEX.test(String(person.email || '').trim())) {
+    const err = new Error(`Invalid email for ${label}`);
+    err.statusCode = 400;
+    throw err;
+  }
+  if (!PHONE_REGEX.test(String(person.phone || '').trim())) {
+    const err = new Error(`Invalid phone number for ${label}`);
+    err.statusCode = 400;
+    throw err;
+  }
+  if (!person.department || String(person.department).trim().length < 1) {
+    const err = new Error(`${label} must have a department`);
+    err.statusCode = 400;
+    throw err;
+  }
+  if (!person.year || String(person.year).trim().length < 1) {
+    const err = new Error(`${label} must have a year`);
+    err.statusCode = 400;
+    throw err;
+  }
 };
 
 const login = async (req, res, next) => {
@@ -109,18 +150,21 @@ const getTeams = async (req, res, next) => {
     const teamFilter = {};
 
     if (status) teamFilter.status = status;
+
+    // Escape regex metacharacters and cap search length (AUD-008)
     if (search) {
+      const sanitizedSearch = escapeRegex(String(search).slice(0, MAX_SEARCH_LENGTH));
       teamFilter.$or = [
-        { teamName: { $regex: search, $options: 'i' } },
-        { teamCode: { $regex: search, $options: 'i' } },
-        { shortlistEmail: { $regex: search, $options: 'i' } },
-        { 'leader.fullName': { $regex: search, $options: 'i' } },
-        { 'leader.phone': { $regex: search, $options: 'i' } },
+        { teamName: { $regex: sanitizedSearch, $options: 'i' } },
+        { teamCode: { $regex: sanitizedSearch, $options: 'i' } },
+        { shortlistEmail: { $regex: sanitizedSearch, $options: 'i' } },
+        { 'leader.fullName': { $regex: sanitizedSearch, $options: 'i' } },
+        { 'leader.phone': { $regex: sanitizedSearch, $options: 'i' } },
       ];
     }
 
     const pageNum = Math.max(parseInt(page, 10) || 1, 1);
-    const limitNum = Math.min(parseInt(limit, 10) || 25, 100);
+    const limitNum = Math.min(Math.max(parseInt(limit, 10) || 25, 1), 100);
     const skip = (pageNum - 1) * limitNum;
 
     if (paymentStatus) {
@@ -128,7 +172,12 @@ const getTeams = async (req, res, next) => {
       teamFilter._id = { $in: matchingRegistrations.map((registration) => registration.teamId) };
     }
 
-    const teams = await Team.find(teamFilter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean();
+    const total = await Team.countDocuments(teamFilter);
+    const maxPage = Math.max(Math.ceil(total / limitNum), 1);
+    const safePage = Math.min(pageNum, maxPage);
+    const safeSkip = (safePage - 1) * limitNum;
+
+    const teams = await Team.find(teamFilter).sort({ createdAt: -1 }).skip(safeSkip).limit(limitNum).lean();
     const registrations = await Registration.find({ teamId: { $in: teams.map((team) => team._id) } }).lean();
     const registrationByTeam = Object.fromEntries(
       registrations.map((registration) => [String(registration.teamId), registration])
@@ -136,14 +185,12 @@ const getTeams = async (req, res, next) => {
 
     const mergedTeams = teams.map((team) => ({ ...team, registration: registrationByTeam[String(team._id)] || null }));
 
-    const total = await Team.countDocuments(teamFilter);
-
     res.json({
       success: true,
-      page: pageNum,
+      page: safePage,
       limit: limitNum,
       total,
-      totalPages: Math.ceil(total / limitNum),
+      totalPages: maxPage,
       teams: mergedTeams,
     });
   } catch (err) {
@@ -153,6 +200,11 @@ const getTeams = async (req, res, next) => {
 
 const getTeamById = async (req, res, next) => {
   try {
+    // Validate ObjectId format to prevent CastError
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid team ID format' });
+    }
+
     const team = await Team.findById(req.params.id).lean();
     if (!team) return res.status(404).json({ success: false, message: 'Team not found' });
 
@@ -168,9 +220,15 @@ const getTeamById = async (req, res, next) => {
 
 const updateTeam = async (req, res, next) => {
   try {
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid team ID format' });
+    }
+
     const team = await Team.findById(req.params.id);
     if (!team) return res.status(404).json({ success: false, message: 'Team not found' });
 
+    // Whitelist mutable fields (AUD-005)
     for (const field of ['teamName', 'collegeName', 'problemStatement', 'modePreference', 'githubRepositoryUrl', 'paymentReviewReason']) {
       if (field in req.body) team[field] = req.body[field];
     }
@@ -178,31 +236,70 @@ const updateTeam = async (req, res, next) => {
     if (!SAFE_TEXT_REGEX.test(String(team.teamName || '')) || !SAFE_TEXT_REGEX.test(String(team.collegeName || ''))) {
       return res.status(400).json({ success: false, message: 'Team details contain unsupported characters' });
     }
+
+    // Validate problem statement length
+    if (team.problemStatement && String(team.problemStatement).length > 120) {
+      return res.status(400).json({ success: false, message: 'Problem statement is too long (max 120 characters)' });
+    }
+
+    // Validate mode preference against allowed values
+    if (team.modePreference && !MODE_PREFERENCES.includes(team.modePreference)) {
+      return res.status(400).json({ success: false, message: 'Invalid mode preference' });
+    }
+
     if (team.githubRepositoryUrl && !GITHUB_REPOSITORY_REGEX.test(String(team.githubRepositoryUrl).trim())) {
       return res.status(400).json({ success: false, message: 'GitHub repository link must be a valid https://github.com/owner/repository URL' });
     }
     if (team.githubRepositoryUrl) team.githubRepositoryUrl = String(team.githubRepositoryUrl).trim().replace(/\/$/, '');
 
+    // Validate paymentReviewReason length
+    if (team.paymentReviewReason && String(team.paymentReviewReason).length > 300) {
+      return res.status(400).json({ success: false, message: 'Payment review reason is too long (max 300 characters)' });
+    }
+
+    // Validate leader if provided (AUD-005)
     if (req.body.leader && typeof req.body.leader === 'object') {
       for (const field of ['fullName', 'email', 'phone', 'department', 'year']) {
         if (field in req.body.leader) team.leader[field] = req.body.leader[field];
       }
+      validatePerson(team.leader, 'team leader');
+      // Normalize leader fields
+      team.leader.email = String(team.leader.email || '').trim().toLowerCase();
+      team.leader.phone = String(team.leader.phone || '').trim();
     }
 
+    // Validate and normalize members if provided (AUD-005)
     if (Array.isArray(req.body.members)) {
-      team.members = req.body.members.map((member, index) => ({
-        memberIndex: index + 2,
-        fullName: member.fullName,
-        email: String(member.email || '').trim().toLowerCase(),
-        phone: String(member.phone || '').trim(),
-        department: member.department,
-        year: member.year,
-      }));
+      const normalizedMembers = req.body.members.map((member, index) => {
+        const m = {
+          memberIndex: index + 2,
+          fullName: String(member.fullName || '').trim(),
+          email: String(member.email || '').trim().toLowerCase(),
+          phone: String(member.phone || '').trim(),
+          department: String(member.department || '').trim(),
+          year: String(member.year || '').trim(),
+        };
+        validatePerson(m, `member ${index + 2}`);
+        return m;
+      });
+
+      // Check for duplicate emails/phones across leader and all members (AUD-015)
+      const allEmails = [String(team.leader.email).toLowerCase(), ...normalizedMembers.map((m) => m.email)];
+      const allPhones = [String(team.leader.phone).trim(), ...normalizedMembers.map((m) => m.phone)];
+
+      if (new Set(allEmails).size !== allEmails.length) {
+        return res.status(400).json({ success: false, message: 'Duplicate email addresses found across team members' });
+      }
+      if (new Set(allPhones).size !== allPhones.length) {
+        return res.status(400).json({ success: false, message: 'Duplicate phone numbers found across team members' });
+      }
+
+      team.members = normalizedMembers;
       team.teamSize = 1 + team.members.length;
     }
 
-    if (team.teamSize < 3 || team.teamSize > 5) {
-      return res.status(400).json({ success: false, message: 'Team size must remain between 3 and 5 members' });
+    if (team.teamSize < SMACKATHON_CONFIG.teamSize.min || team.teamSize > SMACKATHON_CONFIG.teamSize.max) {
+      return res.status(400).json({ success: false, message: `Team size must remain between ${SMACKATHON_CONFIG.teamSize.min} and ${SMACKATHON_CONFIG.teamSize.max} members` });
     }
 
     await team.save();
@@ -217,6 +314,8 @@ const updateTeam = async (req, res, next) => {
 };
 
 const reviewPayment = async (req, res, next) => {
+  // Use a MongoDB transaction so Team + Registration are always consistent (AUD-006)
+  const session = await mongoose.startSession();
   try {
     const { decision, reason = '' } = req.body;
     if (!['VERIFIED', 'REJECTED'].includes(decision)) {
@@ -226,37 +325,64 @@ const reviewPayment = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Review reason is too long' });
     }
 
-    const team = await Team.findById(req.params.id);
-    if (!team) return res.status(404).json({ success: false, message: 'Team not found' });
-    const registration = await Registration.findOne({ teamId: team._id });
-    if (!registration) return res.status(404).json({ success: false, message: 'Registration not found' });
-
-    registration.paymentStatus = decision === 'VERIFIED' ? 'VERIFIED' : 'REJECTED';
-    registration.adminReview = {
-      reviewedBy: req.admin._id,
-      reviewedAt: new Date(),
-      decision,
-      reason: String(reason || '').trim(),
-    };
-
-    if (decision === 'VERIFIED') {
-      team.status = 'CONFIRMED';
-      team.paymentReviewReason = '';
-    } else {
-      team.status = 'PAYMENT_REJECTED';
-      team.paymentReviewReason = String(reason || 'Payment proof could not be verified').trim();
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid team ID format' });
     }
 
-    await Promise.all([team.save(), registration.save()]);
+    let resultMessage;
 
-    res.json({
-      success: true,
-      message: decision === 'VERIFIED'
+    await session.withTransaction(async () => {
+      const team = await Team.findById(req.params.id).session(session);
+      if (!team) {
+        const err = new Error('Team not found');
+        err.statusCode = 404;
+        throw err;
+      }
+
+      const registration = await Registration.findOne({ teamId: team._id }).session(session);
+      if (!registration) {
+        const err = new Error('Registration not found');
+        err.statusCode = 404;
+        throw err;
+      }
+
+      // Optimistic concurrency: only review if currently UNDER_REVIEW or re-reviewing REJECTED
+      if (registration.paymentStatus !== 'UNDER_REVIEW' && registration.paymentStatus !== 'REJECTED') {
+        const err = new Error(`Payment has already been ${registration.paymentStatus.toLowerCase()}. Refresh to see current state.`);
+        err.statusCode = 409;
+        throw err;
+      }
+
+      registration.paymentStatus = decision === 'VERIFIED' ? 'VERIFIED' : 'REJECTED';
+      registration.adminReview = {
+        reviewedBy: req.admin._id,
+        reviewedAt: new Date(),
+        decision,
+        reason: String(reason || '').trim(),
+      };
+
+      if (decision === 'VERIFIED') {
+        team.status = 'CONFIRMED';
+        team.paymentReviewReason = '';
+      } else {
+        team.status = 'PAYMENT_REJECTED';
+        team.paymentReviewReason = String(reason || 'Payment proof could not be verified').trim();
+      }
+
+      await team.save({ session });
+      await registration.save({ session });
+
+      resultMessage = decision === 'VERIFIED'
         ? 'Payment verified successfully. The team can check its status on the registration page.'
-        : 'Payment rejected successfully. The team can check its status on the registration page.',
+        : 'Payment rejected successfully. The team can check its status on the registration page.';
     });
+
+    res.json({ success: true, message: resultMessage });
   } catch (err) {
     next(err);
+  } finally {
+    await session.endSession();
   }
 };
 
@@ -315,6 +441,9 @@ const importShortlist = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Import batch is too large' });
     }
 
+    // Validate batch label length (AUD-008)
+    const batchLabel = String(req.body.batchLabel || '').trim().slice(0, MAX_BATCH_LABEL_LENGTH);
+
     const emails = entries.map(({ email }) => email);
     const invitationCodes = entries.map(({ invitationCode }) => invitationCode);
     const [existingEntries, conflictingCode, conflictingTeam] = await Promise.all([
@@ -340,7 +469,7 @@ const importShortlist = async (req, res, next) => {
             invitationCode,
             isActive: true,
             importedBy: req.admin._id,
-            importBatchLabel: String(req.body.batchLabel || '').trim(),
+            importBatchLabel: batchLabel,
           },
         },
         upsert: true,

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useScroll } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
@@ -56,6 +56,14 @@ export default function Hackathon() {
   useDocumentTitle(flagshipEvent.name);
   const event = flagshipEvent;
   const [selectedTrack, setSelectedTrack] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   /* ── Master scroll — 600vh sticky container ── */
   const containerRef = useRef(null);
@@ -72,7 +80,7 @@ export default function Hackathon() {
       ═══════════════════════════════════════ */}
       <section
         ref={containerRef}
-        style={{ height: '600vh', position: 'relative' }}
+        style={{ height: isMobile ? '350vh' : '600vh', position: 'relative' }}
       >
         <div style={{
           position: 'sticky',
