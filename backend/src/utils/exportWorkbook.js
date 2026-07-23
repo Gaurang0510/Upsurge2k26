@@ -22,6 +22,7 @@ const buildExcelHtml = (rows) => {
       <th>College</th>
       <th>Mode Preference</th>
       <th>Problem Statement</th>
+      <th>GitHub Repository</th>
       <th>UPI UTR</th>
       <th>Payment Screenshot URL</th>
       <th>Members</th>
@@ -48,6 +49,7 @@ const buildExcelHtml = (rows) => {
         <td>${escapeHtml(row.collegeName)}</td>
         <td>${escapeHtml(row.modePreference)}</td>
         <td>${escapeHtml(row.problemStatement)}</td>
+        <td>${escapeHtml(row.githubRepositoryUrl)}</td>
         <td>${escapeHtml(row.utr)}</td>
         <td>${escapeHtml(row.paymentScreenshotUrl)}</td>
         <td>${escapeHtml(row.members)}</td>
