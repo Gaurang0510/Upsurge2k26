@@ -14,7 +14,7 @@ function BloodSplatter({ className, style, progress, from = 0, to = 1, variant =
   const splatters = [
     // Variant 0 — large irregular impact splatter
     (
-      <svg viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+      <svg key="splat-0" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
         {/* Main impact body — irregular organic blob */}
         <path
           d="M150 40C168 38 195 48 210 72C225 96 228 118 218 138C232 132 248 140 252 158C256 176 244 192 228 196C236 208 234 228 222 240C210 252 192 254 180 246C184 268 178 288 164 296C150 304 132 300 122 288C112 300 94 306 80 298C66 290 60 272 64 254C48 262 30 256 22 242C14 228 18 210 32 200C20 194 12 178 16 162C20 146 36 136 52 138C44 120 48 98 62 82C76 66 98 58 116 64C112 50 122 42 150 40Z"
@@ -71,7 +71,7 @@ function BloodSplatter({ className, style, progress, from = 0, to = 1, variant =
     ),
     // Variant 1 — smeared impact with directional spread
     (
-      <svg viewBox="0 0 260 360" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+      <svg key="splat-1" viewBox="0 0 260 360" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
         <path
           d="M130 30C155 28 185 42 200 68C215 94 212 122 198 142C214 148 224 168 218 188C212 208 192 218 172 212C176 232 168 254 150 264C132 274 110 268 98 252C84 264 62 268 46 256C30 244 26 222 36 206C22 200 14 182 20 166C26 150 44 142 60 148C52 128 56 104 72 86C88 68 112 60 130 68C124 50 130 34 130 30Z"
           fill="url(#splat-grad-1)"
