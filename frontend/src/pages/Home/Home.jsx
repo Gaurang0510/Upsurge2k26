@@ -9,6 +9,7 @@ import SectionHeading from '../../components/common/SectionHeading.jsx';
 import RedactedText from '../../components/common/RedactedText.jsx';
 import ScrollFade, { ScrollStaggerContainer, ScrollStaggerItem } from '../../components/common/ScrollFade.jsx';
 import { flagshipEvent } from '../../data/events/index.js';
+import BloodEffects from '../../components/home/BloodEffects.jsx';
 import { Link } from 'react-router-dom';
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
 
   return (
     <>
+      <BloodEffects />
       <Hero />
 
       {/* Police Emergency Lightbar right below Hero */}

@@ -62,12 +62,14 @@ export default function Hero() {
             ◈ &nbsp; CSE Dept · YCCE Nagpur &nbsp; ◈
           </p>
 
-          {/* Main headline */}
-          <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-black uppercase tracking-wider leading-[0.9] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">
-            UPSURGE
-            <br />
-            <span className="text-evidence drop-shadow-[0_0_40px_rgba(193,18,31,0.8)]">2K26</span>
-          </h1>
+          {/* Main headline logo image */}
+          <div className="relative w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[420px] md:max-w-[480px] lg:max-w-[540px] xl:max-w-[640px] filter drop-shadow-[0_10px_25px_rgba(0,0,0,0.9)] drop-shadow-[0_0_20px_rgba(193,18,31,0.4)]">
+            <img
+              src="/images/logo/up-name.png"
+              alt="UPSURGE 2K26"
+              className="w-full h-auto object-contain select-none pointer-events-none"
+            />
+          </div>
 
           {/* Subheading tag */}
           <p className="font-mono text-xs sm:text-sm text-zinc-400 uppercase tracking-widest mt-5 max-w-md">
