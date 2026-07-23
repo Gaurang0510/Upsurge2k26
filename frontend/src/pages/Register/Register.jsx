@@ -9,6 +9,7 @@ import '../Hackathon/hackathon.css';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 const MAX_PAYMENT_SCREENSHOT_BYTES = 2 * 1024 * 1024;
 const PAYMENT_SCREENSHOT_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
+const REQUIRED_PERSON_FIELDS = ['fullName', 'email', 'phone', 'department', 'year'];
 
 const emptyMember = () => ({
   fullName: '',
@@ -188,16 +189,42 @@ export default function Register() {
     setRegistrationError('');
 
     try {
-      const validMembers = formData.members.filter((member) =>
-        Object.values(member).some((value) => String(value).trim() !== '')
+      const missingLeaderField = REQUIRED_PERSON_FIELDS.find(
+        (field) => !String(formData.leader[field] || '').trim()
+      );
+      if (missingLeaderField) {
+        throw new Error('All team leader details are required');
+      }
+
+      const memberRows = formData.members.map((member, index) => ({
+        member,
+        index,
+        hasAnyDetails: Object.values(member).some((value) => String(value).trim() !== ''),
+      }));
+      const missingRequiredMember = memberRows.slice(0, 2).find(({ member }) =>
+        REQUIRED_PERSON_FIELDS.some((field) => !String(member[field] || '').trim())
       );
 
-      if (validMembers.length < 2) {
-        throw new Error('At least two additional team members are required');
+      if (missingRequiredMember) {
+        throw new Error(`All details for member ${missingRequiredMember.index + 2} are required`);
       }
+
+      const incompleteOptionalMember = memberRows.slice(2).find(({ member, hasAnyDetails }) =>
+        hasAnyDetails && REQUIRED_PERSON_FIELDS.some((field) => !String(member[field] || '').trim())
+      );
+      if (incompleteOptionalMember) {
+        throw new Error(`Complete all details for member ${incompleteOptionalMember.index + 2} or leave the row empty`);
+      }
+
+      const validMembers = memberRows
+        .filter(({ hasAnyDetails }) => hasAnyDetails)
+        .map(({ member }) => member);
 
       if (!formData.paymentScreenshot) {
         throw new Error('Payment screenshot is required');
+      }
+      if (!String(formData.utr || '').trim()) {
+        throw new Error('UTR number is required');
       }
       if (!PAYMENT_SCREENSHOT_TYPES.has(formData.paymentScreenshot.type)) {
         throw new Error('Payment screenshot must be a PNG, JPG, or WEBP image');
@@ -456,6 +483,9 @@ export default function Register() {
                         onChange={(e) => setFormData((prev) => ({ ...prev, utr: e.target.value.toUpperCase() }))}
                         placeholder="Enter UTR number"
                         className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
+                        minLength={8}
+                        maxLength={32}
+                        pattern="[A-Za-z0-9-]{8,32}"
                         required
                       />
                       <input

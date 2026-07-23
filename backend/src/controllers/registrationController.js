@@ -71,7 +71,18 @@ const verifyInvitation = async (req, res, next) => {
     }
 
     const shortlistEntry = await ShortlistEntry.findOne({ email, invitationCode, isActive: true });
-    if (!shortlistEntry || shortlistEntry.registrationSubmittedAt) {
+    const existingTeam = shortlistEntry
+      ? await Team.findOne({ teamCode: invitationCode }).select('_id')
+      : null;
+    const existingRegistration = existingTeam
+      ? await Registration.findOne({ teamId: existingTeam._id }).select('paymentStatus')
+      : null;
+
+    if (
+      !shortlistEntry
+      || (!existingRegistration && shortlistEntry.registrationSubmittedAt)
+      || (existingRegistration && existingRegistration.paymentStatus !== 'REJECTED')
+    ) {
       return res.status(403).json({ success: false, message: 'This leader email and team code are not eligible for registration' });
     }
 
@@ -110,7 +121,18 @@ const submitRegistration = async (req, res, next) => {
     const invitationCode = String(verifiedInvitation.invitationCode).trim().toUpperCase();
 
     const shortlistEntry = await ShortlistEntry.findOne({ email: verifiedEmail, invitationCode, isActive: true });
-    if (!shortlistEntry || shortlistEntry.registrationSubmittedAt) {
+    const existingTeam = shortlistEntry
+      ? await Team.findOne({ teamCode: invitationCode })
+      : null;
+    const existingRegistration = existingTeam
+      ? await Registration.findOne({ teamId: existingTeam._id })
+      : null;
+
+    if (
+      !shortlistEntry
+      || (!existingRegistration && shortlistEntry.registrationSubmittedAt)
+      || (existingRegistration && existingRegistration.paymentStatus !== 'REJECTED')
+    ) {
       return res.status(403).json({ success: false, message: 'This team invitation is not eligible for registration' });
     }
 
@@ -160,10 +182,10 @@ const submitRegistration = async (req, res, next) => {
     }
 
     const [nameConflict, emailConflict, phoneConflict, utrConflict] = await Promise.all([
-      Team.findOne({ teamName: normalizedTeamName }),
-      Team.findOne({ 'leader.email': normalizedLeaderEmail }),
-      Team.findOne({ 'leader.phone': normalizedLeaderPhone }),
-      Registration.findOne({ 'paymentProof.utr': normalizedUtr }),
+      Team.findOne({ teamName: normalizedTeamName, ...(existingTeam ? { _id: { $ne: existingTeam._id } } : {}) }),
+      Team.findOne({ 'leader.email': normalizedLeaderEmail, ...(existingTeam ? { _id: { $ne: existingTeam._id } } : {}) }),
+      Team.findOne({ 'leader.phone': normalizedLeaderPhone, ...(existingTeam ? { _id: { $ne: existingTeam._id } } : {}) }),
+      Registration.findOne({ 'paymentProof.utr': normalizedUtr, ...(existingRegistration ? { _id: { $ne: existingRegistration._id } } : {}) }),
     ]);
 
     if (nameConflict) {
@@ -179,12 +201,12 @@ const submitRegistration = async (req, res, next) => {
       return res.status(409).json({ success: false, message: 'This UTR number is already registered' });
     }
 
-    let registrationCode = generateRegistrationCode('smackathon');
+    let registrationCode = existingRegistration?.registrationCode || generateRegistrationCode('smackathon');
 
-    if (await Team.exists({ teamCode: invitationCode })) {
+    if (!existingTeam && await Team.exists({ teamCode: invitationCode })) {
       return res.status(409).json({ success: false, message: 'This team code has already been used for registration' });
     }
-    while (await Registration.exists({ registrationCode })) registrationCode = generateRegistrationCode('smackathon');
+    while (!existingRegistration && await Registration.exists({ registrationCode })) registrationCode = generateRegistrationCode('smackathon');
 
     paymentUpload = await uploadPaymentScreenshot({
       dataUri: paymentScreenshotDataUri,
@@ -234,21 +256,39 @@ const submitRegistration = async (req, res, next) => {
 
     // Atlas supports transactions. If either document cannot be stored, both
     // database documents roll back and the uploaded Cloudinary asset is removed.
+    const previousScreenshotPublicId = existingRegistration?.paymentProof?.screenshotPublicId;
     const session = await mongoose.startSession();
     let team;
     let registration;
     try {
       await session.withTransaction(async () => {
-        [team] = await Team.create([teamData], { session });
-        [registration] = await Registration.create([{ ...registrationData, teamId: team._id }], { session });
-        await ShortlistEntry.updateOne(
-          { _id: shortlistEntry._id, registrationSubmittedAt: null },
-          { $set: { registrationSubmittedAt: new Date() } },
-          { session }
-        );
+        if (existingTeam && existingRegistration) {
+          team = await Team.findByIdAndUpdate(existingTeam._id, teamData, { new: true, session });
+          registration = await Registration.findByIdAndUpdate(
+            existingRegistration._id,
+            { ...registrationData, teamId: team._id, adminReview: {} },
+            { new: true, session }
+          );
+        } else {
+          [team] = await Team.create([teamData], { session });
+          [registration] = await Registration.create([{ ...registrationData, teamId: team._id }], { session });
+          await ShortlistEntry.updateOne(
+            { _id: shortlistEntry._id, registrationSubmittedAt: null },
+            { $set: { registrationSubmittedAt: new Date() } },
+            { session }
+          );
+        }
       });
     } finally {
       await session.endSession();
+    }
+
+    if (previousScreenshotPublicId && previousScreenshotPublicId !== paymentUpload.publicId) {
+      try {
+        await deletePaymentScreenshot(previousScreenshotPublicId);
+      } catch (cleanupError) {
+        console.error('Previous Cloudinary payment screenshot cleanup failed:', cleanupError.message);
+      }
     }
 
     res.status(201).json({
