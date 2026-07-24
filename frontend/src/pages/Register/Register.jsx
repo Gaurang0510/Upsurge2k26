@@ -4,7 +4,7 @@ import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import Aurora from '../../components/team/Aurora.jsx';
 import operationBreach from '../../data/events/operation-breach.js';
-import { Lock, ShieldAlert, Terminal, Users, User, CreditCard, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Lock, ShieldAlert, Terminal, Users, User, CreditCard } from 'lucide-react';
 import '../Hackathon/hackathon.css';
 
 // VITE_API_URL is baked into the production bundle by Vite.
@@ -500,7 +500,7 @@ export default function Register() {
                     <fieldset disabled={!accessToken || isSubmitting} className="space-y-8">
                       {/* Section A: Team Info */}
                       <div className="space-y-4">
-                        <h3 className="font-mono text-xs font-bold text-evidence uppercase tracking-widest">// TEAM PREFERENCES</h3>
+                        <h3 className="font-mono text-xs font-bold text-evidence uppercase tracking-widest">{"// TEAM PREFERENCES"}</h3>
                         <div className="grid gap-4 sm:grid-cols-2">
                           <div className="space-y-1">
                             <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Team Name</label>
@@ -849,7 +849,7 @@ export default function Register() {
                   </div>
 
                   <div className="border-t border-white/5 pt-3 space-y-2">
-                    <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest block font-bold">// UPLOAD PROCEDURES</span>
+                     <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest block font-bold">{"// UPLOAD PROCEDURES"}</span>
                     <ul className="space-y-1.5 text-[10px] text-steel font-mono">
                       {(paymentConfig?.instructions || []).map((item) => (
                         <li key={item} className="flex gap-2">

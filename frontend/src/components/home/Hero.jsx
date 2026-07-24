@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Spotlight } from '../ui/spotlight.tsx';
 import { SplineScene } from '../ui/splite.tsx';
-import { Shield, Terminal, Cpu } from 'lucide-react';
+import { Shield, Terminal } from 'lucide-react';
 
 export default function Hero() {
   return (
