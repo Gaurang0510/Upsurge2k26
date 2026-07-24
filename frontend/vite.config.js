@@ -21,6 +21,11 @@ export default defineConfig(({ mode, command }) => {
       port: 5173,
       open: true,
     },
+    // Railway runs `vite preview` without a desktop session. Explicitly
+    // disable browser launching there so it does not attempt `xdg-open`.
+    preview: {
+      open: false,
+    },
     build: {
       outDir: 'dist',
       sourcemap: false,
