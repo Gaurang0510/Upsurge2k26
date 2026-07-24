@@ -5,15 +5,8 @@ as a citywide crime investigation. Thirteen events, one flagship 24-hour
 hackathon ("Operation Breach"), and a design language built around case
 files, redacted documents, and hacker terminals.
 
-This repo is a **working demo / starter build** — routing, styling, data
-structure, and every page are wired up and functional. What's still
-missing on purpose: real photos/videos, real team member info, confirmed
-dates, prize amounts, and registration links (all marked `TBD` — see
-`docs/TASK_DIVISION.md`).
-
-> Built as a starting point for the 2K26 web team to extend. Nothing here
-> is final — reskin, restructure, or rip out anything that doesn't serve
-> the fest.
+This repository contains the public site, shortlisted-team payment
+registration flow, protected admin panel, and MongoDB-backed API.
 
 ---
 
@@ -24,18 +17,17 @@ dates, prize amounts, and registration links (all marked `TBD` — see
 | Framework  | React 18 (via Vite)                        |
 | Routing    | React Router v6                            |
 | Styling    | Tailwind CSS (custom theme, no UI kit)     |
-| Data       | Plain JS modules (no backend/CMS required) |
-| Deployment | Any static host — Vercel/Netlify recommended |
+| Data       | React content modules + MongoDB registration data |
+| Deployment | Railway (single Express service serving API and built frontend) |
 
-No backend is required to run this site — all content lives in
-`/src/data/` as JS files. If a registration backend or CMS is added later,
-that's a separate integration layer on top of this.
+The public programme content lives in `frontend/src/data/`; registration and
+administration are handled by the backend.
 
 ## Getting started
 
 ```bash
-npm install
-npm run dev       # starts the dev server at http://localhost:5173
+cd frontend && npm ci && npm run dev
+# In another terminal: cd backend && npm ci && npm run dev
 ```
 
 Other scripts:
@@ -50,10 +42,11 @@ npm run lint        # run ESLint
 
 ```
 upsurge-2k26/
-├── public/
+├── frontend/
+│   ├── public/
 │   ├── images/            # events/, sponsors/, team/, gallery/, logo/ — see public/images/README.md
 │   └── videos/            # hero/background video files — see public/videos/README.md
-├── src/
+│   ├── src/
 │   ├── assets/            # icons/SVGs used inline in components
 │   ├── components/
 │   │   ├── common/         # Navbar, Footer, SectionHeading, RedactedText, Logo
@@ -76,6 +69,10 @@ upsurge-2k26/
 │   ├── styles/index.css        # Tailwind entry + reusable component classes (.btn-primary, .file-card, etc.)
 │   ├── App.jsx
 │   └── main.jsx
+├── backend/
+│   ├── src/                 # Express API, models, middleware and utilities
+│   ├── admin-panel/         # protected admin UI served at /admin
+│   └── seed/                # database bootstrap commands
 ├── docs/
 │   ├── GIT_WORKFLOW.md         # branching model, PR flow, conflict avoidance
 │   ├── TASK_DIVISION.md        # what each of the 3 web team members owns
@@ -84,7 +81,8 @@ upsurge-2k26/
 │   ├── workflows/ci.yml        # lint + build check on every PR
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── CODEOWNERS
-└── tailwind.config.js          # the crime/cyber-crime design tokens live here
+├── railway.json                # Railway build, start, and health-check config
+└── frontend/tailwind.config.js # the crime/cyber-crime design tokens
 ```
 
 ## How to add or edit an event
@@ -124,10 +122,12 @@ The full token system — colors, fonts, animations — lives in
 
 ## Deployment
 
-Any static host works (Vercel, Netlify, GitHub Pages, Cloudflare Pages).
-For Vercel/Netlify: connect the repo, framework preset "Vite", build
-command `npm run build`, output directory `dist`. No environment
-variables are required for the current build.
+Deploy the repository root to Railway from GitHub. Railway uses
+`railway.json` to install the frontend and backend, build the SPA, and start
+the backend. The backend serves the SPA and API from one origin, so frontend
+requests automatically reach `/api/v1`. Configure the backend variables listed
+in `backend/.env.example` as Railway service variables; do not expose them to
+the frontend or commit them to Git.
 
 ## Team workflow
 

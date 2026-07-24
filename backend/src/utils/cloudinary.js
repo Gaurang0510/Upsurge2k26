@@ -41,6 +41,23 @@ const signUploadParams = (params, apiSecret) =>
     )
     .digest('hex');
 
+const getSignedPaymentScreenshotUrl = ({ publicId, format = 'webp' }) => {
+  const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_SECRET } = process.env;
+  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_SECRET || !publicId) {
+    throw createUploadError('Payment proof delivery is not configured', 500);
+  }
+
+  const normalizedFormat = String(format).replace(/[^a-z0-9]/gi, '').toLowerCase() || 'webp';
+  const toSign = `${publicId}.${normalizedFormat}`;
+  const signature = crypto
+    .createHash('sha1')
+    .update(`${toSign}${CLOUDINARY_API_SECRET}`)
+    .digest('base64url')
+    .slice(0, 8);
+
+  return `https://res.cloudinary.com/${encodeURIComponent(CLOUDINARY_CLOUD_NAME)}/image/authenticated/s--${signature}--/${publicId}.${normalizedFormat}`;
+};
+
 const uploadPaymentScreenshot = async ({ dataUri, filename }) => {
   const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
 
@@ -62,6 +79,11 @@ const uploadPaymentScreenshot = async ({ dataUri, filename }) => {
     throw createUploadError('Only PNG, JPG, JPEG, or WEBP payment screenshots are allowed');
   }
 
+  // Buffer.from is permissive and silently accepts malformed Base64. Reject
+  // malformed payloads before decoding so uploads cannot bypass validation.
+  if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(base64Payload)) {
+    throw createUploadError('Invalid payment screenshot encoding');
+  }
   const imageBuffer = Buffer.from(base64Payload, 'base64');
   if (!imageBuffer.length || !hasValidImageSignature(imageBuffer, mimeType.toLowerCase())) {
     throw createUploadError('Payment screenshot content does not match its image type');
@@ -84,6 +106,7 @@ const uploadPaymentScreenshot = async ({ dataUri, filename }) => {
     transformation: INCOMING_TRANSFORMATION,
     overwrite: 'true',
     unique_filename: 'false',
+    type: 'authenticated',
   };
   const form = new FormData();
   form.append('file', dataUri);
@@ -108,6 +131,7 @@ const uploadPaymentScreenshot = async ({ dataUri, filename }) => {
     assetId: payload.asset_id,
     bytes: payload.bytes,
     format: payload.format,
+    version: payload.version,
   };
 };
 
@@ -128,4 +152,4 @@ const deletePaymentScreenshot = async (publicId) => {
   });
 };
 
-module.exports = { uploadPaymentScreenshot, deletePaymentScreenshot };
+module.exports = { uploadPaymentScreenshot, deletePaymentScreenshot, getSignedPaymentScreenshotUrl };

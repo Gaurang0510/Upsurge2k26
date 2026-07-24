@@ -20,8 +20,7 @@ Express + MongoDB Atlas backend for the paid selected-team registration flow.
 - `GET /api/v1/events/smackathon-2k26`
 - `POST /api/v1/registrations/verify-invitation`
 - `POST /api/v1/registrations/submit`
-- `GET /api/v1/registrations/status?email=...`
-- `GET /api/v1/registrations/status?teamCode=...`
+- `GET /api/v1/registrations/status?email=...&teamCode=...`
 
 ## Main Admin APIs
 
@@ -51,7 +50,14 @@ Express + MongoDB Atlas backend for the paid selected-team registration flow.
 - `SMACKATHON_UPI_ID`
 - `SMACKATHON_PAYEE_NAME`
 - `SMACKATHON_QR_IMAGE_URL`
-- `FRONTEND_URL` optional
+- `FRONTEND_URL` optional comma-separated allow-list for a separately hosted frontend. When omitted on Railway, the service's `RAILWAY_PUBLIC_DOMAIN` is used.
+
+In production, `JWT_SECRET`, `REGISTRATION_JWT_SECRET`, MongoDB, Cloudinary,
+and UPI settings must be configured. Both JWT secrets must be different and at
+least 32 characters long. For backward-compatible local development only, the
+registration secret may be omitted and a scoped key is derived from
+`JWT_SECRET`. Store all production values in Railway service variables; never
+commit a real `.env` file.
 
 No email, SMS, Gmail, SMTP, or other notification service is used. Shortlist access, registration submission, payment review, and status tracking are handled manually through the database and admin/status pages.
 
@@ -68,3 +74,12 @@ Admin panel:
 ```text
 http://localhost:5000/admin
 ```
+
+## Railway deployment
+
+Deploy this repository as one Railway service from GitHub. Railway reads the
+root `railway.json`, installs each workspace, builds the Vite frontend, and
+starts Express. Express serves the built SPA and `/api/v1` from the same origin,
+so no frontend API URL is required. Set the variables from `.env.example` in
+the Railway service, attach a MongoDB deployment or provide Atlas `MONGO_URI`,
+then run `npm run create-admin --prefix backend` once with the same variables.

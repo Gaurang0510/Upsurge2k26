@@ -1,17 +1,18 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Eagerly import all page components to eliminate page chunk loading latency and remove black blank screens
-import Home from '../pages/Home/Home.jsx';
-import Events from '../pages/Events/Events.jsx';
-import EventDetail from '../pages/EventDetail/EventDetail.jsx';
-import Hackathon from '../pages/Hackathon/Hackathon.jsx';
-import Schedule from '../pages/Schedule/Schedule.jsx';
-import Team from '../pages/Team/Team.jsx';
-import Register from '../pages/Register/Register.jsx';
-import NotFound from '../pages/NotFound/NotFound.jsx';
+const Home = lazy(() => import('../pages/Home/Home.jsx'));
+const Events = lazy(() => import('../pages/Events/Events.jsx'));
+const EventDetail = lazy(() => import('../pages/EventDetail/EventDetail.jsx'));
+const Hackathon = lazy(() => import('../pages/Hackathon/Hackathon.jsx'));
+const Schedule = lazy(() => import('../pages/Schedule/Schedule.jsx'));
+const Team = lazy(() => import('../pages/Team/Team.jsx'));
+const Register = lazy(() => import('../pages/Register/Register.jsx'));
+const NotFound = lazy(() => import('../pages/NotFound/NotFound.jsx'));
 
 export default function AppRoutes() {
   return (
+    <Suspense fallback={<main className="min-h-screen bg-case-black" aria-busy="true" aria-label="Loading page" />}>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/events" element={<Events />} />
@@ -22,5 +23,6 @@ export default function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
   );
 }

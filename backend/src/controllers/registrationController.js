@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const Registration = require('../models/Registration');
 const ShortlistEntry = require('../models/ShortlistEntry');
@@ -12,7 +13,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
 const UTR_REGEX = /^[A-Z0-9-]{8,32}$/;
 const TEAM_CODE_REGEX = /^\d{6}$/;
-const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{2,120}$/;
+const SAFE_TEXT_REGEX = /^[\p{L}\p{N} .,&()\-_/]{2,120}$/u;
 const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/?$/;
 
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
@@ -21,11 +22,14 @@ const normalizeUtr = (utr) => String(utr || '').trim().toUpperCase();
 const normalizeGithubRepositoryUrl = (url) => String(url || '').trim().replace(/\/$/, '');
 
 /**
- * Use the dedicated REGISTRATION_JWT_SECRET for registration access tokens,
- * falling back to JWT_SECRET only if the dedicated secret is not set.
- * This ensures admin and registration tokens use separate signing secrets.
+ * Use the dedicated registration secret when configured. Local development
+ * remains compatible with older `.env` files by deriving a domain-separated
+ * signing key from JWT_SECRET instead of reusing the admin signing key.
  */
-const REGISTRATION_SECRET = () => process.env.REGISTRATION_JWT_SECRET || process.env.JWT_SECRET;
+const REGISTRATION_SECRET = () => {
+  if (process.env.REGISTRATION_JWT_SECRET) return process.env.REGISTRATION_JWT_SECRET;
+  return crypto.createHmac('sha256', process.env.JWT_SECRET).update('smackathon-registration-token').digest('hex');
+};
 
 const signAccessToken = ({ email, invitationCode }) =>
   jwt.sign({ email, invitationCode, purpose: 'smackathon-registration' }, REGISTRATION_SECRET(), {
@@ -56,6 +60,11 @@ const assertRequired = (payload, fields) => {
 };
 
 const validatePerson = (person, label) => {
+  if (!person || typeof person !== 'object' || Array.isArray(person)) {
+    const err = new Error(`${label} details are invalid`);
+    err.statusCode = 400;
+    throw err;
+  }
   assertRequired(person, ['fullName', 'email', 'phone', 'department', 'year']);
 
   if (!EMAIL_REGEX.test(person.email)) {
@@ -161,6 +170,9 @@ const submitRegistration = async (req, res, next) => {
       });
     }
 
+    if (members !== undefined && !Array.isArray(members)) {
+      return res.status(400).json({ success: false, message: 'Members must be provided as a list' });
+    }
     const memberList = Array.isArray(members) ? members.filter((member) => member && member.fullName) : [];
     memberList.forEach((member, index) => validatePerson(member, `member ${index + 2}`));
 
@@ -279,6 +291,7 @@ const submitRegistration = async (req, res, next) => {
       paymentProof: {
         screenshotUrl: paymentUpload.secureUrl,
         screenshotPublicId: paymentUpload.publicId,
+        screenshotFormat: paymentUpload.format,
         utr: normalizedUtr,
       },
     };

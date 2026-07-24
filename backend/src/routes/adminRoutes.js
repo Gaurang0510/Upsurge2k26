@@ -7,6 +7,7 @@ const {
   getStats,
   getTeams,
   getTeamById,
+  getPaymentProof,
   updateTeam,
   reviewPayment,
   exportTeams,
@@ -25,6 +26,7 @@ router.get('/me', me);
 router.get('/stats', getStats);
 router.get('/teams', getTeams);
 router.get('/teams/:id', getTeamById);
+router.get('/teams/:id/payment-proof', getPaymentProof);
 router.get('/shortlist', getShortlist);
 
 // Mutation routes — ADMIN only (AUD-003 fix)
