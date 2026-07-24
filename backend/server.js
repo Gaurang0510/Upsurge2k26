@@ -175,14 +175,6 @@ const statusLimiter = rateLimit({
   message: { success: false, message: 'Too many status checks. Please try again later.' },
 });
 
-const submitLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: 'Too many submission attempts. Please try again later.' },
-});
-
 // ---- Standard JSON body parsing ----
 // A 2 MB image becomes roughly 2.7 MB after base64 encoding.
 app.use(express.json({ limit: '3mb' }));
@@ -192,7 +184,6 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use('/api/v1/events', publicLimiter, eventRoutes);
 app.use('/api/v1/registrations/verify-invitation', invitationLimiter);
 app.use('/api/v1/registrations/status', statusLimiter);
-app.use('/api/v1/registrations/submit', submitLimiter);
 app.use('/api/v1/registrations', publicLimiter, registrationRoutes);
 app.use('/api/v1/admin/login', authLimiter);
 app.use('/api/v1/admin', adminRoutes);

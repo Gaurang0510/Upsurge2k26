@@ -1,19 +1,9 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Spotlight } from '../ui/spotlight.tsx';
 import { SplineScene } from '../ui/splite.tsx';
 import { Shield, Terminal } from 'lucide-react';
 
 export default function Hero() {
-  const [loadSpline, setLoadSpline] = useState(false);
-
-  useEffect(() => {
-    // Delay Spline loading to prevent main-thread blocking during initial page load
-    const timer = setTimeout(() => {
-      setLoadSpline(true);
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, []);
   return (
     <section className="relative w-full min-h-[560px] h-[85vh] sm:aspect-auto sm:h-[80vh] lg:h-[calc(100vh-64px)] sm:min-h-[620px] lg:min-h-[720px] max-h-[1050px] overflow-hidden bg-case-black">
       
@@ -22,8 +12,6 @@ export default function Hero() {
         <img
           src="/images/hero-coffin.png"
           alt="Cyber Crime Investigation Scene"
-          fetchPriority="high"
-          loading="eager"
           className="w-full h-full object-cover object-center opacity-70 mix-blend-luminosity filter brightness-90 contrast-125 scale-105 transform transition-transform duration-1000 ease-out"
         />
         {/* Dark Vignette Overlay for Crisp Typography Contrast */}
@@ -72,8 +60,6 @@ export default function Hero() {
             <img
               src="/images/logo/up-name.png"
               alt="UPSURGE 2K26"
-              fetchPriority="high"
-              loading="eager"
               className="w-full h-auto object-contain select-none pointer-events-none"
             />
           </div>
@@ -113,16 +99,10 @@ export default function Hero() {
 
             {/* Spline Canvas component */}
             <div className="w-full h-full p-2 z-10 relative">
-              {loadSpline ? (
-                <SplineScene
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="w-full h-full"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-evidence/50 font-mono text-xs uppercase tracking-widest animate-pulse">
-                  Initializing 3D Environment...
-                </div>
-              )}
+              <SplineScene
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
             </div>
 
             {/* Status HUD Overlays using Lucide Icons */}
