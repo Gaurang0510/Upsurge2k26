@@ -6,9 +6,8 @@ import Aurora from '../../components/team/Aurora.jsx';
 import operationBreach from '../../data/events/operation-breach.js';
 import '../Hackathon/hackathon.css';
 
-// In production Express serves this SPA, so relative API URLs always target
-// the Railway service. Local development uses Vite's /api proxy.
-const API_BASE_URL = '';
+// VITE_API_URL is baked into the production bundle by Vite.
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 const MAX_PAYMENT_SCREENSHOT_BYTES = 2 * 1024 * 1024;
 const PAYMENT_SCREENSHOT_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
 const REQUIRED_PERSON_FIELDS = ['fullName', 'email', 'phone', 'department', 'year'];

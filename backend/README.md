@@ -50,7 +50,7 @@ Express + MongoDB Atlas backend for the paid selected-team registration flow.
 - `SMACKATHON_UPI_ID`
 - `SMACKATHON_PAYEE_NAME`
 - `SMACKATHON_QR_IMAGE_URL`
-- `FRONTEND_URL` optional comma-separated allow-list for a separately hosted frontend. When omitted on Railway, the service's `RAILWAY_PUBLIC_DOMAIN` is used.
+- `FRONTEND_URL` comma-separated allow-list for browser origins. In production include both the Railway frontend URL and the final Hostinger custom domain.
 
 In production, `JWT_SECRET`, `REGISTRATION_JWT_SECRET`, MongoDB, Cloudinary,
 and UPI settings must be configured. Both JWT secrets must be different and at
@@ -77,9 +77,8 @@ http://localhost:5000/admin
 
 ## Railway deployment
 
-Deploy this repository as one Railway service from GitHub. Railway reads the
-root `railway.json`, installs each workspace, builds the Vite frontend, and
-starts Express. Express serves the built SPA and `/api/v1` from the same origin,
-so no frontend API URL is required. Set the variables from `.env.example` in
-the Railway service, attach a MongoDB deployment or provide Atlas `MONGO_URI`,
-then run `npm run create-admin --prefix backend` once with the same variables.
+Deploy this directory as its own Railway service with Root Directory `backend`.
+Railway runs `npm ci` and `npm start`; configure `/health` as its healthcheck.
+Set `FRONTEND_URL` to the deployed frontend origins, provide Atlas `MONGO_URI`,
+and set the variables from `.env.example`. To create the first admin, run
+`npm run create-admin` from this directory with the same environment variables.
