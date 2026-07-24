@@ -13,6 +13,7 @@ const {
   exportTeams,
   importShortlist,
   getShortlist,
+  removeShortlistEntry,
 } = require('../controllers/adminController');
 
 // Public (within admin namespace)
@@ -34,5 +35,6 @@ router.patch('/teams/:id', requireRole('ADMIN'), updateTeam);
 router.patch('/teams/:id/review-payment', requireRole('ADMIN'), reviewPayment);
 router.get('/export', requireRole('ADMIN'), exportTeams);
 router.post('/shortlist/import', requireRole('ADMIN'), importShortlist);
+router.delete('/shortlist/:email', requireRole('ADMIN'), removeShortlistEntry);
 
 module.exports = router;
