@@ -4,11 +4,18 @@ const Admin = require('../src/models/Admin');
 
 (async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME || 'smackathon_2k26' });
+    const username = String(process.env.ADMIN_USERNAME || '').trim();
+    const password = String(process.env.ADMIN_PASSWORD || '');
+    const email = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
 
-    const username = process.env.ADMIN_USERNAME || 'admin';
-    const password = process.env.ADMIN_PASSWORD || 'ChangeMe123!';
-    const email = process.env.ADMIN_EMAIL || '';
+    if (!username || username.length > 80 || !password || password.length < 12) {
+      throw new Error('ADMIN_USERNAME and an ADMIN_PASSWORD of at least 12 characters are required');
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error('ADMIN_EMAIL must be a valid email address when provided');
+    }
+
+    await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME || 'smackathon_2k26' });
 
     const existing = await Admin.findOne({ username });
     if (existing) {
@@ -17,20 +24,14 @@ const Admin = require('../src/models/Admin');
       existing.role = 'ADMIN';
       existing.passwordChangedAt = new Date();
       await existing.save();
-      console.log(`✅ Admin '${username}' already existed. Password reset from current .env value.`);
-      console.log(`   Username: ${username}`);
-      console.log(`   Password: ${password}`);
-      console.log(`   ⚠️  All existing admin tokens have been invalidated.`);
+      console.log(`✅ Admin '${username}' password reset and existing tokens invalidated.`);
       process.exit(0);
     }
 
     const passwordHash = await Admin.hashPassword(password);
     await Admin.create({ username, email, passwordHash, role: 'ADMIN', passwordChangedAt: new Date() });
 
-    console.log(`✅ Admin account created.`);
-    console.log(`   Username: ${username}`);
-    console.log(`   Password: ${password}`);
-    console.log(`   ⚠️  Change this password after first login.`);
+    console.log(`✅ Admin account '${username}' created.`);
     process.exit(0);
   } catch (err) {
     console.error('❌ Failed to create admin:', err);

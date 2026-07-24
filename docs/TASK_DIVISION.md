@@ -22,7 +22,7 @@ restructure.
   Schedule, Team, 404) — assembling components built by Member 2 with data
   from Member 3.
 - Own `AppRoutes.jsx` — adding new routes when a new page is needed.
-- Set up and maintain the deployment (Vercel/Netlify project, custom
+- Set up and maintain the Railway deployment (GitHub Auto Deploy, custom
   domain, environment config).
 - Run point on the `main` branch — the only person who merges
   `develop → main` for a release (see `GIT_WORKFLOW.md`).

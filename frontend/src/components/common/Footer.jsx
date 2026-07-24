@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from 'react';
 import { siteConfig } from '../../data/site.js';
 
 const YT_VIDEO_ID = 'R8lHaEZYpCU';
-const YT_API_KEY  = 'AIzaSyCWfpMimvsiu7bgT3c2u11fWhI4XSJXvCs';
 
 /* ─── tiny animated cursor for the terminal ─── */
 function Cursor() {
@@ -82,7 +81,7 @@ export default function Footer() {
             border: 'none',
             pointerEvents: 'none',
           }}
-          src={`https://www.youtube.com/embed/${YT_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${YT_VIDEO_ID}&controls=0&showinfo=0&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&modestbranding=1&key=${YT_API_KEY}`}
+          src={`https://www.youtube-nocookie.com/embed/${YT_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${YT_VIDEO_ID}&controls=0&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&modestbranding=1`}
           allow="autoplay; encrypted-media"
           allowFullScreen
           title="Cyber Background"

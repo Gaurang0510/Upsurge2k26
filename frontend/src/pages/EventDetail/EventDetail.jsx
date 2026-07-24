@@ -82,23 +82,14 @@ export default function EventDetail() {
       )}
 
       <ScrollFade direction="up" className="mt-12 flex flex-wrap items-center gap-4 border-t border-white/10 pt-8">
-        {event.registrationLink === '#' || event.registrationLink.startsWith('/') ? (
+        {event.slug === 'operation-breach' ? (
           <Link
-            to={event.registrationLink === '#' ? `/register?event=${event.slug}` : event.registrationLink}
+            to="/register"
             className="btn-primary"
           >
             Register Now
           </Link>
-        ) : (
-          <a
-            href={event.registrationLink}
-            className="btn-primary"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Register Now
-          </a>
-        )}
+        ) : <span className="font-mono text-xs uppercase tracking-widest text-steel">Registration details available from the event organisers.</span>}
         <div className="font-mono text-xs uppercase tracking-widest text-steel">
           Venue: {event.venue} · Date: {event.date}
         </div>

@@ -6,7 +6,9 @@ import Aurora from '../../components/team/Aurora.jsx';
 import operationBreach from '../../data/events/operation-breach.js';
 import '../Hackathon/hackathon.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+// In production Express serves this SPA, so relative API URLs always target
+// the Railway service. Local development uses Vite's /api proxy.
+const API_BASE_URL = '';
 const MAX_PAYMENT_SCREENSHOT_BYTES = 2 * 1024 * 1024;
 const PAYMENT_SCREENSHOT_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
 const REQUIRED_PERSON_FIELDS = ['fullName', 'email', 'phone', 'department', 'year'];
@@ -595,7 +597,7 @@ export default function Register() {
                 type="text"
                 value={statusLookup.teamCode}
                 onChange={(e) => setStatusLookup((prev) => ({ ...prev, teamCode: e.target.value.toUpperCase() }))}
-                placeholder="Or team code"
+                placeholder="Six-digit team code"
                 className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
               />
               {statusError && <div className="text-xs font-mono text-red-300">{statusError}</div>}

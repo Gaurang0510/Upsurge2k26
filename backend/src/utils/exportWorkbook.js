@@ -42,7 +42,6 @@ const buildExcelHtml = (rows) => {
       <th>Problem Statement</th>
       <th>GitHub Repository</th>
       <th>UPI UTR</th>
-      <th>Payment Screenshot URL</th>
       <th>Members</th>
       <th>Created At</th>
       <th>Updated At</th>
@@ -69,7 +68,6 @@ const buildExcelHtml = (rows) => {
         <td>${escapeCellValue(row.problemStatement)}</td>
         <td>${escapeCellValue(row.githubRepositoryUrl)}</td>
         <td>${escapeCellValue(row.utr)}</td>
-        <td>${escapeCellValue(row.paymentScreenshotUrl)}</td>
         <td>${escapeCellValue(row.members)}</td>
         <td>${escapeCellValue(row.createdAt)}</td>
         <td>${escapeCellValue(row.updatedAt)}</td>

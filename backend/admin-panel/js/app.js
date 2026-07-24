@@ -186,11 +186,14 @@ const openTeamDetail = async (teamId) => {
       <div><strong>Review Reason:</strong> ${escapeHtml(team.paymentReviewReason || team.registration?.adminReview?.reason || '—')}</div>
     `;
 
-    document.getElementById('proofCard').innerHTML = `
-      <div class="mono">Payment proof screenshot</div>
-      <div class="small dim">Cloudinary URL: <a href="${escapeHtml(team.registration?.paymentProof?.screenshotUrl || '#')}" target="_blank" rel="noopener noreferrer">Open original</a></div>
-      ${team.registration?.paymentProof?.screenshotUrl ? `<img src="${escapeHtml(team.registration.paymentProof.screenshotUrl)}" alt="Payment proof" />` : '<div class="small dim">No screenshot uploaded</div>'}
-    `;
+    document.getElementById('proofCard').innerHTML = '<div class="mono">Payment proof screenshot</div><div class="small dim">Loading protected proof…</div>';
+    try {
+      const proof = await apiFetch(`/admin/teams/${teamId}/payment-proof`);
+      const safeUrl = escapeHtml(proof.url);
+      document.getElementById('proofCard').innerHTML = `<div class="mono">Payment proof screenshot</div><div class="small dim"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer">Open protected proof</a></div><img src="${safeUrl}" alt="Payment proof" />`;
+    } catch (error) {
+      document.getElementById('proofCard').innerHTML = `<div class="mono">Payment proof screenshot</div><div class="small dim">${escapeHtml(error.message)}</div>`;
+    }
 
     document.getElementById('reviewReason').value = team.paymentReviewReason || team.registration?.adminReview?.reason || '';
     document.getElementById('teamNameInput').value = team.teamName || '';

@@ -153,12 +153,13 @@ export default function Events() {
                   <span className="group-hover/link:translate-x-1 transition-transform">→</span>
                 </Link>
 
-                <Link
-                  to={event.registrationLink || `/register?event=${event.slug}`}
-                  className="btn-primary text-xs py-3 px-7 font-bold uppercase tracking-widest shadow-lg shadow-red-950/50"
-                >
-                  REGISTER NOW
-                </Link>
+                {event.slug === 'operation-breach' ? (
+                  <Link to="/register" className="btn-primary text-xs py-3 px-7 font-bold uppercase tracking-widest shadow-lg shadow-red-950/50">
+                    REGISTER NOW
+                  </Link>
+                ) : (
+                  <span className="text-xs font-mono uppercase tracking-widest text-steel">See dossier for registration</span>
+                )}
               </div>
             </ScrollStackItem>
           ))}

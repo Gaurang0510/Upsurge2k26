@@ -5,16 +5,23 @@ const Admin = require('../models/Admin');
 const Registration = require('../models/Registration');
 const ShortlistEntry = require('../models/ShortlistEntry');
 const Team = require('../models/Team');
-const { SMACKATHON_CONFIG, MODE_PREFERENCES } = require('../config/smackathon');
+const { SMACKATHON_CONFIG, MODE_PREFERENCES, TEAM_STATUSES, PAYMENT_STATUSES } = require('../config/smackathon');
 const { buildExcelHtml } = require('../utils/exportWorkbook');
+const { getSignedPaymentScreenshotUrl } = require('../utils/cloudinary');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
 const TEAM_CODE_REGEX = /^\d{6}$/;
-const SAFE_TEXT_REGEX = /^[a-zA-Z0-9 .,&()\-_/]{0,160}$/;
+const SAFE_TEXT_REGEX = /^[\p{L}\p{N} .,&()\-_/]{0,160}$/u;
 const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/?$/;
 const MAX_SEARCH_LENGTH = 100;
 const MAX_BATCH_LABEL_LENGTH = 120;
+
+const hidePaymentProofUrl = (registration) => {
+  if (!registration?.paymentProof) return registration;
+  const { screenshotUrl: _screenshotUrl, ...paymentProof } = registration.paymentProof;
+  return { ...registration, paymentProof };
+};
 
 /**
  * Escape regex metacharacters to prevent ReDoS (AUD-008).
@@ -57,6 +64,11 @@ const parseShortlistEntries = (value) => {
  * Validate a person (leader or member) for admin edits (AUD-005).
  */
 const validatePerson = (person, label) => {
+  if (!person || typeof person !== 'object' || Array.isArray(person)) {
+    const err = new Error(`${label} details are invalid`);
+    err.statusCode = 400;
+    throw err;
+  }
   if (!person.fullName || String(person.fullName).trim().length < 2) {
     const err = new Error(`${label} must have a valid full name`);
     err.statusCode = 400;
@@ -149,7 +161,12 @@ const getTeams = async (req, res, next) => {
     const { status, paymentStatus, search, page = 1, limit = 25 } = req.query;
     const teamFilter = {};
 
-    if (status) teamFilter.status = status;
+    if (status) {
+      if (!TEAM_STATUSES.includes(status)) {
+        return res.status(400).json({ success: false, message: 'Invalid team status filter' });
+      }
+      teamFilter.status = status;
+    }
 
     // Escape regex metacharacters and cap search length (AUD-008)
     if (search) {
@@ -168,6 +185,9 @@ const getTeams = async (req, res, next) => {
     const skip = (pageNum - 1) * limitNum;
 
     if (paymentStatus) {
+      if (!PAYMENT_STATUSES.includes(paymentStatus)) {
+        return res.status(400).json({ success: false, message: 'Invalid payment status filter' });
+      }
       const matchingRegistrations = await Registration.find({ paymentStatus }).select('teamId').lean();
       teamFilter._id = { $in: matchingRegistrations.map((registration) => registration.teamId) };
     }
@@ -183,7 +203,10 @@ const getTeams = async (req, res, next) => {
       registrations.map((registration) => [String(registration.teamId), registration])
     );
 
-    const mergedTeams = teams.map((team) => ({ ...team, registration: registrationByTeam[String(team._id)] || null }));
+    const mergedTeams = teams.map((team) => ({
+      ...team,
+      registration: hidePaymentProofUrl(registrationByTeam[String(team._id)] || null),
+    }));
 
     res.json({
       success: true,
@@ -212,7 +235,31 @@ const getTeamById = async (req, res, next) => {
       .populate('adminReview.reviewedBy', 'username')
       .lean();
 
-    res.json({ success: true, team: { ...team, registration } });
+    res.json({ success: true, team: { ...team, registration: hidePaymentProofUrl(registration) } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getPaymentProof = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid team ID format' });
+    }
+    const registration = await Registration.findOne({ teamId: req.params.id })
+      .select('paymentProof.screenshotPublicId paymentProof.screenshotFormat')
+      .lean();
+    if (!registration?.paymentProof?.screenshotPublicId) {
+      return res.status(404).json({ success: false, message: 'Payment proof not found' });
+    }
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.json({
+      success: true,
+      url: getSignedPaymentScreenshotUrl({
+        publicId: registration.paymentProof.screenshotPublicId,
+        format: registration.paymentProof.screenshotFormat,
+      }),
+    });
   } catch (err) {
     next(err);
   }
@@ -413,7 +460,6 @@ const exportTeams = async (req, res, next) => {
         problemStatement: team.problemStatement,
         githubRepositoryUrl: team.githubRepositoryUrl,
         utr: registration?.paymentProof?.utr || '',
-        paymentScreenshotUrl: registration?.paymentProof?.screenshotUrl || '',
         members: (team.members || [])
           .map((member) => `${member.fullName} | ${member.email} | ${member.phone} | ${member.department} | ${member.year}`)
           .join(' || '),
@@ -509,6 +555,7 @@ module.exports = {
   getStats,
   getTeams,
   getTeamById,
+  getPaymentProof,
   updateTeam,
   reviewPayment,
   exportTeams,

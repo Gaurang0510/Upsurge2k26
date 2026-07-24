@@ -15,6 +15,7 @@ const paymentProofSchema = new mongoose.Schema(
   {
     screenshotUrl: { type: String, required: true, trim: true, maxlength: 500 },
     screenshotPublicId: { type: String, required: true, trim: true, maxlength: 200 },
+    screenshotFormat: { type: String, required: true, trim: true, lowercase: true, maxlength: 10, default: 'webp' },
     utr: { type: String, required: true, trim: true, uppercase: true, maxlength: 32 },
     uploadedAt: { type: Date, default: Date.now },
   },

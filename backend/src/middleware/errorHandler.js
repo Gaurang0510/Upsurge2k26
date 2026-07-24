@@ -11,6 +11,13 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const errorHandler = (err, req, res, _next) => {
   const correlationId = req.correlationId || 'unknown';
 
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ success: false, message: 'Request body is too large' });
+  }
+  if (err instanceof SyntaxError && 'body' in err) {
+    return res.status(400).json({ success: false, message: 'Malformed JSON request body' });
+  }
+
   // Always log the full error server-side
   console.error(`🔥 [${correlationId}] Error:`, err.message);
   if (!IS_PRODUCTION) {

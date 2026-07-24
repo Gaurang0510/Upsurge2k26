@@ -17,7 +17,13 @@ const adminRoutes = require('./src/routes/adminRoutes');
 // ---- Startup validation (AUD-001, AUD-011, AUD-020) ----
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
-const REQUIRED_SECRETS = ['JWT_SECRET', 'REGISTRATION_JWT_SECRET', 'MONGO_URI'];
+const REQUIRED_SECRETS = ['JWT_SECRET', 'MONGO_URI'];
+const REQUIRED_PAYMENT_SETTINGS = [
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
+  'SMACKATHON_UPI_ID',
+];
 const PLACEHOLDER_VALUES = new Set([
   'replace-with-long-random-secret',
   'your-secret-here',
@@ -26,24 +32,48 @@ const PLACEHOLDER_VALUES = new Set([
   '',
 ]);
 
-for (const key of REQUIRED_SECRETS) {
-  const value = (process.env[key] || '').trim();
-  if (!value || PLACEHOLDER_VALUES.has(value.toLowerCase())) {
-    console.error(`❌ Missing or placeholder value for required env var: ${key}`);
-    process.exit(1);
+const validateEnvironment = () => {
+  for (const key of REQUIRED_SECRETS) {
+    const value = (process.env[key] || '').trim();
+    if (!value || PLACEHOLDER_VALUES.has(value.toLowerCase())) {
+      throw new Error(`Missing or placeholder value for required env var: ${key}`);
+    }
   }
-}
 
-if (IS_PRODUCTION) {
-  const frontendUrl = (process.env.FRONTEND_URL || '').trim();
-  if (!frontendUrl) {
-    console.error('❌ FRONTEND_URL must be set in production to restrict CORS origins');
-    process.exit(1);
+  if (process.env.JWT_SECRET.trim().length < 32) {
+    throw new Error('JWT_SECRET must be at least 32 characters long');
   }
-}
+
+  const registrationSecret = String(process.env.REGISTRATION_JWT_SECRET || '').trim();
+  if (registrationSecret) {
+    if (registrationSecret.length < 32) {
+      throw new Error('REGISTRATION_JWT_SECRET must be at least 32 characters long');
+    }
+    if (process.env.JWT_SECRET === registrationSecret) {
+      throw new Error('JWT_SECRET and REGISTRATION_JWT_SECRET must be different values');
+    }
+  } else if (IS_PRODUCTION) {
+    throw new Error('REGISTRATION_JWT_SECRET must be set in production');
+  }
+
+  if (IS_PRODUCTION) {
+    for (const key of REQUIRED_PAYMENT_SETTINGS) {
+      const value = String(process.env[key] || '').trim();
+      if (!value || PLACEHOLDER_VALUES.has(value.toLowerCase()) || value.startsWith('your-')) {
+        throw new Error(`Missing or placeholder value for required env var: ${key}`);
+      }
+    }
+  }
+};
 
 const app = express();
-const configuredOrigins = String(process.env.FRONTEND_URL || '')
+app.disable('x-powered-by');
+// Railway terminates TLS before forwarding traffic to this process. Trusting
+// exactly one proxy makes secure cookies and client IP rate limits reliable.
+if (IS_PRODUCTION) app.set('trust proxy', 1);
+const configuredOrigins = String(
+  process.env.FRONTEND_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : '')
+)
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -57,9 +87,10 @@ app.use(
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
-            connectSrc: ["'self'", ...configuredOrigins],
+            imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com', 'https://i.ytimg.com'],
+            connectSrc: ["'self'", 'https://prod.spline.design', ...configuredOrigins],
             fontSrc: ["'self'"],
+            frameSrc: ['https://www.youtube-nocookie.com'],
             objectSrc: ["'none'"],
             frameAncestors: ["'none'"],
           },
@@ -97,7 +128,7 @@ app.use(
 
       return callback(new Error(`CORS blocked for origin: ${origin}`));
     },
-    credentials: true,
+    credentials: false,
   })
 );
 
@@ -158,6 +189,17 @@ app.use('/api/v1/admin', adminRoutes);
 // ---- Static Admin Panel (served at /admin) ----
 app.use('/admin', express.static(path.join(__dirname, 'admin-panel')));
 
+// The Railway service builds the Vite application during deployment and this
+// server owns the same-origin SPA. This eliminates CORS/API-host drift.
+const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
+if (IS_PRODUCTION) {
+  app.use(express.static(frontendDist, {
+    maxAge: '1y',
+    immutable: true,
+    index: false,
+  }));
+}
+
 // ---- Health check ----
 app.get('/', (req, res) => {
   res.json({
@@ -166,6 +208,12 @@ app.get('/', (req, res) => {
     adminPanel: '/admin',
     docs: '/api/v1',
   });
+});
+
+app.get('/health', (_req, res) => {
+  const mongoose = require('mongoose');
+  const ready = mongoose.connection.readyState === 1;
+  res.status(ready ? 200 : 503).json({ success: ready, status: ready ? 'ok' : 'database_unavailable' });
 });
 
 app.get('/api/v1', (req, res) => {
@@ -190,6 +238,13 @@ app.get('/api/v1', (req, res) => {
   });
 });
 
+if (IS_PRODUCTION) {
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/admin')) return next();
+    return res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
+
 // ---- 404 + error handlers ----
 app.use(notFound);
 app.use(errorHandler);
@@ -198,6 +253,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
+  validateEnvironment();
   await connectDB();
 
   const server = app.listen(PORT, () => {
@@ -228,7 +284,11 @@ const startServer = async () => {
   process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 };
 
-startServer().catch((err) => {
-  console.error('❌ Server startup failed:', err.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  startServer().catch((err) => {
+    console.error('❌ Server startup failed:', err.message);
+    process.exit(1);
+  });
+}
+
+module.exports = { app, startServer, validateEnvironment };

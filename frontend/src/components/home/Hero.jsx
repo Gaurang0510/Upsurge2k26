@@ -1,19 +1,10 @@
 import { motion } from 'framer-motion';
-import { SplineScene } from '../ui/splite.jsx';
 import { Spotlight } from '../ui/spotlight.jsx';
-import CCTVCamera from './CCTVCamera.jsx';
 
 export default function Hero() {
   return (
     <section className="relative w-full min-h-[560px] h-[85vh] sm:aspect-auto sm:h-[80vh] lg:h-[calc(100vh-64px)] sm:min-h-[620px] lg:min-h-[720px] max-h-[1050px] overflow-hidden bg-case-black">
       
-      {/* ── PINNED 3D SURVEILLANCE CCTV CAMERA (FLIPPED BASE DIRECTION OPPOSITE TO 0.8) ── */}
-      <CCTVCamera
-        className="fixed -top-12 -left-12 sm:-top-16 sm:-left-16 lg:-top-20 lg:-left-20 z-50"
-        baseRotationY={-2.34}
-        sweepSpeed={1.0}
-      />
-
       {/* ── 1. CINEMATIC UNREAL ENGINE 5 COFFIN BACKDROP IMAGE ── */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <img
@@ -47,7 +38,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* ── 6. MAIN LAYOUT: TEXT LEFT, SPLINE RIGHT ── */}
+      {/* ── 6. Main layout ── */}
       <div className="relative z-20 flex h-full w-full">
 
         {/* Left — text content */}
@@ -93,17 +84,15 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Right — Interactive Spline 3D Scene */}
+        {/* Decorative panel replaces the remote interactive scene: it avoids a
+            multi-megabyte third-party runtime and remains usable offline. */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="hidden lg:flex lg:w-1/2 h-full items-center justify-center relative z-20"
         >
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full"
-          />
+          <div className="h-[32rem] w-[32rem] rounded-full border border-evidence/30 bg-[radial-gradient(circle,rgba(193,18,31,0.22),transparent_62%)] blur-[1px]" aria-hidden="true" />
         </motion.div>
       </div>
 
