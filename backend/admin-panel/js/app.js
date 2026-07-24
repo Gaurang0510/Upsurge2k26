@@ -281,12 +281,28 @@ const loadShortlist = async () => {
           <td>${escapeHtml(entry.email)}</td>
           <td class="mono">${escapeHtml(entry.invitationCode || '—')}</td>
           <td>${entry.registrationSubmittedAt ? '<span class="badge badge-VERIFIED">USED</span>' : '<span class="badge badge-UNDER_REVIEW">AVAILABLE</span>'}</td>
-          <td>${entry.registrationSubmittedAt ? '<span class="badge badge-VERIFIED">USED</span>' : '<span class="badge badge-UNDER_REVIEW">AVAILABLE</span>'}</td>
+          <td>${escapeHtml(entry.importBatchLabel || '—')}</td>
+          <td class="dim small">${new Date(entry.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+          <td>${entry.registrationSubmittedAt ? '' : `<button class="table-btn" data-remove-email="${escapeHtml(entry.email)}">Remove</button>`}</td>
           <td>${escapeHtml(entry.importBatchLabel || '—')}</td>
           <td class="dim small">${new Date(entry.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
         </tr>
       `)
       .join('');
+
+    body.querySelectorAll('button[data-remove-email]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        if (!confirm(`Are you sure you want to remove ${button.dataset.removeEmail} from the shortlist?`)) return;
+        try {
+          await apiFetch(`/admin/shortlist/${encodeURIComponent(button.dataset.removeEmail)}`, { method: 'DELETE' });
+          showToast('Email removed from shortlist', true);
+          loadShortlist();
+          loadStats();
+        } catch (error) {
+          showToast(error.message);
+        }
+      });
+    });
   } catch (error) {
     body.innerHTML = `<tr><td colspan="6" class="empty-state">${escapeHtml(error.message)}</td></tr>`;
   }

@@ -549,6 +549,29 @@ const getShortlist = async (req, res, next) => {
   }
 };
 
+const removeShortlistEntry = async (req, res, next) => {
+  try {
+    const { email } = req.params;
+    if (!email || !EMAIL_REGEX.test(email)) {
+      return res.status(400).json({ success: false, message: 'Invalid email format' });
+    }
+
+    const entry = await ShortlistEntry.findOne({ email });
+    if (!entry) {
+      return res.status(404).json({ success: false, message: 'Shortlist entry not found' });
+    }
+
+    if (entry.registrationSubmittedAt) {
+      return res.status(400).json({ success: false, message: 'Cannot remove an email that has already submitted a registration' });
+    }
+
+    await ShortlistEntry.deleteOne({ email });
+    res.json({ success: true, message: 'Shortlisted email removed successfully' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   login,
   me,
@@ -561,4 +584,5 @@ module.exports = {
   exportTeams,
   importShortlist,
   getShortlist,
+  removeShortlistEntry,
 };
