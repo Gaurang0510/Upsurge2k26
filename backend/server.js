@@ -87,7 +87,7 @@ app.use(
       ? {
           directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com', 'https://i.ytimg.com'],
             connectSrc: ["'self'", 'https://prod.spline.design', ...configuredOrigins],
