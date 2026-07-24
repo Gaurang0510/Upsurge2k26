@@ -30,3 +30,7 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: frontend
+        env:
+          # CI validates compilation only. Railway supplies the real public
+          # backend URL when it builds the deployable frontend artifact.
+          VITE_API_URL: https://api.example.invalid
