@@ -561,10 +561,6 @@ const removeShortlistEntry = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Shortlist entry not found' });
     }
 
-    if (entry.registrationSubmittedAt) {
-      return res.status(400).json({ success: false, message: 'Cannot remove an email that has already submitted a registration' });
-    }
-
     await ShortlistEntry.deleteOne({ email });
     res.json({ success: true, message: 'Shortlisted email removed successfully' });
   } catch (err) {

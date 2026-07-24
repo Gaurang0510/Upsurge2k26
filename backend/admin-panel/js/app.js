@@ -283,9 +283,7 @@ const loadShortlist = async () => {
           <td>${entry.registrationSubmittedAt ? '<span class="badge badge-VERIFIED">USED</span>' : '<span class="badge badge-UNDER_REVIEW">AVAILABLE</span>'}</td>
           <td>${escapeHtml(entry.importBatchLabel || '—')}</td>
           <td class="dim small">${new Date(entry.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-          <td>${entry.registrationSubmittedAt ? '' : `<button class="table-btn" data-remove-email="${escapeHtml(entry.email)}">Remove</button>`}</td>
-          <td>${escapeHtml(entry.importBatchLabel || '—')}</td>
-          <td class="dim small">${new Date(entry.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+          <td><button class="table-btn" data-remove-email="${escapeHtml(entry.email)}">Remove</button></td>
         </tr>
       `)
       .join('');
