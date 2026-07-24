@@ -18,7 +18,7 @@ registration flow, protected admin panel, and MongoDB-backed API.
 | Routing    | React Router v6                            |
 | Styling    | Tailwind CSS (custom theme, no UI kit)     |
 | Data       | React content modules + MongoDB registration data |
-| Deployment | Railway (single Express service serving API and built frontend) |
+| Deployment | Railway (separate Vite frontend and Express API services) |
 
 The public programme content lives in `frontend/src/data/`; registration and
 administration are handled by the backend.
@@ -81,7 +81,6 @@ upsurge-2k26/
 │   ├── workflows/ci.yml        # lint + build check on every PR
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── CODEOWNERS
-├── railway.json                # Railway build, start, and health-check config
 └── frontend/tailwind.config.js # the crime/cyber-crime design tokens
 ```
 
@@ -122,12 +121,13 @@ The full token system — colors, fonts, animations — lives in
 
 ## Deployment
 
-Deploy the repository root to Railway from GitHub. Railway uses
-`railway.json` to install the frontend and backend, build the SPA, and start
-the backend. The backend serves the SPA and API from one origin, so frontend
-requests automatically reach `/api/v1`. Configure the backend variables listed
-in `backend/.env.example` as Railway service variables; do not expose them to
-the frontend or commit them to Git.
+Deploy two Railway services from this repository: one with Root Directory
+`frontend` and one with Root Directory `backend`. Set `VITE_API_URL` on the
+frontend to the public HTTPS backend URL at build time. Set `FRONTEND_URL` on
+the backend to a comma-separated list of allowed browser origins, including
+the Railway frontend URL and the final Hostinger custom domain. Configure the
+remaining backend variables listed in `backend/.env.example` as Railway
+service variables; do not expose them to the frontend or commit them to Git.
 
 ## Team workflow
 

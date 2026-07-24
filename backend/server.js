@@ -57,6 +57,10 @@ const validateEnvironment = () => {
   }
 
   if (IS_PRODUCTION) {
+    if (configuredOrigins.length === 0) {
+      throw new Error('FRONTEND_URL must list at least one allowed frontend origin in production');
+    }
+
     for (const key of REQUIRED_PAYMENT_SETTINGS) {
       const value = String(process.env[key] || '').trim();
       if (!value || PLACEHOLDER_VALUES.has(value.toLowerCase()) || value.startsWith('your-')) {
@@ -71,9 +75,7 @@ app.disable('x-powered-by');
 // Railway terminates TLS before forwarding traffic to this process. Trusting
 // exactly one proxy makes secure cookies and client IP rate limits reliable.
 if (IS_PRODUCTION) app.set('trust proxy', 1);
-const configuredOrigins = String(
-  process.env.FRONTEND_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : '')
-)
+const configuredOrigins = String(process.env.FRONTEND_URL || '')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -189,17 +191,6 @@ app.use('/api/v1/admin', adminRoutes);
 // ---- Static Admin Panel (served at /admin) ----
 app.use('/admin', express.static(path.join(__dirname, 'admin-panel')));
 
-// The Railway service builds the Vite application during deployment and this
-// server owns the same-origin SPA. This eliminates CORS/API-host drift.
-const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
-if (IS_PRODUCTION) {
-  app.use(express.static(frontendDist, {
-    maxAge: '1y',
-    immutable: true,
-    index: false,
-  }));
-}
-
 // ---- Health check ----
 app.get('/', (req, res) => {
   res.json({
@@ -238,13 +229,6 @@ app.get('/api/v1', (req, res) => {
   });
 });
 
-if (IS_PRODUCTION) {
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api/') || req.path.startsWith('/admin')) return next();
-    return res.sendFile(path.join(frontendDist, 'index.html'));
-  });
-}
-
 // ---- 404 + error handlers ----
 app.use(notFound);
 app.use(errorHandler);
@@ -258,7 +242,7 @@ const startServer = async () => {
 
   const server = app.listen(PORT, () => {
     console.log(`SMACKATHON 2K26 backend running on port ${PORT}`);
-    console.log(`Admin panel available at http://localhost:${PORT}/admin`);
+    console.log('Admin panel available at /admin');
   });
 
   // ---- Graceful shutdown (AUD-020) ----
