@@ -25,6 +25,7 @@ export default defineConfig(({ mode, command }) => {
     // disable browser launching there so it does not attempt `xdg-open`.
     preview: {
       open: false,
+      allowedHosts: true,
     },
     build: {
       outDir: 'dist',
