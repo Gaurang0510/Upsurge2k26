@@ -703,5 +703,40 @@
   animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
+/* ── LOADER ANIMATION FOR SPLINE ── */
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(193, 18, 31, 0.2);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+.loader::after {
+  content: '';  
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-bottom-color: #c1121f;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
 
 

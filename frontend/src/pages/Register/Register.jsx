@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import Aurora from '../../components/team/Aurora.jsx';
 import operationBreach from '../../data/events/operation-breach.js';
+import { Lock, ShieldAlert, Terminal, Users, User, CreditCard } from 'lucide-react';
 import '../Hackathon/hackathon.css';
 
 // VITE_API_URL is baked into the production bundle by Vite.
@@ -31,6 +32,17 @@ const toDataUri = (file) =>
 
 export default function Register() {
   useDocumentTitle('Smackathon Registration');
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Clear query parameters to make the URL clean (e.g. removing ?event=operation-breach)
+  useEffect(() => {
+    if (searchParams.has('event')) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('event');
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const [eventInfo, setEventInfo] = useState(null);
   const [eventError, setEventError] = useState('');
@@ -302,6 +314,23 @@ export default function Register() {
 
   const paymentConfig = eventInfo?.payment;
 
+  // Fallback calculations for UPI configurations to clean placeholders
+  const cleanUpiId = useMemo(() => {
+    const rawUpi = paymentConfig?.upiId || '';
+    if (!rawUpi || rawUpi.includes('<') || rawUpi.includes('your-')) {
+      return 'ycce.smackathon@okaxis';
+    }
+    return rawUpi;
+  }, [paymentConfig]);
+
+  const cleanPayeeName = useMemo(() => {
+    const rawPayee = paymentConfig?.payeeName || '';
+    if (!rawPayee || rawPayee.includes('<') || rawPayee.includes('your-')) {
+      return 'YCCE CSE Department';
+    }
+    return rawPayee;
+  }, [paymentConfig]);
+
   return (
     <div className="registration-page relative w-full min-h-screen overflow-hidden pb-20">
       <div className="absolute inset-x-0 top-0 h-[800px] z-0 pointer-events-none overflow-hidden">
@@ -311,32 +340,45 @@ export default function Register() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-case-black" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-5xl px-4 pt-28 sm:pt-32 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-28 sm:pt-32 sm:px-6 lg:px-8">
+        <div className="text-center mb-10">
           <SectionHeading
-            eyebrow="Shortlisted Teams Only"
-            title="Smackathon Confirmation Registration"
-            description="Enter the leader email and team code sent after Unstop selection, then upload payment proof."
+            eyebrow="SHORTLISTED TEAMS ONLY"
+            title="Smackathon Confirmation"
+            description="Complete team verification credentials to unlock final registration submittal."
             align="center"
           />
         </div>
 
-        <div className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
           <div className="space-y-8">
             {success ? (
-              <div className="hackathon-panel p-8 border border-evidence/30 bg-black/40 backdrop-blur-md rounded-lg">
-                <span className="case-tag">Submission Logged</span>
-                <h2 className="heading-display mt-4 text-3xl text-white">Registration Submitted Successfully</h2>
-                <div className="mt-6 space-y-2 font-mono text-sm text-steel">
-                  <p><strong className="text-white">Team Code:</strong> {success.teamCode}</p>
-                  <p><strong className="text-white">Registration Code:</strong> {success.registrationCode}</p>
-                  <p><strong className="text-white">Payment Status:</strong> {success.paymentStatus}</p>
-                  <p className="text-steel/80">
-                    Your registration has been submitted successfully and your payment is now pending manual verification. Use the status checker on this page to follow the review.
-                  </p>
+              <div className="hackathon-panel p-8 border border-evidence/30 bg-black/45 backdrop-blur-md rounded-lg relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle,rgba(16,185,129,0.15),transparent_60%)] pointer-events-none" />
+                <span className="case-tag bg-emerald-950/40 text-emerald-400 border border-emerald-500/30 px-3 py-1">Submission Logged</span>
+                <h2 className="heading-display mt-4 text-3xl text-white">Registration Processed</h2>
+                
+                <div className="mt-6 p-6 bg-zinc-950/60 border border-zinc-800 rounded font-mono text-sm space-y-3">
+                  <div className="flex justify-between border-b border-white/5 pb-2">
+                    <span className="text-zinc-500">TEAM CODE:</span>
+                    <span className="text-white font-bold">{success.teamCode}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-white/5 pb-2">
+                    <span className="text-zinc-500">REGISTRATION ID:</span>
+                    <span className="text-white font-bold">{success.registrationCode}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500">PAYMENT STATUS:</span>
+                    <span className="text-amber-400 font-bold animate-pulse">{success.paymentStatus}</span>
+                  </div>
                 </div>
+                
+                <p className="mt-4 text-sm text-steel leading-relaxed">
+                  Your credentials have been loaded. The administrative panel is executing transaction receipt verification. You can track this process in real-time using the panel on the right.
+                </p>
+
                 <div className="mt-8 flex flex-wrap gap-4">
-                  <Link to="/hackathon" className="btn-secondary">Back to Smackathon</Link>
+                  <Link to="/hackathon" className="btn-secondary">Return to Overview</Link>
                   <button
                     type="button"
                     onClick={() => setSuccess(null)}
@@ -348,270 +390,550 @@ export default function Register() {
               </div>
             ) : (
               <>
+                {/* Step 1: Verification Form */}
                 <div className="hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6">
-                  <div>
-                    <h2 className="font-display text-3xl text-white">Step 1: Verify Team Invitation</h2>
-                    <p className="mt-2 text-sm text-steel">
-                      Only shortlisted teams can continue. Enter the leader email and manually assigned six-digit team code.
-                    </p>
+                  <div className="flex items-center gap-2.5 border-b border-white/5 pb-4">
+                    <div className="w-8 h-8 rounded bg-evidence/10 border border-evidence/30 flex items-center justify-center text-evidence font-mono text-sm font-bold">
+                      01
+                    </div>
+                    <div>
+                      <h2 className="font-display text-2xl text-white">Verify Team Invitation</h2>
+                      <p className="text-xs text-steel">
+                        Shortlisted teams verify credentials via the leader email and assigned six-digit team code.
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setAccessToken('');
-                        setVerificationMessage(null);
-                        resetRegistrationDetails();
-                      }}
-                      placeholder="Leader email used on Unstop"
-                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                    />
-                    <input
-                      type="text"
-                      value={teamCode}
-                      onChange={(e) => {
-                        setTeamCode(e.target.value.toUpperCase());
-                        setAccessToken('');
-                        setVerificationMessage(null);
-                        resetRegistrationDetails();
-                      }}
-                      placeholder="Team code from selection email"
-                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                    />
+                  <div className="grid gap-4 sm:grid-cols-2 font-mono text-xs">
+                    <div className="space-y-1">
+                      <label className="block text-zinc-400 uppercase tracking-wider font-semibold">Leader Email (Unstop)</label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-3.5 text-zinc-600 font-bold">&gt;</span>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setAccessToken('');
+                            setVerificationMessage(null);
+                            resetRegistrationDetails();
+                          }}
+                          placeholder="e.g. teamleader@gmail.com"
+                          className="w-full bg-zinc-950/60 border border-zinc-800 text-white pl-8 pr-4 py-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded transition-all placeholder-zinc-700 font-mono"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <label className="block text-zinc-400 uppercase tracking-wider font-semibold">Verification Team Code</label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-3.5 text-zinc-600 font-bold">&gt;</span>
+                        <input
+                          type="text"
+                          value={teamCode}
+                          onChange={(e) => {
+                            setTeamCode(e.target.value.toUpperCase());
+                            setAccessToken('');
+                            setVerificationMessage(null);
+                            resetRegistrationDetails();
+                          }}
+                          placeholder="e.g. SM-A4E2"
+                          className="w-full bg-zinc-950/60 border border-zinc-800 text-white pl-8 pr-4 py-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded transition-all placeholder-zinc-700 font-mono"
+                        />
+                      </div>
+                    </div>
                   </div>
+
                   <button
                     type="button"
                     disabled={isSubmitting || !email || !teamCode}
                     onClick={verifyInvitation}
-                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-primary w-full sm:w-auto py-3 px-6 text-xs tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Verify Invitation
+                    {isSubmitting ? 'Verifying...' : 'Verify Team Credentials'}
                   </button>
 
                   {verificationMessage && (
                     <div
-                      className={`p-3 border rounded font-mono text-xs ${
+                      className={`p-4 border rounded font-mono text-xs flex gap-2 items-start ${
                         verificationMessage.type === 'success'
                           ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
                           : 'bg-red-950/40 border-red-500/30 text-red-300'
                       }`}
                     >
-                      {verificationMessage.text}
+                      <ShieldAlert className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <span>{verificationMessage.text}</span>
                     </div>
                   )}
                 </div>
 
-                <form
-                  onSubmit={handleSubmit}
-                  className={`hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6 ${!accessToken ? 'opacity-60' : ''}`}
-                >
-                  <div>
-                    <h2 className="font-display text-3xl text-white">Step 2: Submit Team And Payment Proof</h2>
-                    <p className="mt-2 text-sm text-steel">
-                      {accessToken
-                        ? 'Team size must remain 3–5 members. Member 2 and Member 3 are required.'
-                        : 'Step 2 is locked. Verify your shortlisted team in Step 1 to unlock the registration form.'}
-                    </p>
-                  </div>
-
-                  <fieldset disabled={!accessToken || isSubmitting} className="space-y-6">
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <input
-                      type="text"
-                      value={formData.teamName}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, teamName: e.target.value }))}
-                      placeholder="Team name"
-                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                      required
-                    />
-                    <input
-                      type="text"
-                      value={formData.collegeName}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, collegeName: e.target.value }))}
-                      placeholder="College / Institution name"
-                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                      required
-                    />
-                    <select
-                      value={formData.problemStatement}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, problemStatement: e.target.value }))}
-                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                      required
-                    >
-                      <option value="">Select problem statement</option>
-                      {problemStatements.map((track) => (
-                        <option key={track.value} value={track.value}>
-                          {track.label}
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      value={formData.modePreference}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, modePreference: e.target.value }))}
-                      className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                    >
-                      <option value="OFFLINE">Offline</option>
-                      <option value="ONLINE_REQUEST">Online Request</option>
-                    </select>
-                    <div className="sm:col-span-2 space-y-2">
-                      <label htmlFor="githubRepositoryUrl" className="block text-xs font-mono uppercase tracking-wider text-steel">
-                        GitHub Repository Link
-                      </label>
-                      <p className="text-xs text-steel">
-                        Create a GitHub repository for your project and paste its link here. Push your project code to this repository.
+                {/* Step 2: Form Submission */}
+                <div className="relative">
+                  {!accessToken && (
+                    <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px] z-30 flex flex-col items-center justify-center rounded-lg p-6 border border-white/5 text-center">
+                      <div className="w-16 h-16 rounded-full bg-evidence/10 border border-evidence/30 flex items-center justify-center text-evidence mb-4 animate-pulse">
+                        <Lock className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-display text-xl text-white uppercase tracking-wider">Step 2 Locked</h3>
+                      <p className="mt-2 text-xs text-zinc-400 max-w-sm font-mono leading-relaxed">
+                        Security verification pending. Please verify your shortlisted team credentials in Step 1 to unlock the registration pipeline.
                       </p>
-                      <input
-                        id="githubRepositoryUrl"
-                        type="url"
-                        value={formData.githubRepositoryUrl}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, githubRepositoryUrl: e.target.value }))}
-                        placeholder="https://github.com/username/project-repository"
-                        pattern="https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/?"
-                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm focus:outline-none focus:border-evidence focus:ring-1 focus:ring-evidence rounded"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="border-t border-white/10 pt-6 space-y-4">
-                    <h3 className="font-display text-2xl text-white">Leader Details</h3>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <input type="text" value={formData.leader.fullName} onChange={(e) => handleLeaderChange('fullName', e.target.value)} placeholder="Leader full name" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded" required />
-                      <input type="email" value={formData.leader.email} readOnly className="w-full bg-ink/40 border border-white/10 text-steel p-3 font-mono text-sm rounded cursor-not-allowed" required />
-                      <input type="tel" value={formData.leader.phone} onChange={(e) => handleLeaderChange('phone', e.target.value)} placeholder="Leader phone number" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded" required />
-                      <input type="text" value={formData.leader.department} onChange={(e) => handleLeaderChange('department', e.target.value)} placeholder="Leader department" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded" required />
-                      <input type="text" value={formData.leader.year} onChange={(e) => handleLeaderChange('year', e.target.value)} placeholder="Leader year" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded sm:col-span-2" required />
-                    </div>
-                  </div>
-
-                  <div className="border-t border-white/10 pt-6 space-y-4">
-                    <h3 className="font-display text-2xl text-white">Team Members</h3>
-                    <div className="grid gap-4">
-                      {formData.members.map((member, index) => (
-                        <div key={index} className="member-row grid gap-4 sm:grid-cols-2">
-                          <input type="text" value={member.fullName} onChange={(e) => handleMemberChange(index, 'fullName', e.target.value)} placeholder={`Member ${index + 2} full name`} className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
-                          <input type="email" value={member.email} onChange={(e) => handleMemberChange(index, 'email', e.target.value)} placeholder="Email" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
-                          <input type="tel" value={member.phone} onChange={(e) => handleMemberChange(index, 'phone', e.target.value)} placeholder="Phone" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
-                          <input type="text" value={member.department} onChange={(e) => handleMemberChange(index, 'department', e.target.value)} placeholder="Department" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
-                          <input type="text" value={member.year} onChange={(e) => handleMemberChange(index, 'year', e.target.value)} placeholder="Year" className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-xs rounded" required={index < 2} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="border-t border-white/10 pt-6 space-y-4">
-                    <h3 className="font-display text-2xl text-white">Payment Proof</h3>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <input
-                        type="text"
-                        value={formData.utr}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, utr: e.target.value.toUpperCase() }))}
-                        placeholder="Enter UTR number"
-                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
-                        minLength={8}
-                        maxLength={32}
-                        pattern="[A-Za-z0-9-]{8,32}"
-                        required
-                      />
-                      <input
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp"
-                        onChange={(e) => setFormData((prev) => ({ ...prev, paymentScreenshot: e.target.files?.[0] || null }))}
-                        className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {registrationError && (
-                    <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-300 text-xs font-mono rounded">
-                      {registrationError}
                     </div>
                   )}
 
-                  <button
-                    type="submit"
-                    className="btn-primary w-full py-4 text-base font-bold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+                  <form
+                    onSubmit={handleSubmit}
+                    className={`hackathon-panel p-6 sm:p-8 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-6 ${!accessToken ? 'opacity-40' : ''}`}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit Registration'}
-                  </button>
-                  </fieldset>
-                </form>
+                    <div className="flex items-center gap-2.5 border-b border-white/5 pb-4">
+                      <div className="w-8 h-8 rounded bg-evidence/10 border border-evidence/30 flex items-center justify-center text-evidence font-mono text-sm font-bold">
+                        02
+                      </div>
+                      <div>
+                        <h2 className="font-display text-2xl text-white">Operative Profile Submission</h2>
+                        <p className="text-xs text-steel">
+                          Submit project metadata, leader contact channels, and core team member registers.
+                        </p>
+                      </div>
+                    </div>
+
+                    <fieldset disabled={!accessToken || isSubmitting} className="space-y-8">
+                      {/* Section A: Team Info */}
+                      <div className="space-y-4">
+                        <h3 className="font-mono text-xs font-bold text-evidence uppercase tracking-widest">{"// TEAM PREFERENCES"}</h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Team Name</label>
+                            <input
+                              type="text"
+                              value={formData.teamName}
+                              onChange={(e) => setFormData((prev) => ({ ...prev, teamName: e.target.value }))}
+                              placeholder="e.g. CyberShield"
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-700"
+                              required
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">College / Institution</label>
+                            <input
+                              type="text"
+                              value={formData.collegeName}
+                              onChange={(e) => setFormData((prev) => ({ ...prev, collegeName: e.target.value }))}
+                              placeholder="e.g. YCCE, Nagpur"
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-700"
+                              required
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Selected Track</label>
+                            <select
+                              value={formData.problemStatement}
+                              onChange={(e) => setFormData((prev) => ({ ...prev, problemStatement: e.target.value }))}
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs focus:outline-none focus:border-evidence rounded transition-all"
+                              required
+                            >
+                              <option value="">Select problem statement</option>
+                              {problemStatements.map((track) => (
+                                <option key={track.value} value={track.value}>
+                                  {track.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Preferred Mode</label>
+                            <select
+                              value={formData.modePreference}
+                              onChange={(e) => setFormData((prev) => ({ ...prev, modePreference: e.target.value }))}
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs focus:outline-none focus:border-evidence rounded transition-all"
+                            >
+                              <option value="OFFLINE">Offline</option>
+                              <option value="ONLINE_REQUEST">Online Request</option>
+                            </select>
+                          </div>
+
+                          <div className="sm:col-span-2 space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">GitHub Project Repository</label>
+                            <p className="text-[11px] text-steel font-mono leading-relaxed pb-1">
+                              Initialize a repository containing your project code and link it below. Keep this accessible for review.
+                            </p>
+                            <input
+                              type="url"
+                              value={formData.githubRepositoryUrl}
+                              onChange={(e) => setFormData((prev) => ({ ...prev, githubRepositoryUrl: e.target.value }))}
+                              placeholder="e.g. https://github.com/username/project-repository"
+                              pattern="https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/?"
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-700"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section B: Leader Details */}
+                      <div className="border-t border-white/5 pt-6 space-y-4">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-evidence" />
+                          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-widest">TEAM LEADER</h3>
+                        </div>
+                        
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Leader Full Name</label>
+                            <input 
+                              type="text" 
+                              value={formData.leader.fullName} 
+                              onChange={(e) => handleLeaderChange('fullName', e.target.value)} 
+                              placeholder="e.g. Alex Mercer" 
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs rounded focus:outline-none focus:border-evidence transition-all placeholder-zinc-700" 
+                              required 
+                            />
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Verified Email (Read-Only)</label>
+                            <input 
+                              type="email" 
+                              value={formData.leader.email} 
+                              readOnly 
+                              className="w-full bg-zinc-950/20 border border-zinc-900 text-zinc-500 p-3 font-mono text-xs rounded cursor-not-allowed" 
+                              required 
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Leader Phone Number</label>
+                            <input 
+                              type="tel" 
+                              value={formData.leader.phone} 
+                              onChange={(e) => handleLeaderChange('phone', e.target.value)} 
+                              placeholder="e.g. 9876543210" 
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs rounded focus:outline-none focus:border-evidence transition-all placeholder-zinc-700" 
+                              required 
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Leader Department</label>
+                            <input 
+                              type="text" 
+                              value={formData.leader.department} 
+                              onChange={(e) => handleLeaderChange('department', e.target.value)} 
+                              placeholder="e.g. Computer Science" 
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs rounded focus:outline-none focus:border-evidence transition-all placeholder-zinc-700" 
+                              required 
+                            />
+                          </div>
+
+                          <div className="space-y-1 sm:col-span-2">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Leader Academic Year</label>
+                            <input 
+                              type="text" 
+                              value={formData.leader.year} 
+                              onChange={(e) => handleLeaderChange('year', e.target.value)} 
+                              placeholder="e.g. 3rd Year (VI Sem)" 
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs rounded focus:outline-none focus:border-evidence transition-all placeholder-zinc-700" 
+                              required 
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section C: Team Members */}
+                      <div className="border-t border-white/5 pt-6 space-y-4">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-evidence" />
+                          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-widest">TEAM OPERATIVES</h3>
+                        </div>
+                        <p className="text-[11px] text-steel font-mono leading-relaxed">
+                          SMACKATHON limits team rosters to 3–5 members. Operatives 02 & 03 are required registers.
+                        </p>
+
+                        <div className="grid gap-6 md:grid-cols-2">
+                          {formData.members.map((member, index) => {
+                            const isRequired = index < 2;
+                            return (
+                              <div 
+                                key={index} 
+                                className={`p-4 border rounded-md transition-all duration-300 ${
+                                  isRequired 
+                                    ? 'bg-zinc-950/30 border-evidence/25 hover:border-evidence/50' 
+                                    : 'bg-zinc-950/15 border-white/5 hover:border-white/10'
+                                }`}
+                              >
+                                <div className="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
+                                  <span className="font-mono text-[10px] font-bold text-white uppercase">
+                                    Operative 0{index + 2}
+                                  </span>
+                                  <span className={`font-mono text-[9px] px-2 py-0.5 rounded uppercase border ${
+                                    isRequired 
+                                      ? 'bg-evidence/15 text-evidence border-evidence/25' 
+                                      : 'bg-zinc-900 text-zinc-500 border-zinc-800'
+                                  }`}>
+                                    {isRequired ? 'Required' : 'Optional'}
+                                  </span>
+                                </div>
+
+                                <div className="space-y-3 text-[10px] font-mono">
+                                  <div className="space-y-1">
+                                    <label className="block text-zinc-400 uppercase">Full Name</label>
+                                    <input 
+                                      type="text" 
+                                      value={member.fullName} 
+                                      onChange={(e) => handleMemberChange(index, 'fullName', e.target.value)} 
+                                      placeholder="e.g. John Doe" 
+                                      className="w-full bg-zinc-900/60 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-800"
+                                      required={isRequired} 
+                                    />
+                                  </div>
+
+                                  <div className="space-y-1">
+                                    <label className="block text-zinc-400 uppercase">Email Address</label>
+                                    <input 
+                                      type="email" 
+                                      value={member.email} 
+                                      onChange={(e) => handleMemberChange(index, 'email', e.target.value)} 
+                                      placeholder="e.g. op@college.edu" 
+                                      className="w-full bg-zinc-900/60 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-800"
+                                      required={isRequired} 
+                                    />
+                                  </div>
+
+                                  <div className="space-y-1">
+                                    <label className="block text-zinc-400 uppercase">Phone Number</label>
+                                    <input 
+                                      type="tel" 
+                                      value={member.phone} 
+                                      onChange={(e) => handleMemberChange(index, 'phone', e.target.value)} 
+                                      placeholder="e.g. 9876543210" 
+                                      className="w-full bg-zinc-900/60 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-800"
+                                      required={isRequired} 
+                                    />
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="space-y-1">
+                                      <label className="block text-zinc-400 uppercase">Dept</label>
+                                      <input 
+                                        type="text" 
+                                        value={member.department} 
+                                        onChange={(e) => handleMemberChange(index, 'department', e.target.value)} 
+                                        placeholder="e.g. CSE" 
+                                        className="w-full bg-zinc-900/60 border border-zinc-800 text-white px-2 py-2 text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-800"
+                                        required={isRequired} 
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="block text-zinc-400 uppercase">Year</label>
+                                      <input 
+                                        type="text" 
+                                        value={member.year} 
+                                        onChange={(e) => handleMemberChange(index, 'year', e.target.value)} 
+                                        placeholder="e.g. 3rd" 
+                                        className="w-full bg-zinc-900/60 border border-zinc-800 text-white px-2 py-2 text-xs focus:outline-none focus:border-evidence rounded transition-all placeholder-zinc-800"
+                                        required={isRequired} 
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Section D: Payment Receipt */}
+                      <div className="border-t border-white/5 pt-6 space-y-4">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-evidence" />
+                          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-widest">TRANSACTION SIGNATURE</h3>
+                        </div>
+
+                        <div className="bg-red-950/20 border border-red-500/30 rounded p-4 flex gap-3 text-xs text-red-300 font-mono">
+                          <ShieldAlert className="w-5 h-5 flex-shrink-0 text-evidence animate-pulse" />
+                          <div>
+                            <strong className="text-white">WARNING // VERIFICATION MONITORING:</strong> False or duplicate UTR entries will be flagged. Attempting transaction fraud will result in automatic team elimination and registration blacklist.
+                          </div>
+                        </div>
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">UTR / Transaction ID</label>
+                            <input
+                              type="text"
+                              value={formData.utr}
+                              onChange={(e) => setFormData((prev) => ({ ...prev, utr: e.target.value.toUpperCase() }))}
+                              placeholder="e.g. 12-digit transaction UTR code"
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs rounded focus:outline-none focus:border-evidence transition-all placeholder-zinc-700"
+                              minLength={8}
+                              maxLength={32}
+                              pattern="[A-Za-z0-9-]{8,32}"
+                              required
+                            />
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Screenshot Receipt Upload</label>
+                            <input
+                              type="file"
+                              accept="image/png,image/jpeg,image/webp"
+                              onChange={(e) => setFormData((prev) => ({ ...prev, paymentScreenshot: e.target.files?.[0] || null }))}
+                              className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-2 font-mono text-xs rounded focus:outline-none focus:border-evidence transition-all file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:bg-evidence file:text-white hover:file:bg-evidence/80 file:cursor-pointer"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {registrationError && (
+                        <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-300 text-xs font-mono rounded flex gap-2">
+                          <ShieldAlert className="w-4 h-4 flex-shrink-0" />
+                          <span>{registrationError}</span>
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="btn-primary w-full py-4 text-sm font-bold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? 'LOGGING SUBMISSION...' : 'SUBMIT REGISTRATION DOSSIER'}
+                      </button>
+                    </fieldset>
+                  </form>
+                </div>
               </>
             )}
           </div>
 
+          {/* Right Column panels */}
           <div className="space-y-8">
             <div className="hackathon-panel p-6 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-4">
-              <h2 className="font-display text-3xl text-white">Payment Details</h2>
+              <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                <CreditCard className="w-5 h-5 text-evidence" />
+                <h2 className="font-display text-2xl text-white">Payment Details</h2>
+              </div>
+              
               {eventError ? (
-                <p className="text-sm text-red-300 font-mono">{eventError}</p>
+                <p className="text-xs text-red-300 font-mono">{eventError}</p>
               ) : (
                 <>
-                  <div className="space-y-2 font-mono text-sm text-steel">
-                    <p><strong className="text-white">Fee:</strong> ₹{eventInfo?.feeInINR ?? 599} per team</p>
-                    <p><strong className="text-white">Team Size:</strong> {eventInfo?.teamSize?.min ?? 3} to {eventInfo?.teamSize?.max ?? 5} members</p>
-                    <p><strong className="text-white">UPI ID:</strong> {paymentConfig?.upiId || 'Will be updated'}</p>
-                    <p><strong className="text-white">Payee Name:</strong> {paymentConfig?.payeeName || 'Will be updated'}</p>
-                  </div>
-                  {paymentConfig?.qrImageUrl ? (
-                    <img
-                      src={paymentConfig.qrImageUrl}
-                      alt="Smackathon payment QR"
-                      className="w-full rounded border border-white/10 bg-white p-3"
-                    />
-                  ) : (
-                    <div className="border border-dashed border-white/20 rounded p-6 font-mono text-xs text-steel">
-                      QR code URL is not configured in the backend yet.
+                  <div className="space-y-2.5 font-mono text-xs text-steel">
+                    <div className="flex justify-between border-b border-white/5 pb-1">
+                      <span>FEE AMOUNT:</span>
+                      <span className="text-white font-bold">₹{eventInfo?.feeInINR ?? 599} INR</span>
                     </div>
-                  )}
-                  <ul className="space-y-2 text-xs text-steel">
-                    {(paymentConfig?.instructions || []).map((item) => (
-                      <li key={item} className="flex gap-2">
-                        <span className="text-evidence">›</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                    <div className="flex justify-between border-b border-white/5 pb-1">
+                      <span>TEAM QUOTA:</span>
+                      <span>{eventInfo?.teamSize?.min ?? 3} - {eventInfo?.teamSize?.max ?? 5} OPERATIVES</span>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-1">
+                      <span>UPI ID:</span>
+                      <span className="text-white select-all">{cleanUpiId}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>PAYEE NAME:</span>
+                      <span className="text-white">{cleanPayeeName}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-3 bg-white border border-white/10 rounded-md">
+                    <img
+                      src="/images/events/QR.jpeg"
+                      alt="Smackathon payment QR"
+                      className="w-full h-auto max-w-[240px] mx-auto"
+                    />
+                  </div>
+
+                  <div className="border-t border-white/5 pt-3 space-y-2">
+                     <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest block font-bold">{"// UPLOAD PROCEDURES"}</span>
+                    <ul className="space-y-1.5 text-[10px] text-steel font-mono">
+                      {(paymentConfig?.instructions || []).map((item) => (
+                        <li key={item} className="flex gap-2">
+                          <span className="text-evidence">›</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </>
               )}
             </div>
 
+            {/* Check Status Form */}
             <form
               onSubmit={checkStatus}
               className="hackathon-panel p-6 border border-white/10 bg-black/35 backdrop-blur-md rounded-lg space-y-4"
             >
-              <h2 className="font-display text-3xl text-white">Check Registration Status</h2>
-              <input
-                type="email"
-                value={statusLookup.email}
-                onChange={(e) => setStatusLookup((prev) => ({ ...prev, email: e.target.value }))}
-                placeholder="Leader email"
-                className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
-              />
-              <input
-                type="text"
-                value={statusLookup.teamCode}
-                onChange={(e) => setStatusLookup((prev) => ({ ...prev, teamCode: e.target.value.toUpperCase() }))}
-                placeholder="Six-digit team code"
-                className="w-full bg-ink/60 border border-white/10 text-white p-3 font-mono text-sm rounded"
-              />
-              {statusError && <div className="text-xs font-mono text-red-300">{statusError}</div>}
+              <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                <Terminal className="w-5 h-5 text-evidence" />
+                <h2 className="font-display text-2xl text-white">Console Query</h2>
+              </div>
+              
+              <p className="text-[10px] text-steel font-mono">
+                Query team registration and transaction logs.
+              </p>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div className="space-y-1">
+                  <label className="block text-zinc-400 uppercase font-semibold">Leader Email</label>
+                  <input
+                    type="email"
+                    value={statusLookup.email}
+                    onChange={(e) => setStatusLookup((prev) => ({ ...prev, email: e.target.value }))}
+                    placeholder="e.g. leader@college.edu"
+                    className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-sm rounded focus:outline-none focus:border-evidence transition-all placeholder-zinc-700"
+                  />
+                </div>
+                
+                <div className="space-y-1">
+                  <label className="block text-zinc-400 uppercase font-semibold">Team Code</label>
+                  <input
+                    type="text"
+                    value={statusLookup.teamCode}
+                    onChange={(e) => setStatusLookup((prev) => ({ ...prev, teamCode: e.target.value.toUpperCase() }))}
+                    placeholder="e.g. SM-A4E2"
+                    className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-sm rounded focus:outline-none focus:border-evidence transition-all placeholder-zinc-700"
+                  />
+                </div>
+              </div>
+
+              {statusError && (
+                <div className="p-2.5 bg-red-950/40 border border-red-500/30 text-red-300 text-xs font-mono rounded">
+                  {statusError}
+                </div>
+              )}
+
               {statusResult && (
-                <div className="space-y-2 font-mono text-sm text-steel">
-                  <p><strong className="text-white">Team:</strong> {statusResult.team.teamName}</p>
-                  <p><strong className="text-white">Team Code:</strong> {statusResult.team.teamCode}</p>
-                  <p><strong className="text-white">Status:</strong> {statusResult.team.status}</p>
-                  <p><strong className="text-white">Payment:</strong> {statusResult.registration?.paymentStatus || '—'}</p>
+                <div className="p-4 bg-zinc-950/60 border border-zinc-800 rounded font-mono text-xs space-y-2">
+                  <div className="flex justify-between border-b border-white/5 pb-1">
+                    <span className="text-zinc-500">TEAM:</span>
+                    <span className="text-white font-bold">{statusResult.team.teamName}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-white/5 pb-1">
+                    <span className="text-zinc-500">CODE:</span>
+                    <span className="text-white font-bold">{statusResult.team.teamCode}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-white/5 pb-1">
+                    <span className="text-zinc-500">LOG STATUS:</span>
+                    <span className="text-white font-bold">{statusResult.team.status}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500">TRANSACTION:</span>
+                    <span className="text-amber-400 font-bold">{statusResult.registration?.paymentStatus || 'PENDING'}</span>
+                  </div>
                   {statusResult.team.paymentReviewReason && (
-                    <p><strong className="text-white">Review Note:</strong> {statusResult.team.paymentReviewReason}</p>
+                    <div className="mt-2 p-2 bg-red-950/20 border border-red-500/20 text-red-300 rounded">
+                      <strong>NOTE:</strong> {statusResult.team.paymentReviewReason}
+                    </div>
                   )}
                 </div>
               )}
-              <button type="submit" className="btn-secondary w-full">Check Status</button>
+
+              <button type="submit" className="btn-secondary w-full py-3 text-xs uppercase tracking-wider font-bold">Query Log Registry</button>
             </form>
           </div>
         </div>

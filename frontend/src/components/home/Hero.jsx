@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
-import { Spotlight } from '../ui/spotlight.jsx';
+import { Spotlight } from '../ui/spotlight.tsx';
+import { SplineScene } from '../ui/splite.tsx';
+import { Shield, Terminal } from 'lucide-react';
 
 export default function Hero() {
   return (
@@ -84,15 +86,48 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Decorative panel replaces the remote interactive scene: it avoids a
-            multi-megabyte third-party runtime and remains usable offline. */}
+        {/* Interactive 3D scene from Spline with high-tech HUD styling */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="hidden lg:flex lg:w-1/2 h-full items-center justify-center relative z-20"
         >
-          <div className="h-[32rem] w-[32rem] rounded-full border border-evidence/30 bg-[radial-gradient(circle,rgba(193,18,31,0.22),transparent_62%)] blur-[1px]" aria-hidden="true" />
+          <div className="relative w-[42rem] h-[42rem] xl:w-[48rem] xl:h-[48rem] flex items-center justify-center">
+            {/* Glowing background behind Spline scene */}
+            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(193,18,31,0.15),transparent_65%)] blur-2xl" aria-hidden="true" />
+
+            {/* Spline Canvas component */}
+            <div className="w-full h-full p-2 z-10 relative">
+              <SplineScene
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
+            </div>
+
+            {/* Status HUD Overlays using Lucide Icons */}
+            <div className="absolute top-12 right-12 z-30 flex items-center gap-2 bg-case-black/85 backdrop-blur border border-evidence/30 rounded-md px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-evidence shadow-[0_0_15px_rgba(193,18,31,0.2)]">
+              <Shield className="w-3.5 h-3.5 animate-pulse text-evidence" />
+              <span>SECURE CONSOLE</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+            </div>
+
+            <div className="absolute bottom-12 left-12 z-30 flex flex-col gap-1 bg-case-black/85 backdrop-blur border border-white/10 rounded-md p-3 font-mono text-[10px] text-zinc-400 min-w-[160px] shadow-lg">
+              <div className="flex items-center gap-1.5 text-white font-bold">
+                <Terminal className="w-3.5 h-3.5 text-evidence" />
+                <span>INVESTIGATION HUD</span>
+              </div>
+              <div className="h-[1px] bg-white/10 my-1" />
+              <div className="flex justify-between">
+                <span>STATUS:</span>
+                <span className="text-evidence">ACTIVE</span>
+              </div>
+              <div className="flex justify-between">
+                <span>THREAT:</span>
+                <span className="text-zinc-500">LEVEL 4</span>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
