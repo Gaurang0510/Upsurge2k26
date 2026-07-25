@@ -39,7 +39,6 @@ export default function Hero() {
     const timer = setTimeout(() => setLoadSpline(true), 2500);
     return () => clearTimeout(timer);
   }, [canUseSpline, splineFailed]);
-
   return (
     <section className="relative w-full min-h-[560px] h-[85vh] sm:aspect-auto sm:h-[80vh] lg:h-[calc(100vh-64px)] sm:min-h-[620px] lg:min-h-[720px] max-h-[1050px] overflow-hidden bg-case-black">
       
