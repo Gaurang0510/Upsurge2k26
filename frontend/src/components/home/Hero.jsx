@@ -6,14 +6,39 @@ import { Shield, Terminal } from 'lucide-react';
 
 export default function Hero() {
   const [loadSpline, setLoadSpline] = useState(false);
+  const [canUseSpline, setCanUseSpline] = useState(false);
+  const [splineFailed, setSplineFailed] = useState(false);
 
   useEffect(() => {
-    // Delay Spline loading to prevent main-thread blocking during initial page load
-    const timer = setTimeout(() => {
-      setLoadSpline(true);
-    }, 2500);
-    return () => clearTimeout(timer);
+    const desktop = window.matchMedia('(min-width: 1024px)');
+
+    const checkSupport = () => {
+      if (!desktop.matches) {
+        setCanUseSpline(false);
+        return;
+      }
+
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('webgl2') || canvas.getContext('webgl');
+      setCanUseSpline(Boolean(context));
+      context?.getExtension('WEBGL_lose_context')?.loseContext();
+    };
+
+    checkSupport();
+    desktop.addEventListener('change', checkSupport);
+    return () => desktop.removeEventListener('change', checkSupport);
   }, []);
+
+  useEffect(() => {
+    if (!canUseSpline || splineFailed) {
+      setLoadSpline(false);
+      return undefined;
+    }
+
+    // Delay the expensive 3D scene until after the main page is interactive.
+    const timer = setTimeout(() => setLoadSpline(true), 2500);
+    return () => clearTimeout(timer);
+  }, [canUseSpline, splineFailed]);
   return (
     <section className="relative w-full min-h-[560px] h-[85vh] sm:aspect-auto sm:h-[80vh] lg:h-[calc(100vh-64px)] sm:min-h-[620px] lg:min-h-[720px] max-h-[1050px] overflow-hidden bg-case-black">
       
@@ -117,10 +142,19 @@ export default function Hero() {
                 <SplineScene
                   scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
                   className="w-full h-full"
+                  onError={() => setSplineFailed(true)}
                 />
-              ) : (
+              ) : canUseSpline && !splineFailed ? (
                 <div className="w-full h-full flex items-center justify-center text-evidence/50 font-mono text-xs uppercase tracking-widest animate-pulse">
                   Initializing 3D Environment...
+                </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center rounded-full border border-evidence/20 bg-case-black/30 p-16">
+                  <img
+                    src="/images/logo/upsurge.png"
+                    alt="UPSURGE 2K26"
+                    className="w-full max-w-sm object-contain opacity-80"
+                  />
                 </div>
               )}
             </div>
