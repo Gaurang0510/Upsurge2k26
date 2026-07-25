@@ -1,17 +1,18 @@
 import React from 'react';
-import { Terminal, ShieldAlert, Cpu, Eye, Binary, Database, Lock, Code2, Fingerprint } from 'lucide-react';
+import { Terminal, Cpu, Database, Lock, Binary, Eye, Globe, Sparkles, HeartPulse, Sprout } from 'lucide-react';
 
 export default function TrackCard({ track, onAccess }) {
-  // Map beautiful cyber-themed icons based on track code/category
-  const getTrackIcon = (code) => {
-    switch (code) {
-      case 'FILE-01': return <Terminal className="w-5 h-5 text-red-500" />;
-      case 'FILE-02': return <ShieldAlert className="w-5 h-5 text-red-500 animate-pulse" />;
-      case 'FILE-03': return <Cpu className="w-5 h-5 text-red-500" />;
-      case 'FILE-04': return <Database className="w-5 h-5 text-red-500" />;
-      case 'FILE-05': return <Lock className="w-5 h-5 text-red-500" />;
-      case 'FILE-06': return <Code2 className="w-5 h-5 text-red-500" />;
-      case 'FILE-08': return <Fingerprint className="w-5 h-5 text-red-500 animate-pulse" />;
+  // Map icons based on domain or fallback to code
+  const getTrackIcon = (domain) => {
+    switch (domain?.toLowerCase()) {
+      case 'education': return <Terminal className="w-5 h-5 text-red-500" />;
+      case 'healthcare': return <HeartPulse className="w-5 h-5 text-red-500 animate-pulse" />;
+      case 'agriculture': return <Sprout className="w-5 h-5 text-red-500" />;
+      case 'web 3.0': return <Cpu className="w-5 h-5 text-red-500" />;
+      case 'fintech': return <Database className="w-5 h-5 text-red-500" />;
+      case 'cybersecurity': return <Lock className="w-5 h-5 text-red-500" />;
+      case 'environment': return <Globe className="w-5 h-5 text-red-500" />;
+      case 'open innovation': return <Sparkles className="w-5 h-5 text-red-500 animate-bounce" />;
       default: return <Binary className="w-5 h-5 text-red-500" />;
     }
   };
@@ -19,7 +20,7 @@ export default function TrackCard({ track, onAccess }) {
   return (
     <article 
       onClick={() => onAccess && onAccess(track)}
-      className="hackathon-track-card relative group overflow-hidden border border-red-500/20 bg-black/60 backdrop-blur-xl p-6 transition-all duration-300 hover:border-red-500/50 hover:shadow-[0_0_30px_rgba(239,68,68,0.15)] rounded-lg flex flex-col justify-between min-h-[290px] cursor-pointer"
+      className="hackathon-track-card relative group overflow-hidden border border-red-500/20 bg-black/70 backdrop-blur-xl p-6 transition-all duration-300 hover:border-red-500/60 hover:shadow-[0_0_35px_rgba(239,68,68,0.2)] rounded-xl flex flex-col justify-between h-full min-h-[320px] cursor-pointer"
     >
       {/* Corner Clip Decoration */}
       <div 
@@ -28,51 +29,55 @@ export default function TrackCard({ track, onAccess }) {
       />
       
       {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(239,68,68,0.02)_1px,transparent_1px),linear-gradient(to_right,rgba(239,68,68,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none opacity-40 group-hover:opacity-75 transition-opacity" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(239,68,68,0.03)_1px,transparent_1px),linear-gradient(to_right,rgba(239,68,68,0.03)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity" />
 
       <div>
         {/* Cyber Header bar */}
-        <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
+        <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
           <div className="flex items-center gap-2">
-            {getTrackIcon(track.code)}
-            <span className="font-mono text-[10px] tracking-widest uppercase text-red-500 font-bold">{track.code} {"//"} {track.psCode}</span>
+            {getTrackIcon(track.domain)}
+            <span className="font-mono text-xs tracking-wider uppercase text-red-500 font-bold">
+              {track.psCode || track.code}
+            </span>
           </div>
-          <div className="flex items-center gap-1.5 font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            <span>ENCRYPTED</span>
-          </div>
+          <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider bg-zinc-900 border border-white/10 px-2 py-0.5 rounded">
+            {track.domain}
+          </span>
         </div>
 
         {/* Track Title */}
-        <h4 className="font-display text-2xl uppercase tracking-wide text-white group-hover:text-red-500 transition-colors duration-300 mt-2">
+        <h4 className="font-display text-lg sm:text-xl font-bold tracking-wide text-white group-hover:text-red-400 transition-colors duration-300 mt-1 line-clamp-2 leading-snug">
           {track.name}
         </h4>
 
-        {/* Track Description */}
-        <p className="mt-3 text-sm text-zinc-400 leading-relaxed font-sans">
-          {track.brief}
-        </p>
+        {/* SDGs Badge */}
+        {track.sdgs && (
+          <div className="mt-2 text-[11px] font-mono text-zinc-400 flex items-center gap-1">
+            <span className="text-red-500 font-bold">SDG:</span>
+            <span className="truncate">{track.sdgs}</span>
+          </div>
+        )}
 
-        {/* Code lines visual placeholder */}
-        <div className="mt-4 flex gap-1 font-mono text-[8px] text-zinc-600">
-          <span>[SYS_KEY: 0x{track.code.replace('-', '')}FA]</span>
-          <span>{"//"}</span>
-          <span>INDEX: ACTIVE</span>
-        </div>
+        {/* Track Brief Description */}
+        <p className="mt-3 text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans line-clamp-3">
+          {track.brief || track.problem}
+        </p>
       </div>
 
       {/* Cyber Button footer */}
-      <div className="mt-6 flex justify-between items-center border-t border-white/5 pt-4 text-xs font-mono">
-        <span className="text-zinc-500 group-hover:text-zinc-300 transition-colors uppercase tracking-wider text-[10px]">CASE OVERVIEW</span>
+      <div className="mt-5 flex justify-between items-center border-t border-white/10 pt-3.5 text-xs font-mono">
+        <span className="text-zinc-500 group-hover:text-zinc-300 transition-colors uppercase tracking-wider text-[10px]">
+          CASE FILE // DECRYPT
+        </span>
         <button 
           onClick={(e) => {
             e.stopPropagation();
             onAccess && onAccess(track);
           }}
-          className="flex items-center gap-1 text-red-500 hover:text-red-400 group-hover:translate-x-1 transition-all"
+          className="flex items-center gap-1.5 text-red-500 hover:text-red-400 font-bold group-hover:translate-x-1 transition-all uppercase text-xs"
         >
-          <span>ACCESS FILE</span>
-          <Eye size={12} />
+          <span>VIEW DETAILS</span>
+          <Eye size={14} />
         </button>
       </div>
     </article>

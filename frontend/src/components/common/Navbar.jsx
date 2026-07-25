@@ -43,7 +43,7 @@ export default function Navbar({ className }) {
   return (
     <div
       className={cn(
-        "fixed bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 w-full flex justify-center z-50 mb-6 sm:pt-6 pointer-events-none",
+        "site-navbar fixed bottom-0 sm:bottom-auto sm:top-0 left-0 right-0 w-full flex justify-center z-50 mb-6 sm:pt-6 pointer-events-none",
         className,
       )}
     >
