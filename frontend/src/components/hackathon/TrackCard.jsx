@@ -1,5 +1,5 @@
 import React from 'react';
-import { Terminal, ShieldAlert, Cpu, Eye, Binary, Database, Lock, Code2 } from 'lucide-react';
+import { Terminal, ShieldAlert, Cpu, Eye, Binary, Database, Lock, Code2, Fingerprint } from 'lucide-react';
 
 export default function TrackCard({ track, onAccess }) {
   // Map beautiful cyber-themed icons based on track code/category
@@ -11,6 +11,7 @@ export default function TrackCard({ track, onAccess }) {
       case 'FILE-04': return <Database className="w-5 h-5 text-red-500" />;
       case 'FILE-05': return <Lock className="w-5 h-5 text-red-500" />;
       case 'FILE-06': return <Code2 className="w-5 h-5 text-red-500" />;
+      case 'FILE-08': return <Fingerprint className="w-5 h-5 text-red-500 animate-pulse" />;
       default: return <Binary className="w-5 h-5 text-red-500" />;
     }
   };
@@ -34,7 +35,7 @@ export default function TrackCard({ track, onAccess }) {
         <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
           <div className="flex items-center gap-2">
             {getTrackIcon(track.code)}
-            <span className="font-mono text-[10px] tracking-widest uppercase text-red-500 font-bold">{track.code}</span>
+            <span className="font-mono text-[10px] tracking-widest uppercase text-red-500 font-bold">{track.code} {"//"} {track.psCode}</span>
           </div>
           <div className="flex items-center gap-1.5 font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />

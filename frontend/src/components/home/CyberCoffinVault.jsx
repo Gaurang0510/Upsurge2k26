@@ -2,7 +2,7 @@ import { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Eye, ChevronRight, ShieldAlert, Sparkles, Lock, Flame } from 'lucide-react';
+import { Download, ShieldAlert, Sparkles, Lock, Flame } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -552,22 +552,13 @@ export default function CyberCoffinVault() {
                   {/* Brochure Action Buttons */}
                   <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full">
                     <a
-                      href="/SMACKATHON_2K26_info.docx"
-                      download="SMACKATHON_2K26_Brochure.docx"
+                      href="/images/events/SMACKATHON_2K26_Brochure.pdf"
+                      download="SMACKATHON_2K26_Brochure.pdf"
                       onClick={(e) => e.stopPropagation()}
                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-mono font-black text-xs sm:text-sm uppercase tracking-wider px-6 py-3.5 rounded-xl shadow-[0_0_30px_rgba(225,29,72,0.5)] transition-all duration-300 hover:scale-105 cursor-pointer"
                     >
                       <Download className="w-4 h-4 text-white" />
-                      DOWNLOAD BROCHURE (.DOCX)
-                    </a>
-                    <a
-                      href="/hackathon"
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-rose-500/40 bg-white/[0.06] hover:bg-rose-500/20 text-rose-200 font-mono font-bold text-xs sm:text-sm uppercase tracking-wider px-5 py-3.5 rounded-xl transition-all duration-300 hover:border-rose-400 cursor-pointer"
-                    >
-                      <Eye className="w-4 h-4 text-amber-300" />
-                      VIEW ONLINE
-                      <ChevronRight className="w-4 h-4" />
+                      DOWNLOAD BROCHURE (.PDF)
                     </a>
                   </div>
                 </motion.div>

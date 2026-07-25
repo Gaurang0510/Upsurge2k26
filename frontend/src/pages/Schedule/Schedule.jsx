@@ -36,7 +36,7 @@ export default function Schedule() {
 
         {/* Cyberpunk Operational Dashboard */}
         <ScrollFade direction="up" delay={0.15}>
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-white/[0.01] border border-white/5 rounded-lg backdrop-blur-sm font-mono text-xs uppercase tracking-widest text-steel relative overflow-hidden">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-white/[0.01] border border-white/5 rounded-lg backdrop-blur-sm font-mono text-xs uppercase tracking-widest text-steel relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-[#61dca3]/5 via-transparent to-transparent pointer-events-none" />
             <div className="flex flex-col gap-1 border-r border-white/5 last:border-0 pr-2">
               <span className="text-[10px] text-steel/60">OPERATION STATUS</span>

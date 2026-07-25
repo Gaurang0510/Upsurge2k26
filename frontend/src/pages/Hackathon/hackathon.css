@@ -757,3 +757,175 @@ body:has(.hackathon-page) header + div[aria-hidden="true"] {
 @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 @keyframes pulse-glow { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Cyber Forensics Prize Pool Section */
+.cyber-prize-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(193, 18, 31, 0.16);
+  background: rgba(10, 5, 5, 0.35);
+  background-image: linear-gradient(135deg, rgba(193, 18, 31, 0.08), transparent 42%, rgba(120, 0, 0, 0.05));
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 24px 60px rgba(0, 0, 0, 0.45);
+  transition: all 300ms cubic-bezier(0.25, 0.8, 0.25, 1);
+  border-radius: 0.75rem;
+}
+
+.cyber-prize-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(193, 18, 31, 0.8), transparent);
+  animation: prize-scan 4s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 200ms ease;
+}
+
+.cyber-prize-card.gold-tier::before {
+  background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.8), transparent);
+}
+.cyber-prize-card.silver-tier::before {
+  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.8), transparent);
+}
+.cyber-prize-card.bronze-tier::before {
+  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.8), transparent);
+}
+.cyber-prize-card.goodies-tier::before {
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.8), transparent);
+}
+
+.cyber-prize-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes prize-scan {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+.cyber-prize-card::after {
+  content: "";
+  position: absolute;
+  inset: -30% auto auto -120%;
+  width: 60%;
+  height: 180%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transform: rotate(18deg);
+  transition: transform 800ms ease;
+  pointer-events: none;
+}
+
+.cyber-prize-card:hover::after {
+  transform: translateX(300%) rotate(18deg);
+}
+
+.cyber-prize-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  background: rgba(15, 8, 8, 0.5);
+}
+
+/* Tier Glows */
+.cyber-prize-card.gold-tier {
+  border-color: rgba(234, 179, 8, 0.2);
+}
+.cyber-prize-card.gold-tier:hover {
+  border-color: rgba(234, 179, 8, 0.5);
+  box-shadow: 0 0 35px rgba(234, 179, 8, 0.2), inset 0 0 15px rgba(234, 179, 8, 0.1);
+}
+
+.cyber-prize-card.silver-tier {
+  border-color: rgba(14, 165, 233, 0.2);
+}
+.cyber-prize-card.silver-tier:hover {
+  border-color: rgba(14, 165, 233, 0.5);
+  box-shadow: 0 0 35px rgba(14, 165, 233, 0.2), inset 0 0 15px rgba(14, 165, 233, 0.1);
+}
+
+.cyber-prize-card.bronze-tier {
+  border-color: rgba(249, 115, 22, 0.2);
+}
+.cyber-prize-card.bronze-tier:hover {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 35px rgba(249, 115, 22, 0.2), inset 0 0 15px rgba(249, 115, 22, 0.1);
+}
+
+.cyber-prize-card.goodies-tier {
+  border-color: rgba(168, 85, 247, 0.2);
+}
+.cyber-prize-card.goodies-tier:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 35px rgba(168, 85, 247, 0.2), inset 0 0 15px rgba(168, 85, 247, 0.1);
+}
+
+/* Card Icons and text styling */
+.prize-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 300ms ease;
+}
+
+.gold-tier .prize-icon-wrapper {
+  background: rgba(234, 179, 8, 0.05);
+  border-color: rgba(234, 179, 8, 0.15);
+}
+.gold-tier:hover .prize-icon-wrapper {
+  background: rgba(234, 179, 8, 0.15);
+  border-color: rgba(234, 179, 8, 0.4);
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+}
+
+.silver-tier .prize-icon-wrapper {
+  background: rgba(14, 165, 233, 0.05);
+  border-color: rgba(14, 165, 233, 0.15);
+}
+.silver-tier:hover .prize-icon-wrapper {
+  background: rgba(14, 165, 233, 0.15);
+  border-color: rgba(14, 165, 233, 0.4);
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.2);
+}
+
+.bronze-tier .prize-icon-wrapper {
+  background: rgba(249, 115, 22, 0.05);
+  border-color: rgba(249, 115, 22, 0.15);
+}
+.bronze-tier:hover .prize-icon-wrapper {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.4);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+}
+
+.goodies-tier .prize-icon-wrapper {
+  background: rgba(168, 85, 247, 0.05);
+  border-color: rgba(168, 85, 247, 0.15);
+}
+.goodies-tier:hover .prize-icon-wrapper {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+/* Grid Overlay visual */
+.prize-card-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 16px 16px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 90%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+

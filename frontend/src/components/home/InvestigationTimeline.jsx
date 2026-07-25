@@ -25,69 +25,69 @@ const TIMELINE_EVENTS = [
     icon: '🎤', linkedEvent: null,
   },
   {
-    id: 'd1-03', caseNo: 'EVID-003', day: 'Day 1', time: '11:00',
-    title: 'OPERATION BREACH — KICKOFF',
-    status: 'ACTIVE BREACH', statusColor: '#ef4444', pinColor: '#ef4444',
-    stickyColor: 'pink', suspectLabel: 'SUSPECT 01',
-    stickyLines: ['CODING: 24 HOURS', 'STATUS: NON-STOP'],
-    description: 'The primary breach vector opens. Teams deploy prototypes under constant surveillance.',
-    icon: '⚡', linkedEvent: '/hackathon',
+    id: 'd1-03', caseNo: 'EVID-003', day: 'Day 1', time: '09:00',
+    title: 'ONSITE ENTRY',
+    status: 'OFFLINE', statusColor: '#22c55e', pinColor: '#22c55e',
+    stickyColor: 'pink', suspectLabel: 'OFFLINE TEAMS',
+    stickyLines: ['CHECK-IN: CSE DEPT', 'STATUS: REGISTERED'],
+    description: 'Reporting and check-in for offline teams.',
+    icon: '🏢', linkedEvent: '/hackathon',
   },
   {
-    id: 'd1-04', caseNo: 'EVID-004', day: 'Day 1', time: '14:00',
-    title: 'CAPTURE THE FLAG',
-    status: 'SURVEILLANCE', statusColor: '#f59e0b', pinColor: '#f59e0b',
-    stickyColor: 'yellow', suspectLabel: 'SUSPECT 02',
-    stickyLines: ['FLAGS: ENCRYPTED', 'ZONE: SERVER ROOM'],
-    description: 'Ethical hackers deploy payloads to uncover hidden security flags across classified servers.',
-    icon: '🚩', linkedEvent: '/events',
+    id: 'd1-04', caseNo: 'EVID-004', day: 'Day 1', time: '10:00',
+    title: 'ROUND 1 - PROTOTYPE DEV',
+    status: 'ACTIVE BUILD', statusColor: '#ef4444', pinColor: '#ef4444',
+    stickyColor: 'yellow', suspectLabel: 'DEVELOPMENT',
+    stickyLines: ['CODING: 4 HOURS', 'FORMAT: HYBRID'],
+    description: 'Teams build a working prototype based on the selected problem statement. Confirmed online teams participate via live video call.',
+    icon: '💻', linkedEvent: '/hackathon',
   },
   {
-    id: 'd1-05', caseNo: 'EVID-005', day: 'Day 1', time: '16:00',
-    title: 'LOCKDOWN',
-    status: 'RESTRICTED', statusColor: '#06b6d4', pinColor: '#06b6d4',
-    stickyColor: 'pink', suspectLabel: 'SUSPECT 03',
-    stickyLines: ['SECTOR: SEALED', 'ACCESS: DENIED'],
-    description: 'High-security zones lock down. Teams must navigate constraints to solve under pressure.',
-    icon: '🔒', linkedEvent: '/events',
+    id: 'd1-05', caseNo: 'EVID-005', day: 'Day 1', time: '14:00',
+    title: 'ROUND 1 - ELIMINATION (JUDGING)',
+    status: 'EVALUATION', statusColor: '#f59e0b', pinColor: '#f59e0b',
+    stickyColor: 'pink', suspectLabel: 'ELIMINATION',
+    stickyLines: ['METHOD: PITCH', 'JURY: ASSIGNED'],
+    description: 'Judges evaluate innovation, execution, and feasibility. Online teams present via live video call/remote demo.',
+    icon: '⚖️', linkedEvent: '/hackathon',
   },
   {
-    id: 'd1-06', caseNo: 'EVID-006', day: 'Day 1', time: '17:30',
-    title: 'CIPHER HEIST & TURF WARS',
-    status: 'ANALYZING', statusColor: '#a855f7', pinColor: '#a855f7',
-    stickyColor: 'yellow', suspectLabel: 'SUSPECT 04',
-    stickyLines: ['ARENA: LOCKED', 'SECTOR: NORTH LAB'],
-    description: 'Cryptographic puzzles unravel as syndicates fight for dominance in tactical arenas.',
-    icon: '🔐', linkedEvent: '/events',
+    id: 'd1-06', caseNo: 'EVID-006', day: 'Day 1', time: '17:00',
+    title: 'TOP TEAMS ANNOUNCEMENT',
+    status: 'QUALIFICATION', statusColor: '#a855f7', pinColor: '#a855f7',
+    stickyColor: 'yellow', suspectLabel: 'RESULTS',
+    stickyLines: ['QUALIFIED: TO FINALS', 'STATUS: COMPLETED'],
+    description: 'Top teams qualify for the Grand Finale. Other teams are eliminated.',
+    icon: '📢', linkedEvent: '/hackathon',
   },
 
   // ── DAY 2 ──
   {
     id: 'd2-01', caseNo: 'EVID-007', day: 'Day 2', time: '09:00',
-    title: 'OPERATION BREACH — CONTINUES',
-    status: 'ACTIVE BREACH', statusColor: '#ef4444', pinColor: '#ef4444',
-    stickyColor: 'pink', suspectLabel: 'ALL TEAMS',
-    stickyLines: ['HOUR: 22 OF 24', 'INTENSITY: MAXIMUM'],
-    description: 'The hackathon enters its final stretch. Teams push final commits and polish prototypes.',
-    icon: '💻', linkedEvent: '/hackathon',
+    title: 'PRODUCT REFINEMENT',
+    status: 'REFINING', statusColor: '#22c55e', pinColor: '#22c55e',
+    stickyColor: 'pink', suspectLabel: 'FINALISTS',
+    stickyLines: ['STAGE: OVERNIGHT', 'ACCESS: GRANTED'],
+    description: 'Finalists continue refining their prototype with additional development time (6 Aug Evening - 7 Aug Morning).',
+    icon: '⚙️', linkedEvent: '/hackathon',
   },
   {
-    id: 'd2-02', caseNo: 'EVID-008', day: 'Day 2', time: '11:00',
-    title: 'SUBMISSIONS CLOSE',
-    status: 'DEADLINE', statusColor: '#f59e0b', pinColor: '#f59e0b',
-    stickyColor: 'yellow', suspectLabel: 'CODE FREEZE',
-    stickyLines: ['REPOS: LOCKED', 'COMMITS: FINAL'],
-    description: 'All code repositories are frozen. No more commits allowed. The evidence is sealed.',
-    icon: '🧊', linkedEvent: '/hackathon',
+    id: 'd2-02', caseNo: 'EVID-008', day: 'Day 2', time: '10:00',
+    title: 'GRAND FINALE',
+    status: 'FINAL DEMO', statusColor: '#ef4444', pinColor: '#ef4444',
+    stickyColor: 'yellow', suspectLabel: 'JURY EVAL',
+    stickyLines: ['PITCH: LIVE DEMO', 'JURY: SENIOR JURY'],
+    description: 'Final demonstration, jury interaction, and evaluation. Online finalists present via live video call.',
+    icon: '🏆', linkedEvent: '/hackathon',
   },
   {
-    id: 'd2-03', caseNo: 'EVID-009', day: 'Day 2', time: '12:00',
-    title: 'THE INVESTIGATION',
-    status: 'INTERROGATION', statusColor: '#a855f7', pinColor: '#a855f7',
-    stickyColor: 'pink', suspectLabel: 'SUSPECT 05',
-    stickyLines: ['JURY: SENIOR AGENTS', 'METHOD: CROSS-EXAM'],
-    description: 'The interrogation room opens. Projects face rigorous evaluation by senior investigators.',
-    icon: '🔎', linkedEvent: '/events',
+    id: 'd2-03', caseNo: 'EVID-009', day: 'Day 2', time: '13:00',
+    title: 'WINNER ANNOUNCEMENT',
+    status: 'VERDICT', statusColor: '#f59e0b', pinColor: '#f59e0b',
+    stickyColor: 'pink', suspectLabel: 'TOP 3 TEAMS',
+    stickyLines: ['BOUNTY: CLAIMED', 'STATUS: DECLASSIFIED'],
+    description: 'Top 3 winning teams are declared.',
+    icon: '🎯', linkedEvent: '/hackathon',
   },
   {
     id: 'd2-04', caseNo: 'EVID-010', day: 'Day 2', time: '14:00',
@@ -214,6 +214,82 @@ function EvidenceCard({ item, index, onHover, onLeave, onClick }) {
     ? 'bg-[#ffe066] text-zinc-900'
     : 'bg-[#ff2a6d] text-white';
 
+  const isSmackathon = item.linkedEvent === '/hackathon';
+
+  const cardContent = (
+    <div className={`relative bg-zinc-100 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.85)] border border-zinc-300 overflow-visible transition-all duration-300 ease-out h-full
+      ${isEven ? '-rotate-1' : 'rotate-1'} 
+      group-hover:rotate-0 group-hover:scale-[1.04] group-hover:shadow-[0_30px_70px_rgba(193,18,31,0.4)]`}
+    >
+      {/* Tape pieces */}
+      <div className="absolute -top-2.5 left-5 w-14 h-3.5 bg-amber-200/60 border border-amber-400/40 -rotate-3 z-10 pointer-events-none" />
+      <div className="absolute -top-2 right-4 w-10 h-3 bg-amber-200/40 border border-amber-400/30 rotate-6 z-10 pointer-events-none" />
+
+      {/* ── Dark Photo Window ── */}
+      <div className="relative h-28 sm:h-32 bg-[#0a0a0f] m-2.5 mb-0 overflow-hidden">
+        {/* Ambient glow */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full blur-2xl opacity-25 transition-opacity duration-300 group-hover:opacity-55"
+          style={{ backgroundColor: item.pinColor }}
+        />
+
+        {/* Top bar */}
+        <div className="relative z-10 flex items-center justify-between p-2.5">
+          <span className="font-mono text-[10px] text-zinc-400 tracking-wider font-bold">{item.caseNo}</span>
+          <span
+            className="px-2 py-0.5 text-[8px] font-mono font-bold tracking-widest uppercase rounded-sm border"
+            style={{
+              color: item.statusColor,
+              borderColor: item.statusColor + '66',
+              backgroundColor: item.statusColor + '1a',
+            }}
+          >
+            {item.status}
+          </span>
+        </div>
+
+        {/* Icon + time */}
+        <div className="absolute bottom-2.5 left-2.5 z-10 flex items-end gap-2">
+          <span className="text-2xl drop-shadow-lg">{item.icon}</span>
+          <div>
+            <p className="font-mono text-lg font-black text-white/90 leading-none">{item.time}</p>
+            <p className="font-mono text-[9px] text-zinc-400 uppercase tracking-[0.2em] mt-0.5">{item.day}</p>
+          </div>
+        </div>
+
+        {/* Fingerprint watermark */}
+        <svg className="absolute right-2 bottom-2 w-8 h-8 opacity-10 z-0" viewBox="0 0 40 40" fill="none" stroke="white" strokeWidth="0.8">
+          <circle cx="20" cy="20" r="18" /><circle cx="20" cy="20" r="14" /><circle cx="20" cy="20" r="10" /><circle cx="20" cy="20" r="6" />
+        </svg>
+      </div>
+
+      {/* ── Caption ── */}
+      <div className="p-2.5 pt-2">
+        <h4 className="font-display text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-zinc-900 leading-tight group-hover:text-rose-700 transition-colors duration-300">
+          {isSmackathon && <span className="bg-red-600 text-white text-[8px] font-mono px-1.5 py-0.5 rounded-sm mr-1.5 align-middle select-none font-bold">SMACKATHON</span>}
+          {item.title}
+        </h4>
+        <p className="font-mono text-[9px] text-zinc-500 mt-1 leading-relaxed line-clamp-2">
+          {item.description}
+        </p>
+      </div>
+
+      {/* ── Sticky Note ── */}
+      <div
+        className={`absolute -bottom-3.5 ${isEven ? '-right-2.5' : '-left-2.5'} w-[6.5rem] p-1.5 shadow-md border border-black/10 z-20
+          ${stickyBg} ${isEven ? 'rotate-3' : '-rotate-3'}
+          transition-transform duration-300 group-hover:scale-110 group-hover:rotate-0`}
+      >
+        <p className="font-mono font-extrabold text-[7px] tracking-wider uppercase border-b border-black/15 pb-0.5 mb-0.5">
+          {item.suspectLabel}
+        </p>
+        {item.stickyLines.map((line, li) => (
+          <p key={li} className="font-mono font-bold text-[7px] uppercase leading-tight tracking-tight">{line}</p>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -222,7 +298,7 @@ function EvidenceCard({ item, index, onHover, onLeave, onClick }) {
       transition={{ duration: 0.35, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      onClick={onClick}
+      onClick={isSmackathon ? onClick : (e) => e.stopPropagation()}
       className={`group relative cursor-pointer will-change-transform transform-gpu transition-transform duration-300 ease-out hover:-translate-y-3 hover:z-40 ${isEven ? 'lg:mt-0' : 'lg:mt-14'}`}
     >
       {/* ── Pushpin ── */}
@@ -235,77 +311,24 @@ function EvidenceCard({ item, index, onHover, onLeave, onClick }) {
         </div>
       </div>
 
-      {/* ── Card Frame ── */}
-      <div className={`relative bg-zinc-100 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.85)] border border-zinc-300 overflow-visible transition-all duration-300 ease-out
-        ${isEven ? '-rotate-1' : 'rotate-1'} 
-        group-hover:rotate-0 group-hover:scale-[1.04] group-hover:shadow-[0_30px_70px_rgba(193,18,31,0.4)]`}
-      >
-        {/* Tape pieces */}
-        <div className="absolute -top-2.5 left-5 w-14 h-3.5 bg-amber-200/60 border border-amber-400/40 -rotate-3 z-10 pointer-events-none" />
-        <div className="absolute -top-2 right-4 w-10 h-3 bg-amber-200/40 border border-amber-400/30 rotate-6 z-10 pointer-events-none" />
-
-        {/* ── Dark Photo Window ── */}
-        <div className="relative h-28 sm:h-32 bg-[#0a0a0f] m-2.5 mb-0 overflow-hidden">
-          {/* Ambient glow */}
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full blur-2xl opacity-25 transition-opacity duration-300 group-hover:opacity-55"
-            style={{ backgroundColor: item.pinColor }}
-          />
-
-          {/* Top bar */}
-          <div className="relative z-10 flex items-center justify-between p-2.5">
-            <span className="font-mono text-[10px] text-zinc-400 tracking-wider font-bold">{item.caseNo}</span>
-            <span
-              className="px-2 py-0.5 text-[8px] font-mono font-bold tracking-widest uppercase rounded-sm border"
-              style={{
-                color: item.statusColor,
-                borderColor: item.statusColor + '66',
-                backgroundColor: item.statusColor + '1a',
-              }}
-            >
-              {item.status}
-            </span>
+      {isSmackathon ? (
+        cardContent
+      ) : (
+        <div className="under-investigation-wrapper h-full rounded-sm overflow-hidden">
+          <div className="under-investigation-blur h-full">
+            {cardContent}
           </div>
-
-          {/* Icon + time */}
-          <div className="absolute bottom-2.5 left-2.5 z-10 flex items-end gap-2">
-            <span className="text-2xl drop-shadow-lg">{item.icon}</span>
-            <div>
-              <p className="font-mono text-lg font-black text-white/90 leading-none">{item.time}</p>
-              <p className="font-mono text-[9px] text-zinc-400 uppercase tracking-[0.2em] mt-0.5">{item.day}</p>
+          <div className="under-investigation-overlay !bg-black/80 rounded-sm p-4">
+            <div className="under-investigation-badge !bg-black/95 !border-red-500/20 !p-4 shadow-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <h4 className="font-mono text-[9px] font-bold text-red-500 uppercase tracking-widest mt-1">[ CLASSIFIED ]</h4>
+              <p className="font-mono text-[8px] text-zinc-500 mt-1 uppercase leading-normal">
+                Verifying schedule...
+              </p>
             </div>
           </div>
-
-          {/* Fingerprint watermark */}
-          <svg className="absolute right-2 bottom-2 w-8 h-8 opacity-10 z-0" viewBox="0 0 40 40" fill="none" stroke="white" strokeWidth="0.8">
-            <circle cx="20" cy="20" r="18" /><circle cx="20" cy="20" r="14" /><circle cx="20" cy="20" r="10" /><circle cx="20" cy="20" r="6" />
-          </svg>
         </div>
-
-        {/* ── Caption ── */}
-        <div className="p-2.5 pt-2">
-          <h4 className="font-display text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-zinc-900 leading-tight group-hover:text-rose-700 transition-colors duration-300">
-            {item.title}
-          </h4>
-          <p className="font-mono text-[9px] text-zinc-500 mt-1 leading-relaxed line-clamp-2">
-            {item.description}
-          </p>
-        </div>
-
-        {/* ── Sticky Note ── */}
-        <div
-          className={`absolute -bottom-3.5 ${isEven ? '-right-2.5' : '-left-2.5'} w-[6.5rem] p-1.5 shadow-md border border-black/10 z-20
-            ${stickyBg} ${isEven ? 'rotate-3' : '-rotate-3'}
-            transition-transform duration-300 group-hover:scale-110 group-hover:rotate-0`}
-        >
-          <p className="font-mono font-extrabold text-[7px] tracking-wider uppercase border-b border-black/15 pb-0.5 mb-0.5">
-            {item.suspectLabel}
-          </p>
-          {item.stickyLines.map((line, li) => (
-            <p key={li} className="font-mono font-bold text-[7px] uppercase leading-tight tracking-tight">{line}</p>
-          ))}
-        </div>
-      </div>
+      )}
     </motion.div>
   );
 }
@@ -390,6 +413,39 @@ function MobileTimelineCard({ item, index, allEvents, onClick }) {
     : 'bg-[#ff2a6d] text-white';
 
   const isFirstOfDay = index === 0 || item.day !== allEvents[index - 1]?.day;
+  const isSmackathon = item.linkedEvent === '/hackathon';
+
+  const cardContent = (
+    <div className="bg-[#0d0d14] border border-white/10 rounded-xl p-4 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-md active:scale-[0.98] transition-all duration-200 hover:border-rose-600/30">
+      <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">{item.icon}</span>
+          <span className="font-mono text-xs font-bold text-rose-400">{item.caseNo}</span>
+        </div>
+        <span
+          className="px-2 py-0.5 text-[8px] font-mono font-bold tracking-widest border rounded-sm uppercase"
+          style={{ color: item.statusColor, borderColor: item.statusColor + '55', backgroundColor: item.statusColor + '15' }}
+        >
+          {item.status}
+        </span>
+      </div>
+
+      <div className="flex items-baseline gap-3 mb-2">
+        <span className="font-mono text-2xl font-black text-white/90 leading-none">{item.time}</span>
+        <h4 className="font-display text-sm font-bold text-white uppercase leading-tight">
+          {isSmackathon && <span className="bg-red-600 text-white text-[8px] font-mono px-1.5 py-0.5 rounded-sm mr-1.5 align-middle select-none font-bold">SMACKATHON</span>}
+          {item.title}
+        </h4>
+      </div>
+
+      <p className="text-zinc-400 text-xs leading-relaxed">{item.description}</p>
+
+      <div className={`mt-3 inline-flex gap-2 items-center px-2.5 py-1.5 rounded text-[9px] font-mono font-bold uppercase ${stickyBg}`}>
+        <span className="font-extrabold">{item.suspectLabel}:</span>
+        <span>{item.stickyLines.join(' · ')}</span>
+      </div>
+    </div>
+  );
 
   return (
     <motion.div
@@ -397,7 +453,7 @@ function MobileTimelineCard({ item, index, allEvents, onClick }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-      onClick={onClick}
+      onClick={isSmackathon ? onClick : (e) => e.stopPropagation()}
       className="relative group cursor-pointer will-change-transform transform-gpu"
     >
       {/* Pin */}
@@ -415,32 +471,24 @@ function MobileTimelineCard({ item, index, allEvents, onClick }) {
         </div>
       )}
 
-      <div className="bg-[#0d0d14] border border-white/10 rounded-xl p-4 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-md active:scale-[0.98] transition-all duration-200 hover:border-rose-600/30">
-        <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-lg">{item.icon}</span>
-            <span className="font-mono text-xs font-bold text-rose-400">{item.caseNo}</span>
+      {isSmackathon ? (
+        cardContent
+      ) : (
+        <div className="under-investigation-wrapper rounded-xl overflow-hidden">
+          <div className="under-investigation-blur">
+            {cardContent}
           </div>
-          <span
-            className="px-2 py-0.5 text-[8px] font-mono font-bold tracking-widest border rounded-sm uppercase"
-            style={{ color: item.statusColor, borderColor: item.statusColor + '55', backgroundColor: item.statusColor + '15' }}
-          >
-            {item.status}
-          </span>
+          <div className="under-investigation-overlay !bg-black/75 rounded-xl">
+            <div className="under-investigation-badge !bg-black/95 !border-red-500/20 !p-3 shadow-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <h4 className="font-mono text-[9px] font-bold text-red-500 uppercase tracking-widest mt-1">[ CLASSIFIED ]</h4>
+              <p className="font-mono text-[8px] text-zinc-500 mt-1 uppercase">
+                Verifying schedule...
+              </p>
+            </div>
+          </div>
         </div>
-
-        <div className="flex items-baseline gap-3 mb-2">
-          <span className="font-mono text-2xl font-black text-white/90 leading-none">{item.time}</span>
-          <h4 className="font-display text-sm font-bold text-white uppercase leading-tight">{item.title}</h4>
-        </div>
-
-        <p className="text-zinc-400 text-xs leading-relaxed">{item.description}</p>
-
-        <div className={`mt-3 inline-flex gap-2 items-center px-2.5 py-1.5 rounded text-[9px] font-mono font-bold uppercase ${stickyBg}`}>
-          <span className="font-extrabold">{item.suspectLabel}:</span>
-          <span>{item.stickyLines.join(' · ')}</span>
-        </div>
-      </div>
+      )}
     </motion.div>
   );
 }
@@ -683,8 +731,11 @@ export default function InvestigationTimeline() {
                 <div className="flex items-center gap-3 mb-5">
                   <span className="text-4xl">{selectedCase.icon}</span>
                   <div>
-                    <p className="font-mono text-[10px] text-evidence font-bold tracking-[0.2em] uppercase">
-                      {selectedCase.caseNo} — {selectedCase.day} / {selectedCase.time}
+                    <p className="font-mono text-[10px] text-evidence font-bold tracking-[0.2em] uppercase flex items-center gap-1.5">
+                      <span>{selectedCase.caseNo} — {selectedCase.day} / {selectedCase.time}</span>
+                      {selectedCase.linkedEvent === '/hackathon' && (
+                        <span className="bg-red-600 text-white text-[8px] font-mono px-1.5 py-0.5 rounded-sm select-none font-black tracking-normal">SMACKATHON</span>
+                      )}
                     </p>
                     <h3 className="font-display text-lg sm:text-xl font-bold uppercase text-white mt-0.5">{selectedCase.title}</h3>
                   </div>
