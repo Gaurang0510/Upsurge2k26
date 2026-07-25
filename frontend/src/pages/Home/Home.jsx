@@ -88,7 +88,28 @@ export default function Home() {
       <InvestigationTimeline />
 
       {/* Sponsors 3D Marquee */}
-      <SponsorsMarquee />
+      <div className="under-investigation-wrapper">
+        <div className="under-investigation-blur">
+          <SponsorsMarquee />
+        </div>
+        <div className="under-investigation-overlay">
+          <div className="under-investigation-badge">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+            <h4 className="under-investigation-title">[ Telemetry Loading ]</h4>
+            <p className="under-investigation-text">
+              Partner and sponsor nodes are currently calibrating and will display soon. Smackathon tracks are active and open for registration.
+            </p>
+            <Link
+              to="/hackathon"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-4 inline-flex items-center justify-center gap-1.5 px-4 py-2 border border-red-500/50 bg-red-950/20 text-red-400 font-mono text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.4)] transition-all duration-300 rounded cursor-pointer"
+            >
+              <span>ACCESS ACTIVE SMACKATHON</span>
+              <span>→</span>
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* CTA strip */}
       <ScrollFade direction="up" className="mx-auto max-w-7xl px-4 py-32 sm:py-48 text-center sm:px-6 lg:px-8">

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { GraduationCap, HeartPulse, TrendingUp, Cpu, Sprout, Leaf, Lightbulb } from "lucide-react";
+import { GraduationCap, HeartPulse, TrendingUp, Cpu, Sprout, Leaf, Lightbulb, ShieldAlert } from "lucide-react";
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 
 const smackathonDomains = [
@@ -13,7 +13,7 @@ const smackathonDomains = [
     category: "Education",
     icon: GraduationCap,
     image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&q=80",
-    relatedIds: [2, 7],
+    relatedIds: [2, 8],
     status: "completed",
     energy: 95,
   },
@@ -85,9 +85,21 @@ const smackathonDomains = [
     category: "Open Track",
     icon: Lightbulb,
     image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&q=80",
-    relatedIds: [6, 1],
+    relatedIds: [6, 8],
     status: "completed",
     energy: 90,
+  },
+  {
+    id: 8,
+    title: "CYBER FORENSICS",
+    date: "TRACK-08",
+    content: "Digital forensics, memory analysis, log trace recovery, threat hunting, and digital evidence decryption.",
+    category: "Cyber Forensics",
+    icon: ShieldAlert,
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&q=80",
+    relatedIds: [7, 1],
+    status: "completed",
+    energy: 94,
   },
 ];
 

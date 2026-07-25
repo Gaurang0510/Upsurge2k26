@@ -56,38 +56,59 @@ export default {
   tracks: [
     {
       code: 'FILE-01',
+      psCode: 'PS-ED-01',
+      domain: 'Education',
       name: 'Education',
       brief: 'Case files on access to learning — tools that make education reach further and land better.',
     },
     {
       code: 'FILE-02',
+      psCode: 'PS-HC-02',
+      domain: 'Healthcare',
       name: 'Healthcare',
       brief: 'Evidence for public health gaps — wellness, access, and early-warning systems.',
     },
     {
       code: 'FILE-03',
+      psCode: 'PS-EV-03',
+      domain: 'Environment',
       name: 'Environment',
       brief: 'Field reports on sustainability — tech that leaves less of a trace.',
     },
     {
       code: 'FILE-04',
+      psCode: 'PS-FT-04',
+      domain: 'FinTech',
       name: 'FinTech',
       brief: 'Follow the money — secure transactions, financial inclusion, fraud defense.',
     },
     {
       code: 'FILE-05',
+      psCode: 'PS-CD-05',
+      domain: 'Cyber Defense',
       name: 'Cyber Defense',
       brief: 'Privacy, security, and decentralization — protect the system from the inside.',
     },
     {
       code: 'FILE-06',
+      psCode: 'PS-AG-06',
+      domain: 'AgriTech',
       name: 'AgriTech',
       brief: 'Ground-level intelligence for farming — efficiency and sustainability in the field.',
     },
     {
       code: 'FILE-07',
+      psCode: 'PS-OP-07',
+      domain: 'Open Case',
       name: 'Open Case',
       brief: 'No track fits? Bring your own lead. Any domain, any approach, wide open.',
+    },
+    {
+      code: 'FILE-08',
+      psCode: 'PS-CF-08',
+      domain: 'Cyber Forensics',
+      name: 'Cyber Forensics',
+      brief: 'Investigative case files on digital crimes — tracing signatures, decryption tools, and data recovery.',
     },
   ],
   assessmentCriteria: [
@@ -118,7 +139,7 @@ export default {
       a: 'No. A participant may be part of only one team.',
     },
   ],
-  prize: { first: '20,000', second: '12,000', third: '8,000', currency: '₹' },
+  prize: { total: '40,000', first: '20,000', second: '10,000', third: '5,000', goodies: '5,000', currency: '₹' },
   coordinators: [
     { name: 'TBD', phone: 'TBD' },
     { name: 'TBD', phone: 'TBD' },
