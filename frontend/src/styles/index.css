@@ -792,4 +792,10 @@
   text-transform: uppercase;
 }
 
+/* Hide navbar when modal is open */
+body.hide-navbar .site-navbar {
+  display: none !important;
+}
+
+
 
