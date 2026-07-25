@@ -26,14 +26,11 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-overflow-scrolling: touch;
   }
 
-  body {
-    background-color: theme('colors.case-black');
-    overscroll-behavior-y: none;
-    touch-action: manipulation;
+  html.lenis,
+  html.lenis body {
+    height: auto;
   }
 
   .lenis.lenis-smooth {

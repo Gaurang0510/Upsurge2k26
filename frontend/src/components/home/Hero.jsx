@@ -47,8 +47,6 @@ export default function Hero() {
         <img
           src="/images/hero-coffin.png"
           alt="Cyber Crime Investigation Scene"
-          fetchPriority="high"
-          loading="eager"
           className="w-full h-full object-cover object-center opacity-70 mix-blend-luminosity filter brightness-90 contrast-125 scale-105 transform transition-transform duration-1000 ease-out"
         />
         {/* Dark Vignette Overlay for Crisp Typography Contrast */}
@@ -97,8 +95,6 @@ export default function Hero() {
             <img
               src="/images/logo/up-name.png"
               alt="UPSURGE 2K26"
-              fetchPriority="high"
-              loading="eager"
               className="w-full h-auto object-contain select-none pointer-events-none"
             />
           </div>

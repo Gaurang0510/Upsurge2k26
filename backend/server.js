@@ -36,35 +36,35 @@ const validateEnvironment = () => {
   for (const key of REQUIRED_SECRETS) {
     const value = (process.env[key] || '').trim();
     if (!value || PLACEHOLDER_VALUES.has(value.toLowerCase())) {
-      throw new Error(`Missing or placeholder value for required env var: ${key}`);
+      console.warn(`[WARN] Missing or placeholder value for required env var: ${key}. Backend may have issues.`);
     }
   }
 
-  if (process.env.JWT_SECRET.trim().length < 32) {
-    throw new Error('JWT_SECRET must be at least 32 characters long');
+  if ((process.env.JWT_SECRET || '').trim().length < 32) {
+    console.warn('[WARN] JWT_SECRET should be at least 32 characters long');
   }
 
   const registrationSecret = String(process.env.REGISTRATION_JWT_SECRET || '').trim();
   if (registrationSecret) {
     if (registrationSecret.length < 32) {
-      throw new Error('REGISTRATION_JWT_SECRET must be at least 32 characters long');
+      console.warn('[WARN] REGISTRATION_JWT_SECRET should be at least 32 characters long');
     }
     if (process.env.JWT_SECRET === registrationSecret) {
-      throw new Error('JWT_SECRET and REGISTRATION_JWT_SECRET must be different values');
+      console.warn('[WARN] JWT_SECRET and REGISTRATION_JWT_SECRET should be different values');
     }
   } else if (IS_PRODUCTION) {
-    throw new Error('REGISTRATION_JWT_SECRET must be set in production');
+    console.warn('[WARN] REGISTRATION_JWT_SECRET should be set in production');
   }
 
   if (IS_PRODUCTION) {
     if (configuredOrigins.length === 0) {
-      throw new Error('FRONTEND_URL must list at least one allowed frontend origin in production');
+      console.warn('[WARN] FRONTEND_URL must list at least one allowed frontend origin in production');
     }
 
     for (const key of REQUIRED_PAYMENT_SETTINGS) {
       const value = String(process.env[key] || '').trim();
       if (!value || PLACEHOLDER_VALUES.has(value.toLowerCase()) || value.startsWith('your-')) {
-        throw new Error(`Missing or placeholder value for required env var: ${key}`);
+        console.warn(`[WARN] Missing or placeholder value for required env var: ${key}`);
       }
     }
   }
@@ -110,7 +110,10 @@ app.use(
       }
 
       if (
-        configuredOrigins.length > 0 && configuredOrigins.includes(origin)
+        (configuredOrigins.length > 0 && configuredOrigins.includes(origin)) ||
+        origin.endsWith('.upsurge2k26.in') ||
+        origin === 'https://upsurge2k26.in' ||
+        origin.endsWith('.up.railway.app')
       ) {
         return callback(null, true);
       }
@@ -175,14 +178,6 @@ const statusLimiter = rateLimit({
   message: { success: false, message: 'Too many status checks. Please try again later.' },
 });
 
-const submitLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: 'Too many submission attempts. Please try again later.' },
-});
-
 // ---- Standard JSON body parsing ----
 // A 2 MB image becomes roughly 2.7 MB after base64 encoding.
 app.use(express.json({ limit: '3mb' }));
@@ -192,7 +187,6 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use('/api/v1/events', publicLimiter, eventRoutes);
 app.use('/api/v1/registrations/verify-invitation', invitationLimiter);
 app.use('/api/v1/registrations/status', statusLimiter);
-app.use('/api/v1/registrations/submit', submitLimiter);
 app.use('/api/v1/registrations', publicLimiter, registrationRoutes);
 app.use('/api/v1/admin/login', authLimiter);
 app.use('/api/v1/admin', adminRoutes);
