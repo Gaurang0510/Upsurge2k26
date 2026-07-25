@@ -2,7 +2,7 @@ import { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Eye, ChevronRight, ShieldAlert, Sparkles, Lock, Flame } from 'lucide-react';
+import { Download, ShieldAlert, Sparkles, Lock, Flame } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 

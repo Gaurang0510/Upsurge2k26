@@ -1,6 +1,5 @@
 import { useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { getEventBySlug } from '../../data/events/index.js';
 
 const FALLOFF_CURVES = {

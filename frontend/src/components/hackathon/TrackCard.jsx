@@ -35,7 +35,7 @@ export default function TrackCard({ track, onAccess }) {
         <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
           <div className="flex items-center gap-2">
             {getTrackIcon(track.code)}
-            <span className="font-mono text-[10px] tracking-widest uppercase text-red-500 font-bold">{track.code} // {track.psCode}</span>
+            <span className="font-mono text-[10px] tracking-widest uppercase text-red-500 font-bold">{track.code} {"//"} {track.psCode}</span>
           </div>
           <div className="flex items-center gap-1.5 font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
