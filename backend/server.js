@@ -110,7 +110,10 @@ app.use(
       }
 
       if (
-        configuredOrigins.length > 0 && configuredOrigins.includes(origin)
+        (configuredOrigins.length > 0 && configuredOrigins.includes(origin)) ||
+        origin.endsWith('.upsurge2k26.in') ||
+        origin === 'https://upsurge2k26.in' ||
+        origin.endsWith('.up.railway.app')
       ) {
         return callback(null, true);
       }
