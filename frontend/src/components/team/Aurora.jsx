@@ -118,12 +118,27 @@ export default function Aurora(props) {
     const ctn = ctnDom.current;
     if (!ctn) return;
 
-    const renderer = new Renderer({
-      alpha: true,
-      premultipliedAlpha: true,
-      antialias: true
-    });
+    // Aurora uses WebGL2 shaders. Do not initialise OGL at all on devices
+    // where the browser/GPU cannot create a WebGL2 context.
+    const testCanvas = document.createElement('canvas');
+    const testGl = testCanvas.getContext('webgl2');
+    if (!testGl) return;
+    testGl.getExtension('WEBGL_lose_context')?.loseContext();
+
+    let renderer;
+    try {
+      renderer = new Renderer({
+        alpha: true,
+        premultipliedAlpha: true,
+        antialias: true
+      });
+    } catch {
+      return;
+    }
+
     const gl = renderer.gl;
+    if (!gl) return;
+
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
