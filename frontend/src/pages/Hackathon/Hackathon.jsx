@@ -254,9 +254,9 @@ export default function Hackathon() {
         <section className="border-b border-white/5 bg-transparent relative overflow-hidden">
           {/* Ambient decorative glowing orbs for the prize pool section */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-950/20 blur-[120px] rounded-full pointer-events-none z-0" />
-          
+
           <div className="mx-auto max-w-7xl px-4 py-24 sm:py-32 sm:px-6 lg:px-8 relative z-10">
-            
+
             {/* High Fidelity Prize Pool Header matching Squid Game layout style but Cyber Themed */}
             <ScrollFade direction="up" className="flex flex-col items-center text-center mb-20">
               <span className="font-mono text-xs text-red-500 tracking-[0.4em] uppercase mb-3 block">
@@ -277,7 +277,7 @@ export default function Hackathon() {
             <div className="mt-16 max-w-6xl mx-auto flex flex-col gap-8 md:gap-12">
               {/* Podium Grid for Cash Prizes */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 items-stretch">
-                
+
                 {/* Card 2: 2nd Place (1st Runner Up) - Placed Left on Desktop */}
                 <ScrollFade direction="up" delay={0.2} className="cyber-prize-card silver-tier p-6 flex flex-col justify-between min-h-[320px] order-2 md:order-1 md:translate-y-4 self-stretch">
                   <div className="prize-card-grid-overlay" />
@@ -501,11 +501,10 @@ export default function Hackathon() {
                 <button
                   key={domain}
                   onClick={() => setActiveDomain(domain)}
-                  className={`font-mono text-[10px] sm:text-xs uppercase px-4 py-2 border transition-all duration-300 relative tracking-wider ${
-                    activeDomain === domain
+                  className={`font-mono text-[10px] sm:text-xs uppercase px-4 py-2 border transition-all duration-300 relative tracking-wider ${activeDomain === domain
                       ? 'bg-red-950/40 border-red-500 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.25)] font-bold'
                       : 'bg-black/40 border-white/10 text-zinc-500 hover:border-red-500/40 hover:text-zinc-300'
-                  }`}
+                    }`}
                 >
                   {activeDomain === domain && (
                     <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-2 animate-pulse" />
@@ -514,19 +513,19 @@ export default function Hackathon() {
                 </button>
               ))}
             </div>
-            
+
             {/* Matches counter metadata */}
             <div className="mt-6 font-mono text-[9px] tracking-widest text-zinc-500 uppercase flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
               STATUS: SECURE_LINK // CASES_RESOLVED: {
-                activeDomain === 'All' 
-                  ? event.tracks.length 
+                activeDomain === 'All'
+                  ? event.tracks.length
                   : event.tracks.filter(t => t.domain === activeDomain).length
               } FILES FOUND
             </div>
           </ScrollFade>
 
-          <ScrollStaggerContainer key={activeDomain} className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 w-full max-w-full">
+          <ScrollStaggerContainer key={activeDomain} className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {event.tracks
               .filter(track => activeDomain === 'All' || track.domain === activeDomain)
               .map((track) => (
