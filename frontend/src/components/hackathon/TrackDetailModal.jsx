@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, ShieldAlert, Cpu, Database, Lock, Terminal, Binary, AlertTriangle, Target, CheckCircle2, Globe, Sparkles } from 'lucide-react';
+import { X, ShieldAlert, Cpu, Database, Lock, Terminal, Binary, AlertTriangle, Target, CheckCircle2, Globe, Sparkles, HeartPulse, Sprout } from 'lucide-react';
 
 export default function TrackDetailModal({ track, onClose }) {
   useEffect(() => {
@@ -16,8 +16,8 @@ export default function TrackDetailModal({ track, onClose }) {
   const getTrackIcon = (domain) => {
     switch (domain?.toLowerCase()) {
       case 'education': return <Terminal className="w-7 h-7 text-red-500" />;
-      case 'healthcare': return <HeartPulseIcon className="w-7 h-7 text-red-500 animate-pulse" />;
-      case 'agriculture': return <SproutIcon className="w-7 h-7 text-red-500" />;
+      case 'healthcare': return <HeartPulse className="w-7 h-7 text-red-500 animate-pulse" />;
+      case 'agriculture': return <Sprout className="w-7 h-7 text-red-500" />;
       case 'web 3.0': return <Cpu className="w-7 h-7 text-red-500" />;
       case 'fintech': return <Database className="w-7 h-7 text-red-500" />;
       case 'cybersecurity': return <Lock className="w-7 h-7 text-red-500" />;

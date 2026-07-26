@@ -48,7 +48,7 @@ export default function Footer() {
         reply = { text: '  ACCESS GRANTED — WELCOME TO OPERATION BREACH, UPSURGE 2K26', cls: 'text-green-400' };
         break;
       case 'socials':
-        reply = { text: `  IG → ${siteConfig.socials.instagram}   LI → ${siteConfig.socials.linkedin}`, cls: 'text-green-400' };
+        reply = { text: `  IG → ${isSmackathonPage ? 'https://www.instagram.com/acm.ycce?igsh=bHFhdjVnYjU5MGU4' : siteConfig.socials.instagram}   LI → ${siteConfig.socials.linkedin}`, cls: 'text-green-400' };
         break;
       case 'date':
         reply = { text: `  ${new Date().toUTCString()}`, cls: 'text-green-400' };
@@ -138,7 +138,7 @@ export default function Footer() {
             {/* Social links */}
             <div className="mt-6 flex gap-5">
               <a
-                href={siteConfig.socials.instagram}
+                href={isSmackathonPage ? 'https://www.instagram.com/acm.ycce?igsh=bHFhdjVnYjU5MGU4' : siteConfig.socials.instagram}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 rounded border border-evidence/40 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-evidence transition-all duration-200 hover:border-evidence hover:bg-evidence/10 hover:text-white"
