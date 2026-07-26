@@ -305,7 +305,7 @@ const FuzzyText = ({
     letterSpacing
   ]);
 
-  return <canvas ref={canvasRef} className={className} />;
+  return <canvas ref={canvasRef} className={`max-w-full h-auto ${className}`} style={{ display: 'block' }} />;
 };
 
 export default FuzzyText;

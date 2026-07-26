@@ -16,17 +16,37 @@ export default function RadialOrbitalTimeline({
   const centerOffset = { x: 0, y: 0 };
   const [activeNodeId, setActiveNodeId] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [scale, setScale] = useState(1);
   const containerRef = useRef(null);
   const orbitRef = useRef(null);
   const nodeRefs = useRef({});
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      const isMob = window.innerWidth <= 768;
+      setIsMobile(isMob);
+      
+      if (containerRef.current) {
+        const width = containerRef.current.getBoundingClientRect().width;
+        if (isMob) {
+          // mobile design width: 480px
+          const newScale = Math.min(1, (width - 24) / 480);
+          setScale(newScale);
+        } else {
+          // tablet / smaller desktop design width: 760px
+          if (width < 800) {
+            const newScale = Math.min(1, (width - 40) / 760);
+            setScale(newScale);
+          } else {
+            setScale(1);
+          }
+        }
+      }
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleContainerClick = (e) => {
@@ -143,7 +163,10 @@ export default function RadialOrbitalTimeline({
 
   return (
     <div
-      className="w-full min-h-[750px] md:min-h-[920px] h-[800px] md:h-[980px] flex flex-col items-center justify-center bg-black/90 rounded-3xl border border-red-500/20 shadow-2xl relative overflow-hidden my-12"
+      className="w-full min-h-[480px] sm:min-h-[600px] md:min-h-[920px] h-[800px] md:h-[980px] flex flex-col items-center justify-center bg-black/90 rounded-3xl border border-red-500/20 shadow-2xl relative overflow-hidden my-12"
+      style={{
+        height: isMobile ? `${Math.max(480, 800 * scale)}px` : undefined
+      }}
       ref={containerRef}
       onClick={handleContainerClick}
     >
@@ -153,7 +176,7 @@ export default function RadialOrbitalTimeline({
           ref={orbitRef}
           style={{
             perspective: "1200px",
-            transform: `translate(${centerOffset.x}px, ${centerOffset.y}px)`,
+            transform: `translate(${centerOffset.x}px, ${centerOffset.y}px) scale(${scale})`,
           }}
         >
           {/* Orbital Center Hub */}
@@ -169,7 +192,13 @@ export default function RadialOrbitalTimeline({
           </div>
 
           {/* Large Orbital Ring Track */}
-          <div className="absolute w-[420px] h-[420px] md:w-[660px] md:h-[660px] rounded-full border-2 border-red-500/20 pointer-events-none shadow-[0_0_30px_rgba(239,68,68,0.1)]"></div>
+          <div 
+            className="absolute rounded-full border-2 border-red-500/20 pointer-events-none shadow-[0_0_30px_rgba(239,68,68,0.1)]"
+            style={{
+              width: `${(isMobile ? 210 : 330) * 2}px`,
+              height: `${(isMobile ? 210 : 330) * 2}px`,
+            }}
+          ></div>
 
           {timelineData.map((item, index) => {
             const position = calculateNodePosition(index, timelineData.length);
@@ -252,7 +281,7 @@ export default function RadialOrbitalTimeline({
                   {item.title}
                 </div>
 
-                {isExpanded && (
+                {!isMobile && isExpanded && (
                   <Card className="absolute top-28 md:top-36 left-1/2 -translate-x-1/2 w-80 md:w-96 bg-black/95 backdrop-blur-2xl border-red-500/50 shadow-2xl shadow-red-950/60 overflow-visible z-[250] p-1">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-red-500/80"></div>
                     <CardHeader className="pb-2">
@@ -341,6 +370,110 @@ export default function RadialOrbitalTimeline({
           })}
         </div>
       </div>
+
+      {/* Mobile Card Overlay */}
+      {isMobile && activeNodeId && (() => {
+        const activeItem = timelineData.find(item => item.id === activeNodeId);
+        if (!activeItem) return null;
+        return (
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-[250] flex items-center justify-center p-4">
+            <Card className="w-full max-w-sm bg-zinc-950 border border-red-500/40 shadow-2xl p-4 relative overflow-y-auto max-h-[90%]">
+              <button 
+                className="absolute top-3 right-3 text-zinc-400 hover:text-white font-mono text-lg p-1.5 focus:outline-none"
+                onClick={() => {
+                  setExpandedItems({});
+                  setActiveNodeId(null);
+                  setPulseEffect({});
+                  setAutoRotate(true);
+                }}
+              >
+                ✕
+              </button>
+              
+              <div className="pb-2">
+                <div className="flex justify-between items-center">
+                  <Badge
+                    className={`px-2.5 py-0.5 text-xs font-mono tracking-wider ${getStatusStyles(
+                      activeItem.status
+                    )}`}
+                  >
+                    {activeItem.category.toUpperCase()}
+                  </Badge>
+                  <span className="text-xs font-mono text-steel">
+                    {activeItem.date}
+                  </span>
+                </div>
+                <CardTitle className="text-lg font-display uppercase tracking-wide mt-3 text-paper">
+                  {activeItem.title}
+                </CardTitle>
+              </div>
+              
+              <div className="text-xs sm:text-sm text-steel/90 space-y-4">
+                {activeItem.image && (
+                  <img
+                    src={activeItem.image}
+                    alt={activeItem.title}
+                    className="w-full h-32 object-cover rounded-lg border border-white/10"
+                  />
+                )}
+                <p className="leading-relaxed">{activeItem.content}</p>
+
+                <div className="mt-4 pt-3 border-t border-white/10">
+                  <div className="flex justify-between items-center text-xs mb-1.5">
+                    <span className="flex items-center font-mono text-xs uppercase text-steel">
+                      <Zap size={12} className="mr-1 text-red-500" />
+                      Activity Index
+                    </span>
+                    <span className="font-mono text-red-400 font-bold text-sm">{activeItem.energy}%</span>
+                  </div>
+                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-red-600 via-amber-500 to-red-400"
+                      style={{ width: `${activeItem.energy}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {activeItem.relatedIds.length > 0 && (
+                  <div className="mt-4 pt-3 border-t border-white/10">
+                    <div className="flex items-center mb-2">
+                      <Link size={12} className="text-steel mr-1.5" />
+                      <h4 className="text-xs uppercase tracking-wider font-mono font-medium text-steel">
+                        Connected Tracks
+                      </h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {activeItem.relatedIds.map((relatedId) => {
+                        const relatedItem = timelineData.find(
+                          (i) => i.id === relatedId
+                        );
+                        return (
+                          <Button
+                            key={relatedId}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center h-7 px-2.5 py-0.5 text-xs font-mono rounded-none border-red-500/30 bg-red-950/20 hover:bg-red-900/40 text-paper transition-all"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleItem(relatedId);
+                            }}
+                          >
+                            {relatedItem?.title}
+                            <ArrowRight
+                              size={10}
+                              className="ml-1.5 text-red-400"
+                            />
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+        );
+      })()}
     </div>
   );
 }
