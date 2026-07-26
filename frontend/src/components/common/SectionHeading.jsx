@@ -8,15 +8,15 @@ export default function SectionHeading({ eyebrow, title, description, align = 'l
       {eyebrow && <span className="case-tag">{"//"} {eyebrow}</span>}
       {scrollFloat && typeof title === 'string' ? (
         <ScrollFloat
-          containerClassName="!my-0 overflow-visible"
-          textClassName="heading-display text-4xl sm:text-5xl uppercase tracking-wide text-white"
+          containerClassName="!my-0 overflow-hidden max-w-full"
+          textClassName="heading-display text-2xl sm:text-4xl lg:text-5xl uppercase tracking-wide text-white"
           scrollStart="top bottom-=10%"
           scrollEnd="bottom center"
         >
           {title}
         </ScrollFloat>
       ) : (
-        <h2 className="heading-display text-4xl sm:text-5xl">{title}</h2>
+        <h2 className="heading-display text-2xl sm:text-4xl lg:text-5xl">{title}</h2>
       )}
       {description && <p className="text-steel text-base sm:text-lg mt-1">{description}</p>}
     </div>

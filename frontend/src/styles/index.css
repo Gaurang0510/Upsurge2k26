@@ -24,7 +24,9 @@
 @tailwind utilities;
 
 @layer base {
-  html {
+  html, body {
+    overflow-x: clip;
+    max-width: 100%;
     scroll-behavior: smooth;
   }
 

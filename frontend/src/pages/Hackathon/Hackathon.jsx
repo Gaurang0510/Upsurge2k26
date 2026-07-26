@@ -472,7 +472,7 @@ export default function Hackathon() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:py-28 sm:px-6 lg:px-8" id="problem-statements">
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:py-28 sm:px-6 lg:px-8 overflow-hidden max-w-full" id="problem-statements">
           <ScrollFade direction="up">
             <SectionHeading
               eyebrow="Domain Tracks"
@@ -495,19 +495,19 @@ export default function Hackathon() {
           </ScrollFade>
 
           {/* Domain Filter Tab Bar */}
-          <ScrollFade direction="up" className="mt-12 flex flex-col items-center">
-            <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-4xl">
+          <ScrollFade direction="up" className="mt-12 flex flex-col items-center max-w-full px-2">
+            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 max-w-4xl w-full">
               {['All', ...new Set(event.tracks.map(t => t.domain))].map((domain) => (
                 <button
                   key={domain}
                   onClick={() => setActiveDomain(domain)}
-                  className={`font-mono text-[10px] sm:text-xs uppercase px-4 py-2 border transition-all duration-300 relative tracking-wider ${activeDomain === domain
+                  className={`font-mono text-[10px] sm:text-xs uppercase px-3 py-1.5 sm:px-4 sm:py-2 border transition-all duration-300 relative tracking-wider ${activeDomain === domain
                       ? 'bg-red-950/40 border-red-500 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.25)] font-bold'
                       : 'bg-black/40 border-white/10 text-zinc-500 hover:border-red-500/40 hover:text-zinc-300'
                     }`}
                 >
                   {activeDomain === domain && (
-                    <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-2 animate-pulse" />
+                    <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5 animate-pulse" />
                   )}
                   {domain}
                 </button>
@@ -515,21 +515,23 @@ export default function Hackathon() {
             </div>
 
             {/* Matches counter metadata */}
-            <div className="mt-6 font-mono text-[9px] tracking-widest text-zinc-500 uppercase flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-              STATUS: SECURE_LINK // CASES_RESOLVED: {
-                activeDomain === 'All'
-                  ? event.tracks.length
-                  : event.tracks.filter(t => t.domain === activeDomain).length
-              } FILES FOUND
+            <div className="mt-6 font-mono text-[9px] tracking-wider sm:tracking-widest text-zinc-500 uppercase flex flex-wrap items-center justify-center gap-2 text-center max-w-full px-2">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse flex-shrink-0" />
+              <span>
+                STATUS: SECURE_LINK // CASES_RESOLVED: {
+                  activeDomain === 'All'
+                    ? event.tracks.length
+                    : event.tracks.filter(t => t.domain === activeDomain).length
+                } FILES FOUND
+              </span>
             </div>
           </ScrollFade>
 
-          <ScrollStaggerContainer key={activeDomain} className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <ScrollStaggerContainer key={activeDomain} className="mt-10 grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-3 w-full max-w-full min-w-0">
             {event.tracks
               .filter(track => activeDomain === 'All' || track.domain === activeDomain)
               .map((track) => (
-                <ScrollStaggerItem key={track.code} direction="up">
+                <ScrollStaggerItem key={track.code} direction="up" className="w-full max-w-full min-w-0">
                   <TrackCard track={track} onAccess={(track) => setSelectedTrack(track)} />
                 </ScrollStaggerItem>
               ))}

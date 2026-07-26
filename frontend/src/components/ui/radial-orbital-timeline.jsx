@@ -25,14 +25,16 @@ export default function RadialOrbitalTimeline({
     const handleResize = () => {
       const width = window.innerWidth;
       setIsMobile(width <= 768);
-      if (width < 380) {
+      if (width < 360) {
+        setOrbitRadius(80);
+      } else if (width < 420) {
         setOrbitRadius(95);
       } else if (width < 480) {
-        setOrbitRadius(115);
+        setOrbitRadius(110);
       } else if (width < 640) {
-        setOrbitRadius(155);
+        setOrbitRadius(140);
       } else if (width < 768) {
-        setOrbitRadius(195);
+        setOrbitRadius(180);
       } else {
         setOrbitRadius(330);
       }
@@ -266,8 +268,8 @@ export default function RadialOrbitalTimeline({
 
                 <div
                   className={`
-                  absolute top-14 sm:top-20 md:top-28 left-1/2 -translate-x-1/2 whitespace-nowrap
-                  text-[9px] sm:text-xs md:text-sm font-bold tracking-widest uppercase
+                  absolute top-14 sm:top-20 md:top-28 left-1/2 -translate-x-1/2 max-w-[75px] sm:max-w-none text-center whitespace-normal sm:whitespace-nowrap leading-tight
+                  text-[9px] sm:text-xs md:text-sm font-bold tracking-wider sm:tracking-widest uppercase
                   transition-all duration-300
                   ${isExpanded ? "text-red-400 scale-110 sm:scale-125 font-mono" : "text-white/90 font-mono drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"}
                 `}

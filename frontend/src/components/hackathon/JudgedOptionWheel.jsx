@@ -6,8 +6,17 @@ import SectionHeading from '../common/SectionHeading.jsx';
  * CriteriaWheel — A 3D perspective text selector driven by pinned section scrolling with smooth spring interpolation.
  */
 function CriteriaWheel({ items, selectedIndex, onSelect }) {
-  const ITEM_HEIGHT = 60;
-  const VISIBLE_ITEMS = 7;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const ITEM_HEIGHT = isMobile ? 42 : 60;
+  const VISIBLE_ITEMS = isMobile ? 5 : 7;
 
   return (
     <div className="relative flex flex-col w-full items-start gap-4">
@@ -33,8 +42,8 @@ function CriteriaWheel({ items, selectedIndex, onSelect }) {
 
           if (absDistance > Math.floor(VISIBLE_ITEMS / 2) + 1) return null;
 
-          const angle = distance * 11;
-          const xShift = Math.abs(distance) * Math.abs(distance) * 10;
+          const angle = distance * (isMobile ? 14 : 11);
+          const xShift = Math.abs(distance) * Math.abs(distance) * (isMobile ? 6 : 10);
           const opacity = Math.max(0.12, 1 - absDistance * 0.22);
           const blurAmount = absDistance * 1.2;
           const scale = Math.max(0.8, 1 - absDistance * 0.05);
@@ -42,7 +51,7 @@ function CriteriaWheel({ items, selectedIndex, onSelect }) {
           return (
             <div
               key={`${label}-${index}`}
-              className="absolute left-0 flex items-center px-4 transition-all duration-300 ease-out cursor-pointer"
+              className="absolute left-0 flex items-center px-3 sm:px-4 transition-all duration-300 ease-out cursor-pointer"
               style={{
                 top: 0,
                 height: ITEM_HEIGHT,
@@ -54,10 +63,10 @@ function CriteriaWheel({ items, selectedIndex, onSelect }) {
               onClick={() => onSelect(index)}
             >
               <span
-                className={`truncate max-w-[280px] sm:max-w-[320px] lg:max-w-[400px] font-display uppercase tracking-wider transition-all duration-300 ${
+                className={`truncate max-w-[220px] sm:max-w-[320px] lg:max-w-[400px] font-display uppercase tracking-wider transition-all duration-300 ${
                   index === selectedIndex
-                    ? 'text-white text-lg sm:text-2xl lg:text-3xl font-bold'
-                    : 'text-zinc-500 text-sm sm:text-lg font-medium hover:text-zinc-300'
+                    ? 'text-white text-base sm:text-2xl lg:text-3xl font-bold'
+                    : 'text-zinc-500 text-xs sm:text-lg font-medium hover:text-zinc-300'
                 }`}
               >
                 {label}
