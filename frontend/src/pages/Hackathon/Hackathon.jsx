@@ -526,7 +526,7 @@ export default function Hackathon() {
             </div>
           </ScrollFade>
 
-          <ScrollStaggerContainer key={activeDomain} className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <ScrollStaggerContainer key={activeDomain} className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 w-full max-w-full">
             {event.tracks
               .filter(track => activeDomain === 'All' || track.domain === activeDomain)
               .map((track) => (

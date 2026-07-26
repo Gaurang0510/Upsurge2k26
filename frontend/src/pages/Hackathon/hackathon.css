@@ -3,6 +3,8 @@
   background:
     radial-gradient(circle at top, rgba(193, 18, 31, 0.14), transparent 32%),
     linear-gradient(180deg, #050505 0%, #060606 36%, #090909 100%);
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body:has(.hackathon-page) header + div[aria-hidden="true"] {
