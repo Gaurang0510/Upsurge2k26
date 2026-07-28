@@ -39,7 +39,6 @@ export default function Events() {
       {filteredEvents.length > 0 ? (
         <ScrollStack key={activeCategory}>
           {filteredEvents.map((event, index) => {
-            const isSmackathon = event.slug === 'operation-breach';
 
             const cardContent = (
               <>

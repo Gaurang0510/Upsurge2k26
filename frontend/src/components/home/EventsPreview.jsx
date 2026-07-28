@@ -24,7 +24,6 @@ export default function EventsPreview() {
       {/* Interactive Scroll Stack Events Experience */}
       <ScrollStack>
         {preview.map((event, index) => {
-          const isSmackathon = event.slug === 'operation-breach';
 
           const cardContent = (
             <>

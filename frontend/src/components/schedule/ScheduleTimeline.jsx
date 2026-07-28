@@ -190,7 +190,6 @@ export default function ScheduleTimeline({ day }) {
           </div>
         );
 
-        const isSmackathon = block.eventSlug === 'operation-breach';
 
         return (
           <motion.div

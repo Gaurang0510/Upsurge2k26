@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import TeamSection from '../../components/team/TeamSection.jsx';
