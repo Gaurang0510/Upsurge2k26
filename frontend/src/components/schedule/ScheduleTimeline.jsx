@@ -190,7 +190,6 @@ export default function ScheduleTimeline({ day }) {
           </div>
         );
 
-        const isSmackathon = block.eventSlug === 'operation-breach';
 
         return (
           <motion.div
@@ -209,24 +208,7 @@ export default function ScheduleTimeline({ day }) {
               style={{ willChange: 'transform, box-shadow' }}
             />
 
-            {isSmackathon ? (
-              content
-            ) : (
-              <div className="under-investigation-wrapper rounded-lg overflow-hidden">
-                <div className="under-investigation-blur">
-                  {content}
-                </div>
-                <div className="under-investigation-overlay !bg-black/80 rounded-lg">
-                  <div className="under-investigation-badge !bg-black/95 !border-red-500/20 !p-3 shadow-none">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                    <h4 className="font-mono text-[9px] font-bold text-red-500 uppercase tracking-widest mt-1">[ CLASSIFIED ]</h4>
-                    <p className="font-mono text-[8px] text-zinc-500 mt-1 uppercase">
-                      Verifying schedule...
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+            {content}
           </motion.div>
         );
       })}

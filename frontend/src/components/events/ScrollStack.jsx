@@ -28,7 +28,7 @@ export const ScrollStackItem = ({ children, index = 0, total = 1, itemClassName 
     >
       <motion.div
         style={{ scale }}
-        className={`scroll-stack-card relative w-full rounded-2xl sm:rounded-3xl border border-white/12 bg-[#0d0d10]/98 p-6 sm:p-8 lg:p-10 ${itemClassName}`.trim()}
+        className={`scroll-stack-card relative w-full rounded-2xl sm:rounded-3xl border border-white/12 bg-ink p-6 sm:p-8 lg:p-10 ${itemClassName}`.trim()}
       >
         {children}
       </motion.div>

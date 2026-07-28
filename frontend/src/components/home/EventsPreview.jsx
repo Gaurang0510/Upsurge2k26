@@ -24,7 +24,6 @@ export default function EventsPreview() {
       {/* Interactive Scroll Stack Events Experience */}
       <ScrollStack>
         {preview.map((event, index) => {
-          const isSmackathon = event.slug === 'operation-breach';
 
           const cardContent = (
             <>
@@ -154,32 +153,7 @@ export default function EventsPreview() {
 
           return (
             <ScrollStackItem key={event.id} index={index} total={preview.length}>
-              {isSmackathon ? (
-                cardContent
-              ) : (
-                <div className="under-investigation-wrapper -m-6 sm:-m-8 lg:-m-10 p-6 sm:p-8 lg:p-10 min-h-[380px] rounded-2xl sm:rounded-3xl">
-                  <div className="under-investigation-blur">
-                    {cardContent}
-                  </div>
-                  <div className="under-investigation-overlay rounded-2xl sm:rounded-3xl">
-                    <div className="under-investigation-badge scale-90 sm:scale-100">
-                      <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                      <h4 className="under-investigation-title">[ Decryption In Progress ]</h4>
-                      <p className="under-investigation-text">
-                        This event dossier is undergoing verification and will unlock soon. Smackathon is active now!
-                      </p>
-                      <Link
-                        to="/hackathon"
-                        onClick={(e) => e.stopPropagation()}
-                        className="mt-4 inline-flex items-center justify-center gap-1.5 px-4 py-2 border border-red-500/50 bg-red-950/20 text-red-400 font-mono text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.4)] transition-all duration-300 rounded cursor-pointer"
-                      >
-                        <span>ACCESS ACTIVE SMACKATHON</span>
-                        <span>→</span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {cardContent}
             </ScrollStackItem>
           );
         })}

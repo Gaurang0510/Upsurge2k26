@@ -89,9 +89,20 @@ export default function EventDetail() {
           >
             Register Now
           </Link>
-        ) : <span className="font-mono text-xs uppercase tracking-widest text-steel">Registration details available from the event organisers.</span>}
+        ) : event.whatsappGroup ? (
+          <a
+            href={event.whatsappGroup}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white border-none font-bold shadow-md shadow-green-950/20"
+          >
+            Join WhatsApp Group
+          </a>
+        ) : (
+          <span className="font-mono text-xs uppercase tracking-widest text-steel">Registration details available from the event organisers.</span>
+        )}
         <div className="font-mono text-xs uppercase tracking-widest text-steel">
-          Venue: {event.venue} · Date: {event.date}
+          Venue: {event.venue} · Date: {event.date} {event.time && `· Time: ${event.time}`}
         </div>
       </ScrollFade>
     </div>

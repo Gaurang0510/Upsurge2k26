@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import TeamSection from '../../components/team/TeamSection.jsx';
@@ -36,33 +35,14 @@ export default function Team() {
           />
         </ScrollFade>
 
-        {/* Team Departments Grid under investigation */}
-        <div className="under-investigation-wrapper mt-20">
-          <div className="under-investigation-blur space-y-24 sm:space-y-36">
+        {/* Team Departments Grid */}
+        <div className="mt-20">
+          <div className="space-y-24 sm:space-y-36">
             {teamDepartments.map((department) => (
               <ScrollFade key={department.slug} direction="up">
                 <TeamSection department={department} />
               </ScrollFade>
             ))}
-          </div>
-
-          {/* Under Investigation Overlay */}
-          <div className="under-investigation-overlay">
-            <div className="under-investigation-badge">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-              <h4 className="under-investigation-title">[ Registry Lock ]</h4>
-              <p className="under-investigation-text">
-                Operative personnel logs are undergoing security clearance and will display soon. The active Smackathon page is fully functional for track details and registrations.
-              </p>
-              <Link
-                to="/hackathon"
-                onClick={(e) => e.stopPropagation()}
-                className="mt-4 inline-flex items-center justify-center gap-1.5 px-4 py-2 border border-red-500/50 bg-red-950/20 text-red-400 font-mono text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.4)] transition-all duration-300 rounded cursor-pointer"
-              >
-                <span>ACCESS ACTIVE SMACKATHON</span>
-                <span>→</span>
-              </Link>
-            </div>
           </div>
         </div>
       </div>
