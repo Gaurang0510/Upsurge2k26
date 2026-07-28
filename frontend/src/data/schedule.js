@@ -9,13 +9,14 @@ export const schedule = [
     blocks: [
       { time: '09:00 AM', title: 'Onsite Entry', eventSlug: 'operation-breach' },
       { time: '10:00 AM - 02:00 PM', title: 'Round 1 - Prototype Development', eventSlug: 'operation-breach' },
+      { time: '11:00 AM - 02:00 PM', title: 'Cypher Chase', eventSlug: 'cipher-heist' },
+      { time: '11:00 AM - 05:00 PM', title: 'Escape Room', eventSlug: 'lockdown' },
+      { time: '11:00 AM - 05:00 PM', title: 'FIFA 26', eventSlug: 'turf-wars' },
+      { time: '11:00 AM - 05:00 PM', title: 'F1 Simulator', eventSlug: 'the-getaway' },
       { time: '02:00 PM - 05:00 PM', title: 'Round 1 - Elimination (Judging)', eventSlug: 'operation-breach' },
       { time: '05:00 PM onwards', title: 'Top Teams Announcement', eventSlug: 'operation-breach' },
       { time: 'Evening', title: 'Product Refinement', eventSlug: 'operation-breach' },
-      { time: 'TBD', title: 'Capture the Flag', eventSlug: 'capture-the-flag' },
-      { time: 'TBD', title: 'Lockdown', eventSlug: 'lockdown' },
-      { time: 'TBD', title: 'Cipher Heist', eventSlug: 'cipher-heist' },
-      { time: 'TBD', title: 'Turf Wars', eventSlug: 'turf-wars' },
+      { time: 'TBD', title: 'Capture the Flag', eventSlug: 'capture-the-flag' }
     ],
   },
   {
@@ -23,12 +24,23 @@ export const schedule = [
     date: '7 Aug 2026',
     blocks: [
       { time: '10:00 AM - 01:00 PM', title: 'Grand Finale', eventSlug: 'operation-breach' },
+      { time: '11:00 AM - 05:00 PM', title: 'Free Fire', eventSlug: 'manhunt' },
+      { time: '11:00 AM - 05:00 PM', title: 'F1 Simulator', eventSlug: 'the-getaway' },
+      { time: '02:00 PM - 05:00 PM', title: 'Ideathon', eventSlug: 'syndicate-pitch' },
       { time: 'TBD', title: 'Winner Announcement', eventSlug: 'operation-breach' },
       { time: 'TBD', title: 'The Investigation', eventSlug: 'the-investigation' },
-      { time: 'TBD', title: 'Syndicate Pitch — Finals', eventSlug: 'syndicate-pitch' },
       { time: 'TBD', title: 'Evidence Locker — Showcase', eventSlug: 'evidence-locker' },
-      { time: 'TBD', title: 'Cage Match — Finals', eventSlug: 'cage-match' },
-      { time: 'TBD', title: 'Closing Ceremony & Prize Distribution', eventSlug: null },
+      { time: 'TBD', title: 'Cage Match — Finals', eventSlug: 'cage-match' }
     ],
   },
+  {
+    day: 'Day 3',
+    date: '8 Aug 2026',
+    blocks: [
+      { time: '11:00 AM - 02:00 PM', title: 'Coding Relay', eventSlug: 'the-chase' },
+      { time: '11:00 AM - 05:00 PM', title: 'Carrom', eventSlug: 'underground-circuit' },
+      { time: '11:00 AM - 05:00 PM', title: 'F1 Simulator', eventSlug: 'the-getaway' },
+      { time: '05:00 PM onwards', title: 'Closing Ceremony & Prize Distribution', eventSlug: null }
+    ]
+  }
 ];

@@ -25,54 +25,45 @@ const TIMELINE_EVENTS = [
     icon: '🎤', linkedEvent: null,
   },
   {
-    id: 'd1-03', caseNo: 'EVID-003', day: 'Day 1', time: '09:00',
-    title: 'ONSITE ENTRY',
-    status: 'OFFLINE', statusColor: '#22c55e', pinColor: '#22c55e',
-    stickyColor: 'pink', suspectLabel: 'OFFLINE TEAMS',
-    stickyLines: ['CHECK-IN: CSE DEPT', 'STATUS: REGISTERED'],
-    description: 'Reporting and check-in for offline teams.',
-    icon: '🏢', linkedEvent: '/hackathon',
-  },
-  {
-    id: 'd1-04', caseNo: 'EVID-004', day: 'Day 1', time: '10:00',
-    title: 'ROUND 1 - PROTOTYPE DEV',
+    id: 'd1-03', caseNo: 'EVID-003', day: 'Day 1', time: '10:00',
+    title: 'PROTOTYPE DEVELOPMENT',
     status: 'ACTIVE BUILD', statusColor: '#ef4444', pinColor: '#ef4444',
     stickyColor: 'yellow', suspectLabel: 'DEVELOPMENT',
     stickyLines: ['CODING: 4 HOURS', 'FORMAT: HYBRID'],
-    description: 'Teams build a working prototype based on the selected problem statement. Confirmed online teams participate via live video call.',
+    description: 'Teams build a working prototype based on the selected problem statement.',
     icon: '💻', linkedEvent: '/hackathon',
   },
   {
-    id: 'd1-05', caseNo: 'EVID-005', day: 'Day 1', time: '14:00',
-    title: 'ROUND 1 - ELIMINATION (JUDGING)',
-    status: 'EVALUATION', statusColor: '#f59e0b', pinColor: '#f59e0b',
-    stickyColor: 'pink', suspectLabel: 'ELIMINATION',
-    stickyLines: ['METHOD: PITCH', 'JURY: ASSIGNED'],
-    description: 'Judges evaluate innovation, execution, and feasibility. Online teams present via live video call/remote demo.',
-    icon: '⚖️', linkedEvent: '/hackathon',
+    id: 'd1-04', caseNo: 'EVID-004', day: 'Day 1', time: '11:00',
+    title: 'CYPHER CHASE',
+    status: 'DECODING', statusColor: '#06b6d4', pinColor: '#06b6d4',
+    stickyColor: 'pink', suspectLabel: 'TREASURE HUNT',
+    stickyLines: ['DECODE: ACTIVE', 'LOCATION: CAMPUS'],
+    description: 'Campus-wide digital treasure hunt where technology meets adventure. Hidden QR codes hold the encrypted keys.',
+    icon: '🔐', linkedEvent: '/events/cipher-heist',
   },
   {
-    id: 'd1-06', caseNo: 'EVID-006', day: 'Day 1', time: '17:00',
-    title: 'TOP TEAMS ANNOUNCEMENT',
-    status: 'QUALIFICATION', statusColor: '#a855f7', pinColor: '#a855f7',
-    stickyColor: 'yellow', suspectLabel: 'RESULTS',
-    stickyLines: ['QUALIFIED: TO FINALS', 'STATUS: COMPLETED'],
-    description: 'Top teams qualify for the Grand Finale. Other teams are eliminated.',
-    icon: '📢', linkedEvent: '/hackathon',
+    id: 'd1-05', caseNo: 'EVID-005', day: 'Day 1', time: '11:00',
+    title: 'ESCAPE ROOM',
+    status: 'LOCKED IN', statusColor: '#ef4444', pinColor: '#ef4444',
+    stickyColor: 'yellow', suspectLabel: 'CHALLENGERS',
+    stickyLines: ['VAULT: SEALED', 'COUNTDOWN: ON'],
+    description: 'Riddles, hidden clues, and locked puzzles stand between your team and freedom. Beat the clock.',
+    icon: '🔓', linkedEvent: '/events/lockdown',
+  },
+  {
+    id: 'd1-06', caseNo: 'EVID-006', day: 'Day 1', time: '11:00',
+    title: 'FIFA 26',
+    status: 'TOURNAMENT', statusColor: '#22c55e', pinColor: '#22c55e',
+    stickyColor: 'pink', suspectLabel: 'GAMERS',
+    stickyLines: ['FORMAT: BRACKET', 'PITCH: VIRTUAL'],
+    description: 'Football simulation knockout tournament with authentic teams. Score the winner and take home the cup.',
+    icon: '⚽', linkedEvent: '/events/turf-wars',
   },
 
   // ── DAY 2 ──
   {
-    id: 'd2-01', caseNo: 'EVID-007', day: 'Day 2', time: '09:00',
-    title: 'PRODUCT REFINEMENT',
-    status: 'REFINING', statusColor: '#22c55e', pinColor: '#22c55e',
-    stickyColor: 'pink', suspectLabel: 'FINALISTS',
-    stickyLines: ['STAGE: OVERNIGHT', 'ACCESS: GRANTED'],
-    description: 'Finalists continue refining their prototype with additional development time (6 Aug Evening - 7 Aug Morning).',
-    icon: '⚙️', linkedEvent: '/hackathon',
-  },
-  {
-    id: 'd2-02', caseNo: 'EVID-008', day: 'Day 2', time: '10:00',
+    id: 'd2-01', caseNo: 'EVID-007', day: 'Day 2', time: '10:00',
     title: 'GRAND FINALE',
     status: 'FINAL DEMO', statusColor: '#ef4444', pinColor: '#ef4444',
     stickyColor: 'yellow', suspectLabel: 'JURY EVAL',
@@ -81,69 +72,78 @@ const TIMELINE_EVENTS = [
     icon: '🏆', linkedEvent: '/hackathon',
   },
   {
+    id: 'd2-02', caseNo: 'EVID-008', day: 'Day 2', time: '11:00',
+    title: 'FREE FIRE',
+    status: 'BATTLEFIELD', statusColor: '#f59e0b', pinColor: '#f59e0b',
+    stickyColor: 'pink', suspectLabel: 'SQUADS',
+    stickyLines: ['MAP: SHRINKING', 'GLORY: SURVIVAL'],
+    description: 'Mobile battle-royale showdown. Outlast the zone and outgun rivals—glory belongs to the survivor.',
+    icon: '🔥', linkedEvent: '/events/manhunt',
+  },
+  {
     id: 'd2-03', caseNo: 'EVID-009', day: 'Day 2', time: '13:00',
     title: 'WINNER ANNOUNCEMENT',
-    status: 'VERDICT', statusColor: '#f59e0b', pinColor: '#f59e0b',
-    stickyColor: 'pink', suspectLabel: 'TOP 3 TEAMS',
+    status: 'VERDICT', statusColor: '#22c55e', pinColor: '#22c55e',
+    stickyColor: 'yellow', suspectLabel: 'TOP 3 TEAMS',
     stickyLines: ['BOUNTY: CLAIMED', 'STATUS: DECLASSIFIED'],
-    description: 'Top 3 winning teams are declared.',
+    description: 'Top 3 winning teams of the prototype hackathon are declared.',
     icon: '🎯', linkedEvent: '/hackathon',
   },
   {
     id: 'd2-04', caseNo: 'EVID-010', day: 'Day 2', time: '14:00',
-    title: 'SYNDICATE PITCH — FINALS',
+    title: 'IDEATHON',
     status: 'PRESENTING', statusColor: '#06b6d4', pinColor: '#06b6d4',
-    stickyColor: 'yellow', suspectLabel: 'TOP SYNDICATES',
-    stickyLines: ['PITCH: 10 MIN EACH', 'STAKES: MAXIMUM'],
-    description: 'Shortlisted syndicates present their final pitch to the grand jury. High stakes, zero margin.',
-    icon: '🎯', linkedEvent: '/events',
+    stickyColor: 'pink', suspectLabel: 'INNOVATORS',
+    stickyLines: ['PITCH: VISIONS', 'STAKES: MAXIMUM'],
+    description: 'Pitch your boldest concepts in YCCE\'s Shark Tank. Defend your model to win incubation path.',
+    icon: '💡', linkedEvent: '/events/syndicate-pitch',
   },
   {
     id: 'd2-05', caseNo: 'EVID-011', day: 'Day 2', time: '15:30',
-    title: 'EVIDENCE LOCKER — SHOWCASE',
+    title: 'EVIDENCE LOCKER',
     status: 'ON DISPLAY', statusColor: '#22c55e', pinColor: '#22c55e',
-    stickyColor: 'pink', suspectLabel: 'ALL PROJECTS',
+    stickyColor: 'yellow', suspectLabel: 'SHOWCASE',
     stickyLines: ['EXPO: OPEN', 'VISITORS: WELCOME'],
     description: 'All project evidence is displayed for public viewing. Attendees explore every build and prototype.',
     icon: '🗄️', linkedEvent: '/events',
   },
   {
     id: 'd2-06', caseNo: 'EVID-012', day: 'Day 2', time: '17:00',
-    title: 'CAGE MATCH — FINALS',
+    title: 'CAGE MATCH',
     status: 'COMBAT', statusColor: '#ef4444', pinColor: '#ef4444',
-    stickyColor: 'yellow', suspectLabel: 'FINALISTS',
-    stickyLines: ['FORMAT: ELIMINATION', 'ROUND: FINAL'],
-    description: 'The ultimate head-to-head showdown. Finalists battle in a rapid-fire elimination round.',
+    stickyColor: 'pink', suspectLabel: 'FINALISTS',
+    stickyLines: ['FORMAT: ELIMINATION', 'ROUND: FINALS'],
+    description: 'The ultimate head-to-head combat gaming showdown. Finalists battle in rapid elimination.',
     icon: '⚔️', linkedEvent: '/events',
   },
 
   // ── DAY 3 ──
   {
-    id: 'd3-01', caseNo: 'EVID-013', day: 'Day 3', time: '09:00',
-    title: 'THE GETAWAY & MANHUNT',
-    status: 'IN PURSUIT', statusColor: '#f59e0b', pinColor: '#f59e0b',
-    stickyColor: 'yellow', suspectLabel: 'FIELD AGENTS',
-    stickyLines: ['TERRAIN: OUTDOOR', 'STATUS: ON THE RUN'],
-    description: 'Physical and strategic outdoor events. Agents must pursue, strategize, and survive the manhunt.',
-    icon: '🏃', linkedEvent: '/events',
+    id: 'd3-01', caseNo: 'EVID-013', day: 'Day 3', time: '11:00',
+    title: 'F1 SIMULATOR',
+    status: 'RACING', statusColor: '#f59e0b', pinColor: '#f59e0b',
+    stickyColor: 'yellow', suspectLabel: 'DRIVERS',
+    stickyLines: ['SPEED: MAX LIMIT', 'TRACK: SIMULATOR'],
+    description: 'Formula 1 racing simulator heats. Experience the thrill, master every turn and set the fastest lap.',
+    icon: '🏎️', linkedEvent: '/events/the-getaway',
   },
   {
     id: 'd3-02', caseNo: 'EVID-014', day: 'Day 3', time: '11:00',
-    title: 'THE CHASE',
+    title: 'CODING RELAY',
     status: 'HIGH SPEED', statusColor: '#06b6d4', pinColor: '#06b6d4',
-    stickyColor: 'pink', suspectLabel: 'PURSUIT TEAMS',
-    stickyLines: ['SPEED: MAXIMUM', 'COURSE: MAPPED'],
-    description: 'A high-intensity relay challenge across the campus. Speed, coordination, and team sync required.',
-    icon: '🏎️', linkedEvent: '/events',
+    stickyColor: 'pink', suspectLabel: 'CODERS',
+    stickyLines: ['SPEED: MAXIMUM', 'COURSE: DSA'],
+    description: 'A relay-style coding race — each team member takes their turn solving a DSA problem on command.',
+    icon: '💻', linkedEvent: '/events/the-chase',
   },
   {
-    id: 'd3-03', caseNo: 'EVID-015', day: 'Day 3', time: '13:00',
-    title: 'UNDERGROUND CIRCUIT',
-    status: 'COVERT OPS', statusColor: '#a855f7', pinColor: '#a855f7',
-    stickyColor: 'yellow', suspectLabel: 'DEEP COVER',
-    stickyLines: ['ACCESS: RESTRICTED', 'INTEL: CLASSIFIED'],
-    description: 'A hidden layer of challenges only the most observant agents can access and complete.',
-    icon: '🕳️', linkedEvent: '/events',
+    id: 'd3-03', caseNo: 'EVID-015', day: 'Day 3', time: '11:00',
+    title: 'CARROM',
+    status: 'TOURNAMENT', statusColor: '#a855f7', pinColor: '#a855f7',
+    stickyColor: 'yellow', suspectLabel: 'PLAYERS',
+    stickyLines: ['STRATEGY: PRECISION', 'BOARD: ACTIVE'],
+    description: 'Test your accuracy, strategy, and control as every strike counts to pocket your way to victory.',
+    icon: '🪙', linkedEvent: '/events/underground-circuit',
   },
   {
     id: 'd3-04', caseNo: 'EVID-016', day: 'Day 3', time: '14:30',
@@ -165,11 +165,11 @@ const TIMELINE_EVENTS = [
   },
   {
     id: 'd3-06', caseNo: 'EVID-018', day: 'Day 3', time: '17:00',
-    title: 'CASE CLOSED — BOUNTY DISTRIBUTION',
+    title: 'CASE CLOSED — BOUNTY',
     status: 'RESOLVED', statusColor: '#22c55e', pinColor: '#22c55e',
     stickyColor: 'pink', suspectLabel: 'VICTORIOUS',
     stickyLines: ['BOUNTY: CLAIMED', 'STATUS: DECLASSIFIED'],
-    description: 'The masterminds are unmasked. Trophies, cash bounties, and certificates are awarded to the best.',
+    description: 'Trophies, cash prizes, and certificates are awarded to the best teams and masterminds.',
     icon: '🏆', linkedEvent: '/schedule',
   },
 ];
@@ -311,24 +311,7 @@ function EvidenceCard({ item, index, onHover, onLeave, onClick }) {
         </div>
       </div>
 
-      {isSmackathon ? (
-        cardContent
-      ) : (
-        <div className="under-investigation-wrapper h-full rounded-sm overflow-hidden">
-          <div className="under-investigation-blur h-full">
-            {cardContent}
-          </div>
-          <div className="under-investigation-overlay !bg-black/80 rounded-sm p-4">
-            <div className="under-investigation-badge !bg-black/95 !border-red-500/20 !p-4 shadow-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              <h4 className="font-mono text-[9px] font-bold text-red-500 uppercase tracking-widest mt-1">[ CLASSIFIED ]</h4>
-              <p className="font-mono text-[8px] text-zinc-500 mt-1 uppercase leading-normal">
-                Verifying schedule...
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {cardContent}
     </motion.div>
   );
 }
@@ -471,24 +454,7 @@ function MobileTimelineCard({ item, index, allEvents, onClick }) {
         </div>
       )}
 
-      {isSmackathon ? (
-        cardContent
-      ) : (
-        <div className="under-investigation-wrapper rounded-xl overflow-hidden">
-          <div className="under-investigation-blur">
-            {cardContent}
-          </div>
-          <div className="under-investigation-overlay !bg-black/75 rounded-xl">
-            <div className="under-investigation-badge !bg-black/95 !border-red-500/20 !p-3 shadow-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              <h4 className="font-mono text-[9px] font-bold text-red-500 uppercase tracking-widest mt-1">[ CLASSIFIED ]</h4>
-              <p className="font-mono text-[8px] text-zinc-500 mt-1 uppercase">
-                Verifying schedule...
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {cardContent}
     </motion.div>
   );
 }
