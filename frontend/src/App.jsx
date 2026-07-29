@@ -2,6 +2,8 @@ import MainLayout from './layouts/MainLayout.jsx';
 import AppRoutes from './routes/AppRoutes.jsx';
 import ScrollToTop from './components/common/ScrollToTop.jsx';
 import SmoothScroll from './components/common/SmoothScroll.jsx';
+import AmbientAudio from './components/AmbientAudio.jsx';
+
 
 export default function App() {
   return (
@@ -9,6 +11,7 @@ export default function App() {
       <MainLayout>
         <ScrollToTop />
         <AppRoutes />
+        <AmbientAudio />
       </MainLayout>
     </SmoothScroll>
   );

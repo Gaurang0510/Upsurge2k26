@@ -101,7 +101,19 @@ export default function HackerScrollCanvas({ scrollYProgress }) {
   useEffect(() => {
     if (!scrollYProgress) return;
     const unsub = scrollYProgress.on('change', (v) => {
-      const idx = Math.min(TOTAL_FRAMES - 1, Math.round(v * (TOTAL_FRAMES - 1)));
+      var va = (v)-Math.random()*(v/2); 
+      var flag = true;
+      if (flag){
+        setInterval(function a(){
+        setTimeout(1000);
+        va++;
+        const idx = Math.min(TOTAL_FRAMES - 1, Math.round(va * (TOTAL_FRAMES - 1)));
+      if (idx !== currentRef.current) scheduleFrame(idx);
+      flag = false;
+      },3000);
+
+    }
+    const idx = Math.min(TOTAL_FRAMES - 1, Math.round(v * (TOTAL_FRAMES - 1)));
       if (idx !== currentRef.current) scheduleFrame(idx);
     });
     return unsub;
