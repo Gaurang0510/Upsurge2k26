@@ -17,10 +17,10 @@ const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0
 const toDisplayableImageUrl = (url) => {
   const value = String(url || '').trim();
   const driveFileMatch = value.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
-  if (driveFileMatch) return `https://drive.google.com/uc?export=view&id=${driveFileMatch[1]}`;
+  if (driveFileMatch) return `https://drive.google.com/thumbnail?id=${driveFileMatch[1]}&sz=w1000`;
 
   const driveOpenMatch = value.match(/drive\.google\.com\/open\?[^#]*\bid=([^&#]+)/);
-  if (driveOpenMatch) return `https://drive.google.com/uc?export=view&id=${driveOpenMatch[1]}`;
+  if (driveOpenMatch) return `https://drive.google.com/thumbnail?id=${driveOpenMatch[1]}&sz=w1000`;
 
   return value;
 };
@@ -960,20 +960,20 @@ export default function Register() {
                     </div>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid gap-5">
                     {paymentOptions.map((option, index) => (
-                      <div key={`${option.upiId}-${index}`} className="space-y-3 rounded-md border border-white/10 bg-zinc-950/50 p-3">
-                        <div className="space-y-1.5 font-mono text-[11px] text-steel">
+                      <div key={`${option.upiId}-${index}`} className="space-y-4 rounded-md border border-white/10 bg-zinc-950/50 p-4">
+                        <div className="space-y-2 font-mono text-xs text-steel">
                           <p className="text-[10px] font-bold uppercase tracking-widest text-evidence">Payment Option {index + 1}</p>
                           <p className="break-all"><span className="text-zinc-500">UPI ID: </span><span className="select-all text-white">{option.upiId || 'Not configured'}</span></p>
                           {option.payeeName && <p><span className="text-zinc-500">PAYEE: </span><span className="text-white">{option.payeeName}</span></p>}
                         </div>
                         {option.qrImageUrl ? (
-                          <div className="bg-white p-2 rounded">
+                          <div className="bg-white p-3 rounded">
                             <img
                               src={option.qrImageUrl}
                               alt={`Smackathon payment QR option ${index + 1}`}
-                              className="w-full h-auto mx-auto"
+                              className="aspect-square w-full max-w-[360px] object-contain mx-auto"
                             />
                           </div>
                         ) : (
