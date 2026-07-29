@@ -107,6 +107,20 @@ export default function Register() {
     });
   };
 
+  const [slots, setSlots] = useState(null);
+
+  const fetchSlots = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/slots`);
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setSlots(data.slots);
+      }
+    } catch (e) {
+      // ignore network errors during poll
+    }
+  };
+
   useEffect(() => {
     let active = true;
 
@@ -117,17 +131,31 @@ export default function Register() {
         if (!response.ok || !data.success) {
           throw new Error(data.message || 'Failed to load registration details');
         }
-        if (active) setEventInfo(data.event);
+        if (active) {
+          setEventInfo(data.event);
+          if (data.event.slots) setSlots(data.event.slots);
+        }
       } catch (err) {
         if (active) setEventError(err.message || 'Failed to load registration details');
       }
     };
 
     loadEvent();
+    const interval = setInterval(fetchSlots, 15000);
     return () => {
       active = false;
+      clearInterval(interval);
     };
   }, []);
+
+  const isOfflineFull = (slots?.offline?.remaining ?? 50) === 0;
+  const isOnlineFull = (slots?.online?.remaining ?? 30) === 0;
+
+  useEffect(() => {
+    if (isOfflineFull && !isOnlineFull && formData.modePreference === 'OFFLINE') {
+      setFormData((prev) => ({ ...prev, modePreference: 'ONLINE_REQUEST' }));
+    }
+  }, [isOfflineFull, isOnlineFull, formData.modePreference]);
 
   useEffect(() => {
     if (accessToken) {
@@ -283,6 +311,7 @@ export default function Register() {
         teamCode: data.teamCode,
         paymentStatus: data.paymentStatus,
       });
+      fetchSlots();
     } catch (err) {
       setRegistrationError(err.message || 'Registration submission failed. Please review your details and try again.');
     } finally {
@@ -348,6 +377,81 @@ export default function Register() {
             description="Complete team verification credentials to unlock final registration submittal."
             align="center"
           />
+        </div>
+
+        {/* Dynamic Hackathon Registration Slots HUD */}
+        <div className="mb-10 hackathon-panel p-6 border border-evidence/30 bg-black/55 backdrop-blur-md rounded-lg relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle,rgba(239,68,68,0.14),transparent_70%)] pointer-events-none" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <span className="flex h-2.5 w-2.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-evidence opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-evidence" />
+              </span>
+              <div>
+                <h3 className="font-mono text-xs text-white tracking-widest uppercase font-bold">Live Registration Capacity Tracker</h3>
+                <p className="text-[11px] text-zinc-400 font-mono">Real-time hackathon slot availability across Offline and Online modes</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-400 bg-zinc-950/80 border border-zinc-800 px-3 py-1.5 rounded">
+              <span>STATUS:</span>
+              <span className={isOfflineFull && isOnlineFull ? 'text-red-400 font-bold' : 'text-emerald-400 font-bold'}>
+                {isOfflineFull && isOnlineFull ? 'ALL SLOTS FILLED' : 'OPEN FOR REGISTRATION'}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+            {/* Offline Capacity Meter */}
+            <div className="bg-zinc-950/60 border border-zinc-800/80 rounded p-4 relative overflow-hidden">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-mono text-xs uppercase tracking-wider text-zinc-300 font-bold flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-evidence" />
+                  Offline Mode Capacity
+                </span>
+                <span className={`font-mono text-xs px-2 py-0.5 rounded font-bold ${
+                  isOfflineFull ? 'bg-red-950/80 text-red-400 border border-red-500/30' : 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/30'
+                }`}>
+                  {isOfflineFull ? '0 REMAINING (FULL)' : `${slots?.offline?.remaining ?? 50} / ${slots?.offline?.total ?? 50} SLOTS LEFT`}
+                </span>
+              </div>
+              <div className="w-full bg-zinc-900 h-2 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-700 ${isOfflineFull ? 'bg-red-500' : 'bg-gradient-to-r from-red-600 to-amber-500'}`}
+                  style={{ width: `${Math.min(100, Math.max(0, ((slots?.offline?.used ?? 0) / (slots?.offline?.total || 50)) * 100))}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-zinc-500 font-mono mt-2 flex justify-between">
+                <span>Total Capacity: {slots?.offline?.total ?? 50} teams</span>
+                <span>Filled: {slots?.offline?.used ?? 0}</span>
+              </p>
+            </div>
+
+            {/* Online Request Capacity Meter */}
+            <div className="bg-zinc-950/60 border border-zinc-800/80 rounded p-4 relative overflow-hidden">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-mono text-xs uppercase tracking-wider text-zinc-300 font-bold flex items-center gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                  Online Request Capacity
+                </span>
+                <span className={`font-mono text-xs px-2 py-0.5 rounded font-bold ${
+                  isOnlineFull ? 'bg-red-950/80 text-red-400 border border-red-500/30' : 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/30'
+                }`}>
+                  {isOnlineFull ? '0 REMAINING (FULL)' : `${slots?.online?.remaining ?? 30} / ${slots?.online?.total ?? 30} SLOTS LEFT`}
+                </span>
+              </div>
+              <div className="w-full bg-zinc-900 h-2 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-700 ${isOnlineFull ? 'bg-red-500' : 'bg-gradient-to-r from-amber-500 to-emerald-500'}`}
+                  style={{ width: `${Math.min(100, Math.max(0, ((slots?.online?.used ?? 0) / (slots?.online?.total || 30)) * 100))}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-zinc-500 font-mono mt-2 flex justify-between">
+                <span>Total Capacity: {slots?.online?.total ?? 30} teams</span>
+                <span>Filled: {slots?.online?.used ?? 0}</span>
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
@@ -544,15 +648,31 @@ export default function Register() {
                           </div>
 
                           <div className="space-y-1">
-                            <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Preferred Mode</label>
+                            <div className="flex justify-between items-center">
+                              <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Preferred Mode</label>
+                              <span className="text-[10px] font-mono text-evidence">
+                                {formData.modePreference === 'OFFLINE'
+                                  ? `${slots?.offline?.remaining ?? 50} OFFLINE SLOTS LEFT`
+                                  : `${slots?.online?.remaining ?? 30} ONLINE SLOTS LEFT`}
+                              </span>
+                            </div>
                             <select
                               value={formData.modePreference}
                               onChange={(e) => setFormData((prev) => ({ ...prev, modePreference: e.target.value }))}
                               className="w-full bg-zinc-950/60 border border-zinc-800 text-white p-3 font-mono text-xs focus:outline-none focus:border-evidence rounded transition-all"
                             >
-                              <option value="OFFLINE">Offline</option>
-                              <option value="ONLINE_REQUEST">Online Request</option>
+                              <option value="OFFLINE" disabled={isOfflineFull}>
+                                {isOfflineFull ? 'Offline (FULL - 0/50 Remaining)' : `Offline (${slots?.offline?.remaining ?? 50} Slots Available)`}
+                              </option>
+                              <option value="ONLINE_REQUEST" disabled={isOnlineFull}>
+                                {isOnlineFull ? 'Online Request (FULL - 0/30 Remaining)' : `Online Request (${slots?.online?.remaining ?? 30} Slots Available)`}
+                              </option>
                             </select>
+                            {isOfflineFull && (
+                              <p className="text-[11px] font-mono text-amber-400 mt-1">
+                                ⚠️ 50/50 Offline registration slots have been filled. You can register for Online Request mode.
+                              </p>
+                            )}
                           </div>
 
                           <div className="sm:col-span-2 space-y-1">

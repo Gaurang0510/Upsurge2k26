@@ -41,16 +41,16 @@ const validateEnvironment = () => {
   }
 
   if ((process.env.JWT_SECRET || '').trim().length < 32) {
-    console.warn('[WARN] JWT_SECRET should be at least 32 characters long');
+    throw new Error('JWT_SECRET must be at least 32 characters long');
   }
 
   const registrationSecret = String(process.env.REGISTRATION_JWT_SECRET || '').trim();
   if (registrationSecret) {
     if (registrationSecret.length < 32) {
-      console.warn('[WARN] REGISTRATION_JWT_SECRET should be at least 32 characters long');
+      throw new Error('REGISTRATION_JWT_SECRET must be at least 32 characters long');
     }
     if (process.env.JWT_SECRET === registrationSecret) {
-      console.warn('[WARN] JWT_SECRET and REGISTRATION_JWT_SECRET should be different values');
+      throw new Error('JWT_SECRET and REGISTRATION_JWT_SECRET must be different values');
     }
   } else if (IS_PRODUCTION) {
     console.warn('[WARN] REGISTRATION_JWT_SECRET should be set in production');
