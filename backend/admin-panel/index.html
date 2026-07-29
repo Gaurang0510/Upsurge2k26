@@ -48,6 +48,28 @@
           <div class="stat-card"><div class="stat-label">Confirmed</div><div class="stat-value ok" id="statConfirmed">—</div></div>
           <div class="stat-card"><div class="stat-label">Rejected Payments</div><div class="stat-value accent" id="statRejected">—</div></div>
           <div class="stat-card"><div class="stat-label">Verified Revenue</div><div class="stat-value ok" id="statRevenue">—</div></div>
+          <div class="stat-card"><div class="stat-label">Offline Slots Left</div><div class="stat-value ok" id="statOfflineSlots">—</div></div>
+          <div class="stat-card"><div class="stat-label">Online Slots Left</div><div class="stat-value ok" id="statOnlineSlots">—</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Hackathon Registration Slots Control</h3>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; align-items: end; padding-bottom: 0.5rem;">
+            <div class="field" style="margin-bottom: 0;">
+              <label for="offlineSlotsTotalInput">Total Offline Slots</label>
+              <input type="number" id="offlineSlotsTotalInput" min="0" placeholder="50" />
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label for="onlineSlotsTotalInput">Total Online Slots</label>
+              <input type="number" id="onlineSlotsTotalInput" min="0" placeholder="30" />
+            </div>
+            <button class="btn btn-primary" id="saveSlotsBtn" style="height: 42px;">Save Slot Limits</button>
+          </div>
+          <div class="dim small" style="margin-top: 0.75rem;">
+            When offline slots reach capacity (50/50), teams cannot choose OFFLINE mode on the registration page.
+          </div>
         </div>
 
         <div class="panel">

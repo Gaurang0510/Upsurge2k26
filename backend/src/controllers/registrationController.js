@@ -8,6 +8,7 @@ const Team = require('../models/Team');
 const { SMACKATHON_CONFIG } = require('../config/smackathon');
 const { generateRegistrationCode } = require('../utils/generateCode');
 const { uploadPaymentScreenshot, deletePaymentScreenshot } = require('../utils/cloudinary');
+const { getSlotStats } = require('../utils/slotHelper');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
@@ -210,6 +211,27 @@ const submitRegistration = async (req, res, next) => {
     // Validate mode preference against allowed enum values
     const validatedModePreference = modePreference === 'ONLINE_REQUEST' ? 'ONLINE_REQUEST' : 'OFFLINE';
 
+    // Enforce dynamic registration slot limits
+    const slotStats = await getSlotStats();
+    if (validatedModePreference === 'OFFLINE') {
+      const holdsOfflineSlot = existingTeam && existingTeam.modePreference === 'OFFLINE';
+      if (!holdsOfflineSlot && slotStats.offline.remaining <= 0) {
+        return res.status(403).json({
+          success: false,
+          message: 'Offline registration slots are completely filled (0 left). Please select Online Request mode if slots are available.',
+        });
+      }
+    }
+    if (validatedModePreference === 'ONLINE_REQUEST') {
+      const holdsOnlineSlot = existingTeam && existingTeam.modePreference === 'ONLINE_REQUEST';
+      if (!holdsOnlineSlot && slotStats.online.remaining <= 0) {
+        return res.status(403).json({
+          success: false,
+          message: 'Online registration slots are completely filled (0 left).',
+        });
+      }
+    }
+
     // Check for duplicate emails/phones across leader and all members (AUD-015)
     const allEmails = [normalizedLeaderEmail, ...memberList.map((m) => normalizeEmail(m.email))];
     const allPhones = [normalizedLeaderPhone, ...memberList.map((m) => normalizePhone(m.phone))];
@@ -356,6 +378,15 @@ const submitRegistration = async (req, res, next) => {
   }
 };
 
+const getRegistrationSlots = async (req, res, next) => {
+  try {
+    const slots = await getSlotStats();
+    res.json({ success: true, slots });
+  } catch (err) {
+    next(err);
+  }
+};
+
 /**
  * Public status endpoint. Requires BOTH email AND teamCode to prevent
  * enumeration attacks on six-digit codes (AUD-004 IDOR fix).
@@ -382,6 +413,7 @@ const getRegistrationStatus = async (req, res, next) => {
     }
 
     const registration = await Registration.findOne({ teamId: team._id }).lean();
+    const slots = await getSlotStats();
 
     res.json({
       success: true,
@@ -399,6 +431,7 @@ const getRegistrationStatus = async (req, res, next) => {
             updatedAt: registration.updatedAt,
           }
         : null,
+      slots,
     });
   } catch (err) {
     next(err);
@@ -408,5 +441,6 @@ const getRegistrationStatus = async (req, res, next) => {
 module.exports = {
   verifyInvitation,
   submitRegistration,
+  getRegistrationSlots,
   getRegistrationStatus,
 };

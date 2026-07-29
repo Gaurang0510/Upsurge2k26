@@ -96,6 +96,18 @@ const loadStats = async () => {
     document.getElementById('statConfirmed').textContent = stats.confirmed;
     document.getElementById('statRejected').textContent = stats.paymentRejected;
     document.getElementById('statRevenue').textContent = `₹${stats.totalRevenueINR.toLocaleString('en-IN')}`;
+    if (stats.slots) {
+      const off = stats.slots.offline;
+      const on = stats.slots.online;
+      document.getElementById('statOfflineSlots').textContent = `${off.remaining} / ${off.total}`;
+      document.getElementById('statOnlineSlots').textContent = `${on.remaining} / ${on.total}`;
+      if (document.activeElement?.id !== 'offlineSlotsTotalInput') {
+        document.getElementById('offlineSlotsTotalInput').value = off.total;
+      }
+      if (document.activeElement?.id !== 'onlineSlotsTotalInput') {
+        document.getElementById('onlineSlotsTotalInput').value = on.total;
+      }
+    }
   } catch (error) {
     showToast(error.message);
   }
@@ -348,6 +360,22 @@ document.getElementById('closeDetailBtn').addEventListener('click', () => {
 });
 document.getElementById('importShortlistBtn').addEventListener('click', importShortlist);
 document.getElementById('refreshShortlistBtn').addEventListener('click', loadShortlist);
+
+const saveSlots = async () => {
+  const offlineSlotsTotal = document.getElementById('offlineSlotsTotalInput').value.trim();
+  const onlineSlotsTotal = document.getElementById('onlineSlotsTotalInput').value.trim();
+  try {
+    await apiFetch('/admin/settings/slots', {
+      method: 'PATCH',
+      body: JSON.stringify({ offlineSlotsTotal, onlineSlotsTotal }),
+    });
+    showToast('Slot limits updated successfully', true);
+    loadStats();
+  } catch (error) {
+    showToast(error.message);
+  }
+};
+document.getElementById('saveSlotsBtn').addEventListener('click', saveSlots);
 
 document.getElementById('exportBtn').addEventListener('click', async () => {
   try {

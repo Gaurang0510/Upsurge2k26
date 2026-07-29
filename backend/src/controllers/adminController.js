@@ -6,8 +6,10 @@ const Registration = require('../models/Registration');
 const ShortlistEntry = require('../models/ShortlistEntry');
 const Team = require('../models/Team');
 const { SMACKATHON_CONFIG, MODE_PREFERENCES, TEAM_STATUSES, PAYMENT_STATUSES } = require('../config/smackathon');
+const HackathonSetting = require('../models/HackathonSetting');
 const { buildExcelHtml } = require('../utils/exportWorkbook');
 const { getSignedPaymentScreenshotUrl } = require('../utils/cloudinary');
+const { getSlotStats } = require('../utils/slotHelper');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+\-\s()]{10,20}$/;
@@ -149,6 +151,7 @@ const getStats = async (req, res, next) => {
         shortlistCount,
         feeInINR: SMACKATHON_CONFIG.feeInINR,
         totalRevenueINR: verifiedPayments * SMACKATHON_CONFIG.feeInINR,
+        slots: await getSlotStats(),
       },
     });
   } catch (err) {
@@ -568,6 +571,40 @@ const removeShortlistEntry = async (req, res, next) => {
   }
 };
 
+const getSlotSettings = async (req, res, next) => {
+  try {
+    const slots = await getSlotStats();
+    res.json({ success: true, slots });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateSlotSettings = async (req, res, next) => {
+  try {
+    const { offlineSlotsTotal, onlineSlotsTotal } = req.body;
+    const offlineVal = parseInt(offlineSlotsTotal, 10);
+    const onlineVal = parseInt(onlineSlotsTotal, 10);
+
+    if (isNaN(offlineVal) || offlineVal < 0 || isNaN(onlineVal) || onlineVal < 0) {
+      return res.status(400).json({ success: false, message: 'Slot totals must be valid non-negative numbers' });
+    }
+
+    const settings = await HackathonSetting.getSettings();
+    settings.offlineSlotsTotal = offlineVal;
+    settings.onlineSlotsTotal = onlineVal;
+    if (req.admin && req.admin._id) {
+      settings.updatedBy = req.admin._id;
+    }
+    await settings.save();
+
+    const slots = await getSlotStats();
+    res.json({ success: true, message: 'Hackathon slot limits updated successfully', slots });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   login,
   me,
@@ -581,4 +618,6 @@ module.exports = {
   importShortlist,
   getShortlist,
   removeShortlistEntry,
+  getSlotSettings,
+  updateSlotSettings,
 };
