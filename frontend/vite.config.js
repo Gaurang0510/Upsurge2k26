@@ -20,6 +20,14 @@ export default defineConfig(({ mode, command }) => {
     server: {
       port: 5173,
       open: true,
+      // When VITE_API_URL is not set locally, proxy the event request used for
+      // registration payment details to the local backend.
+      proxy: {
+        '/api/v1/events': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+        },
+      },
     },
     // Railway runs `vite preview` without a desktop session. Explicitly
     // disable browser launching there so it does not attempt `xdg-open`.
