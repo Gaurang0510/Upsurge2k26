@@ -14,6 +14,17 @@ const PAYMENT_SCREENSHOT_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp
 const REQUIRED_PERSON_FIELDS = ['fullName', 'email', 'phone', 'department', 'year'];
 const GITHUB_REPOSITORY_REGEX = /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+\/?$/;
 
+const toDisplayableImageUrl = (url) => {
+  const value = String(url || '').trim();
+  const driveFileMatch = value.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (driveFileMatch) return `https://drive.google.com/thumbnail?id=${driveFileMatch[1]}&sz=w1000`;
+
+  const driveOpenMatch = value.match(/drive\.google\.com\/open\?[^#]*\bid=([^&#]+)/);
+  if (driveOpenMatch) return `https://drive.google.com/thumbnail?id=${driveOpenMatch[1]}&sz=w1000`;
+
+  return value;
+};
+
 const emptyMember = () => ({
   fullName: '',
   email: '',
@@ -343,21 +354,18 @@ export default function Register() {
 
   const paymentConfig = eventInfo?.payment;
 
-  // Fallback calculations for UPI configurations to clean placeholders
-  const cleanUpiId = useMemo(() => {
-    const rawUpi = paymentConfig?.upiId || '';
-    if (!rawUpi || rawUpi.includes('<') || rawUpi.includes('your-')) {
-      return 'ycce.smackathon@okaxis';
-    }
-    return rawUpi;
-  }, [paymentConfig]);
+  const paymentOptions = useMemo(() => {
+    const configuredOptions = paymentConfig?.paymentOptions || [];
+    const options = configuredOptions.length
+      ? configuredOptions
+      : [paymentConfig].filter(Boolean);
 
-  const cleanPayeeName = useMemo(() => {
-    const rawPayee = paymentConfig?.payeeName || '';
-    if (!rawPayee || rawPayee.includes('<') || rawPayee.includes('your-')) {
-      return 'YCCE CSE Department';
-    }
-    return rawPayee;
+    return options
+      .map((option) => ({
+        ...option,
+        qrImageUrl: toDisplayableImageUrl(option.qrImageUrl),
+      }))
+      .filter((option) => option.upiId || option.qrImageUrl);
   }, [paymentConfig]);
 
   return (
@@ -877,22 +885,29 @@ export default function Register() {
                       <span>TEAM QUOTA:</span>
                       <span>{eventInfo?.teamSize?.min ?? 3} - {eventInfo?.teamSize?.max ?? 5} OPERATIVES</span>
                     </div>
-                    <div className="flex justify-between border-b border-white/5 pb-1">
-                      <span>UPI ID:</span>
-                      <span className="text-white select-all">{cleanUpiId}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>PAYEE NAME:</span>
-                      <span className="text-white">{cleanPayeeName}</span>
-                    </div>
                   </div>
-                  
-                  <div className="p-3 bg-white border border-white/10 rounded-md">
-                    <img
-                      src="/images/events/QR.jpeg"
-                      alt="Smackathon payment QR"
-                      className="w-full h-auto max-w-[240px] mx-auto"
-                    />
+
+                  <div className="grid gap-5">
+                    {paymentOptions.map((option, index) => (
+                      <div key={`${option.upiId}-${index}`} className="space-y-4 rounded-md border border-white/10 bg-zinc-950/50 p-4">
+                        <div className="space-y-2 font-mono text-xs text-steel">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-evidence">Payment Option {index + 1}</p>
+                          <p className="break-all"><span className="text-zinc-500">UPI ID: </span><span className="select-all text-white">{option.upiId || 'Not configured'}</span></p>
+                          {option.payeeName && <p><span className="text-zinc-500">PAYEE: </span><span className="text-white">{option.payeeName}</span></p>}
+                        </div>
+                        {option.qrImageUrl ? (
+                          <div className="bg-white p-3 rounded">
+                            <img
+                              src={option.qrImageUrl}
+                              alt={`Smackathon payment QR option ${index + 1}`}
+                              className="aspect-square w-full max-w-[360px] object-contain mx-auto"
+                            />
+                          </div>
+                        ) : (
+                          <p className="font-mono text-[10px] text-zinc-500">QR image not configured.</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
 
                   <div className="border-t border-white/5 pt-3 space-y-2">
