@@ -43,10 +43,10 @@ export default function Events() {
             const cardContent = (
               <>
                 {/* Yellow Caution Tape Banner */}
-                <div className="relative -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 lg:-mx-10 lg:-mt-10 mb-6 overflow-hidden rounded-t-2xl sm:rounded-t-3xl bg-amber-400 py-2 px-4 text-[#000000] border-b-2 border-black shadow-lg">
-                  <div className="flex items-center justify-between font-mono text-[10px] sm:text-xs font-black uppercase tracking-[0.22em] select-none text-[#000000]">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-[#000000] text-amber-400 px-2 py-0.5 rounded text-[9px] font-black tracking-widest shadow">CAUTION</span>
+                <div className="relative -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 lg:-mx-10 lg:-mt-10 mb-4 sm:mb-6 overflow-hidden rounded-t-2xl sm:rounded-t-3xl bg-amber-400 py-1.5 sm:py-2 px-3 sm:px-4 text-[#000000] border-b-2 border-black shadow-lg">
+                  <div className="flex items-center justify-between font-mono text-[9px] sm:text-xs font-black uppercase tracking-[0.22em] select-none text-[#000000]">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <span className="bg-[#000000] text-amber-400 px-1.5 sm:px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black tracking-widest shadow">CAUTION</span>
                       <span className="font-extrabold text-[#000000]">CRIME SCENE — DO NOT CROSS</span>
                     </div>
                     <div className="hidden sm:flex items-center gap-2 font-extrabold">
@@ -54,8 +54,8 @@ export default function Events() {
                       <span className="text-[#000000] font-black">{'///'}</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-black">
-                      <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-600 animate-ping" />
-                      <span className="text-[9px] font-black tracking-widest text-[#000000]">RESTRICTED AREA</span>
+                      <span className="inline-block w-2 w-2 sm:w-2.5 sm:h-2.5 rounded-full bg-red-600 animate-ping" />
+                      <span className="text-[8px] sm:text-[9px] font-black tracking-widest text-[#000000]">RESTRICTED AREA</span>
                     </div>
                   </div>
                   {/* High contrast dark hazard stripes pattern overlay */}
@@ -73,40 +73,40 @@ export default function Events() {
                 <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/10 blur-3xl pointer-events-none rounded-full" />
 
                 {/* Card Top Meta Header */}
-                <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 sm:pb-5">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold tracking-widest text-evidence uppercase bg-evidence/10 px-3 py-1 rounded border border-evidence/30">
+                <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 sm:pb-5">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <span className="font-mono text-[10px] sm:text-xs font-bold tracking-widest text-evidence uppercase bg-evidence/10 px-2 sm:px-3 py-0.5 sm:py-1 rounded border border-evidence/30">
                       {event.caseNumber}
                     </span>
-                    <span className="font-mono text-[11px] uppercase tracking-widest text-paper/70 bg-white/5 px-2.5 py-1 rounded border border-white/10">
+                    <span className="font-mono text-[9px] sm:text-[11px] uppercase tracking-widest text-paper/70 bg-white/5 px-2 py-0.5 sm:py-1 rounded border border-white/10">
                       {event.category}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 font-mono text-xs text-steel">
-                    <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <div className="flex items-center gap-2 font-mono text-[10px] sm:text-xs text-steel">
+                    <span className="inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 animate-pulse" />
                     <span>{event.format}</span>
                   </div>
                 </div>
 
                 {/* Card Main Body Grid */}
-                <div className="relative z-10 my-6 sm:my-8 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+                <div className="relative z-10 my-4 sm:my-8 grid gap-4 sm:gap-6 lg:grid-cols-[1.5fr_1fr]">
                   {/* Left Column: Title, Tagline, Overview */}
                   <div className="flex flex-col justify-between">
                     <div>
-                      <h3 className="font-display text-3xl sm:text-4xl lg:text-5xl uppercase tracking-wider text-paper hover:text-evidence transition-colors">
+                      <h3 className="font-display text-2xl sm:text-4xl lg:text-5xl uppercase tracking-wider text-paper hover:text-evidence transition-colors">
                         {event.name}
                       </h3>
-                      <p className="mt-2 font-mono text-xs sm:text-sm text-evidence/90 font-medium">
+                      <p className="mt-1 sm:mt-2 font-mono text-[10px] sm:text-sm text-evidence/90 font-medium">
                         {event.tagline}
                       </p>
-                      <p className="mt-4 text-xs sm:text-sm leading-relaxed text-steel/90">
+                      <p className="mt-3 sm:mt-4 text-xs sm:text-sm leading-relaxed text-steel/90 hidden sm:block">
                         {event.description}
                       </p>
                     </div>
 
                     {/* Highlights Preview */}
                     {event.highlights && event.highlights.length > 0 && (
-                      <div className="mt-6 border-l-2 border-evidence/50 pl-3 py-1 font-mono text-[11px] text-steel/80">
+                      <div className="mt-4 sm:mt-6 border-l-2 border-evidence/50 pl-3 py-1 font-mono text-[10px] sm:text-[11px] text-steel/80 hidden sm:block">
                         <span className="text-evidence font-bold">&gt; Key Note: </span>
                         <span>{event.highlights[0]}</span>
                       </div>
@@ -114,53 +114,53 @@ export default function Events() {
                   </div>
 
                   {/* Right Column: Key Specifications Box */}
-                  <div className="flex flex-col justify-between gap-4 bg-black/50 p-5 sm:p-6 rounded-xl border border-white/10 font-mono text-xs shadow-inner">
-                    <div className="space-y-3.5">
+                  <div className="flex flex-col justify-between gap-3 bg-black/50 p-4 sm:p-6 rounded-xl border border-white/10 font-mono text-[11px] sm:text-xs shadow-inner">
+                    <div className="space-y-2.5 sm:space-y-3.5">
                       <div className="flex justify-between items-center text-paper">
-                        <span className="text-steel uppercase text-[10px] tracking-wider">Team Size</span>
-                        <span className="font-bold text-paper text-sm">{event.teamSize}</span>
+                        <span className="text-steel uppercase text-[9px] sm:text-[10px] tracking-wider">Team Size</span>
+                        <span className="font-bold text-paper text-xs sm:text-sm">{event.teamSize}</span>
                       </div>
                       <div className="flex justify-between items-center text-paper">
-                        <span className="text-steel uppercase text-[10px] tracking-wider">Schedule</span>
-                        <span className="font-bold text-paper text-sm">{event.date || event.duration}</span>
+                        <span className="text-steel uppercase text-[9px] sm:text-[10px] tracking-wider">Schedule</span>
+                        <span className="font-bold text-paper text-xs sm:text-sm">{event.date || event.duration}</span>
                       </div>
                       <div className="flex justify-between items-center text-paper">
-                        <span className="text-steel uppercase text-[10px] tracking-wider">Venue</span>
-                        <span className="font-bold text-paper text-right max-w-[200px] text-xs leading-tight">{event.venue}</span>
+                        <span className="text-steel uppercase text-[9px] sm:text-[10px] tracking-wider">Venue</span>
+                        <span className="font-bold text-paper text-right max-w-[180px] sm:max-w-[200px] text-[11px] sm:text-xs leading-tight">{event.venue}</span>
                       </div>
 
                       {event.prize && (
-                        <div className="flex justify-between items-center border-t border-white/10 pt-3">
-                          <span className="text-steel uppercase text-[10px] tracking-wider">Prize Pool</span>
-                          <span className="font-bold text-amber-400 text-sm">
+                        <div className="flex justify-between items-center border-t border-white/10 pt-2.5 sm:pt-3">
+                           <span className="text-steel uppercase text-[9px] sm:text-[10px] tracking-wider">Prize Pool</span>
+                          <span className="font-bold text-amber-400 text-xs sm:text-sm">
                             {event.prize.currency}{event.prize.total || event.prize.first} + Perks
                           </span>
                         </div>
                       )}
                     </div>
 
-                    <div className="mt-3 text-[10px] text-steel/60 uppercase tracking-widest text-center border-t border-white/5 pt-2">
+                    <div className="hidden sm:block mt-3 text-[10px] text-steel/60 uppercase tracking-widest text-center border-t border-white/5 pt-2">
                       Official UPSURGE 2K26 Case File
                     </div>
                   </div>
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-4 sm:pt-5 mt-auto">
+                <div className="relative z-10 flex items-center justify-between gap-3 border-t border-white/10 pt-3 sm:pt-5 mt-auto">
                   <Link
                     to={event.pagePath || `/events/${event.slug}`}
-                    className="btn-secondary text-xs py-3 px-6 flex items-center gap-2 group/link"
+                    className="btn-secondary text-[11px] sm:text-xs py-2.5 sm:py-3 px-4 sm:px-6 flex items-center gap-1.5 sm:gap-2 group/link"
                   >
                     <span>VIEW DOSSIER</span>
                     <span className="group-hover/link:translate-x-1 transition-transform">→</span>
                   </Link>
 
                   {event.slug === 'operation-breach' ? (
-                    <Link to="/register" className="btn-primary text-xs py-3 px-7 font-bold uppercase tracking-widest shadow-lg shadow-red-950/50">
+                    <Link to="/register" className="btn-primary text-[11px] sm:text-xs py-2.5 sm:py-3 px-5 sm:px-7 font-bold uppercase tracking-widest shadow-lg shadow-red-950/50">
                       REGISTER NOW
                     </Link>
                   ) : (
-                    <span className="text-xs font-mono uppercase tracking-widest text-steel">See dossier for registration</span>
+                    <span className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-steel text-right">See dossier for registration</span>
                   )}
                 </div>
               </>

@@ -15,20 +15,22 @@ export const ScrollStackItem = ({ children, index = 0, total = 1, itemClassName 
 
   // Sticky top positioning: pins 115px from top + 12px offset per card
   const stickyTop = 115 + Math.min(index, 8) * 12;
+  const stickyTopMobile = 70 + Math.min(index, 8) * 6;
 
   return (
     <div
       ref={containerRef}
-      className="sticky w-full"
+      className="sticky w-full scroll-stack-sticky-container"
       style={{
-        top: `${stickyTop}px`,
+        '--sticky-top': `${stickyTop}px`,
+        '--sticky-top-mobile': `${stickyTopMobile}px`,
         zIndex: index + 1,
         marginBottom: index === total - 1 ? '0px' : '32px',
       }}
     >
       <motion.div
         style={{ scale }}
-        className={`scroll-stack-card relative w-full rounded-2xl sm:rounded-3xl border border-white/12 bg-ink p-6 sm:p-8 lg:p-10 ${itemClassName}`.trim()}
+        className={`scroll-stack-card relative w-full rounded-2xl sm:rounded-3xl border border-white/12 bg-ink p-4 sm:p-8 lg:p-10 ${itemClassName}`.trim()}
       >
         {children}
       </motion.div>

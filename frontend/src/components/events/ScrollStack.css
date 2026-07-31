@@ -15,3 +15,14 @@
   border-color: rgba(193, 18, 31, 0.5);
   box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.95), 0 0 50px rgba(193, 18, 31, 0.28);
 }
+
+.scroll-stack-sticky-container {
+  top: var(--sticky-top-mobile);
+}
+
+@media (min-width: 640px) {
+  .scroll-stack-sticky-container {
+    top: var(--sticky-top);
+  }
+}
+
