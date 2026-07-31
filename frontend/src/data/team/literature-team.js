@@ -42,5 +42,27 @@ export default [
       "linkedin": "https://www.linkedin.com/in/astha-awari-925767342?utm_source=share_via&utm_content=profile&utm_medium=member_android",
       "github": ""
     }
+  },
+  {
+    "name": "Sarthak Kadam",
+    "role": "CC Master",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513015/IMG_20260724_132017901_HDR_-_Sarthak_Kadam_po14mb.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/_.saarthakk?igsh=dHFyNXg4NWZnYm5u",
+      "linkedin": "https://www.linkedin.com/in/sarthak-kadam-6192bb328?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+      "github": ""
+    }
+  },
+  {
+    "name": "Rudra Umap",
+    "role": "Semicore",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513015/IMG_20260724_132655179_HDR_-_Rudra_Umap_y8e9tk.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/rudra.umap/",
+      "linkedin": "https://www.linkedin.com/me?trk=p_mwlite_feed-secondary_nav",
+      "github": ""
+    }
   }
 ];

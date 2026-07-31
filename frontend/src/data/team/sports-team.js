@@ -22,6 +22,17 @@ export default [
     }
   },
   {
+    "name": "Lokesh Lonarkar",
+    "role": "Head",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513008/file_000000006dfc8230b27f5f3300a747e7_-_Fury_X_Gaming_nwtdut.png",
+    "socials": {
+      "instagram": "https://www.instagram.com/lokesh_lonarkar?igsh=dm9pYjE2MDQycnlx",
+      "linkedin": "https://www.linkedin.com/in/lokesh-lonarkar-317b7631b?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+      "github": "https://github.com/lokeshlonarkar662-bit"
+    }
+  },
+  {
     "name": "Aabhas Vijay Limje",
     "role": "Co-Head",
     "committee": "Cosmos",

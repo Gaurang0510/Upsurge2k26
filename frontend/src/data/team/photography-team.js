@@ -22,6 +22,17 @@ export default [
     }
   },
   {
+    "name": "Disha Nannaware",
+    "role": "Head",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513013/IMG_8448_-_disha_nannaware_l53owg.png",
+    "socials": {
+      "instagram": "https://www.instagram.com/diishhaaaaaaa_",
+      "linkedin": "",
+      "github": ""
+    }
+  },
+  {
     "name": "Karan Narayan Uike",
     "role": "Photography Master",
     "committee": "ACM",

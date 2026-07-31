@@ -9,5 +9,27 @@ export default [
       "linkedin": "www.linkedin.com/in/kabeirkaushik",
       "github": "https://github.com/kabeirrr1124"
     }
+  },
+  {
+    "name": "Aryan Vardani",
+    "role": "Head",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513003/IMG_2297_-_Aryan_Vardani_rhtppr.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/aryan_vardani",
+      "linkedin": "",
+      "github": ""
+    }
+  },
+  {
+    "name": "Devang Vinaysingh Bais",
+    "role": "Co-head",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513004/IMG_20251017_142212_-_Devang_Bais_xc2svp.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/devang_bais_28",
+      "linkedin": "https://www.linkedin.com/in/devangbais28",
+      "github": ""
+    }
   }
 ];

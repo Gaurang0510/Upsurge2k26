@@ -53,5 +53,16 @@ export default [
       "linkedin": "https://www.linkedin.com/in/swati-ambhore-03b08635a",
       "github": ""
     }
+  },
+  {
+    "name": "Prachi Ambadas Rahate",
+    "role": "Member",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513016/IMG_20260730_214818_-_Prachi_Rahate_unqxdn.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/prachi_r26",
+      "linkedin": "",
+      "github": "https://github.com/prachirahate15"
+    }
   }
 ];
