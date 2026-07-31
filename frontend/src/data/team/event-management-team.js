@@ -33,13 +33,24 @@ export default [
     }
   },
   {
-    "name": "Anuj Burande",
-    "role": "Co-Head",
-    "committee": "ACM",
-    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785250692/photo_-_Anuj_Burande_im1zfs.jpg",
+    "name": "ARJUN KADAM",
+    "role": "HM HEAD",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513012/IMG_5337_-_Arjun_Kadam_xyldi0.jpg",
     "socials": {
-      "instagram": "its_anuj_burande_7681",
-      "linkedin": "Anuj Burande",
+      "instagram": "",
+      "linkedin": "",
+      "github": ""
+    }
+  },
+  {
+    "name": "NIKHILESH GHORMODE",
+    "role": "EM & PR HEAD",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513009/IMG_1413.JPG_-_Nikhilesh_cl5skq.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/nikhileshghormode?igsh=MWFqcDJoaDQwa2ZmOA==",
+      "linkedin": "https://www.linkedin.com/in/nikhilesh-ghormode-a3720728a",
       "github": ""
     }
   },
@@ -99,6 +110,39 @@ export default [
     }
   },
   {
+    "name": "Yeshu bhogekar",
+    "role": "HM Co head",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513001/-_Yeshu_Bhogekar_xyhzar.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/_yeshu21_?igsh=cDdqNW5raXVnNTg2",
+      "linkedin": "https://www.linkedin.com/feed/",
+      "github": "https://github.com/"
+    }
+  },
+  {
+    "name": "Anuj Burande",
+    "role": "Co-Head",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785250692/photo_-_Anuj_Burande_im1zfs.jpg",
+    "socials": {
+      "instagram": "its_anuj_burande_7681",
+      "linkedin": "Anuj Burande",
+      "github": ""
+    }
+  },
+  {
+    "name": "Ayush Bhoyar",
+    "role": "Co head",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785516184/ayush_bhoyar_ote4x9.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/ayuush.b?igsh=MTM2Z3hoZnEwc2w1Yw==",
+      "linkedin": "",
+      "github": ""
+    }
+  },
+  {
     "name": "Saransh Bele",
     "role": "EM Master",
     "committee": "ACM",
@@ -107,6 +151,17 @@ export default [
       "instagram": "https://www.instagram.com/saransh2609?igsh=ZGY1cXN2NnkzMmc=",
       "linkedin": "https://www.linkedin.com/in/saransh-bele-84974632a?utm_source=share_via&utm_content=profile&utm_medium=member_android",
       "github": "https://github.com/TheRoyalCoder2609"
+    }
+  },
+  {
+    "name": "Anuj harde",
+    "role": "Semi core",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513020/Screenshot_20260728-222923_-_anuj_harde_zqkor6.png",
+    "socials": {
+      "instagram": "https://www.instagram.com/anuj_harde_?igsh=bGNxNTYycnpqMmpu",
+      "linkedin": "",
+      "github": ""
     }
   }
 ];

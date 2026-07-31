@@ -22,10 +22,21 @@ export default [
     }
   },
   {
+    "name": "NIKHILESH GHORMODE",
+    "role": "EM & PR HEAD",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513009/IMG_1413.JPG_-_Nikhilesh_cl5skq.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/nikhileshghormode?igsh=MWFqcDJoaDQwa2ZmOA==",
+      "linkedin": "https://www.linkedin.com/in/nikhilesh-ghormode-a3720728a",
+      "github": ""
+    }
+  },
+  {
     "name": "Aishwarya Chaudhari",
     "role": "Co head",
     "committee": "Cosmos",
-    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785250691/IMG-20260401-WA0018_1_-_Aishwarya_Choudhary_h6hpt7.jpg",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785515942/Aishwarya_Chaudhari_huem64.jpg",
     "socials": {
       "instagram": "3_aish_warya",
       "linkedin": "https://linkedin.com/in/aishwarya-chaudhari03",
@@ -52,17 +63,6 @@ export default [
       "instagram": "N.A.",
       "linkedin": "https://www.linkedin.com/in/amit-kumbhare?utm_source=share_via&utm_content=profile&utm_medium=member_android",
       "github": "https://github.com/amit-kumbhare"
-    }
-  },
-  {
-    "name": "BALRAJ PUNSE",
-    "role": "Semicore (pr)",
-    "committee": "ACM",
-    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785250685/IMG_20260724_132137914_HDR_-_Balraj_Punse_vtvzzz.jpg",
-    "socials": {
-      "instagram": "balraj_punse18",
-      "linkedin": "www.linkedin.com/in/balraj-punse-70731435b",
-      "github": "https://github.com/Balrajpunse"
     }
   },
   {
@@ -96,6 +96,17 @@ export default [
       "instagram": "https://www.instagram.com/shravani_darade?igsh=cGUyOHdoNTJtbjAy",
       "linkedin": "https://www.linkedin.com/in/shravanidarade?utm_source=share_via&utm_content=profile&utm_medium=member_android",
       "github": ""
+    }
+  },
+  {
+    "name": "BALRAJ PUNSE",
+    "role": "Semicore (pr)",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785250685/IMG_20260724_132137914_HDR_-_Balraj_Punse_vtvzzz.jpg",
+    "socials": {
+      "instagram": "balraj_punse18",
+      "linkedin": "www.linkedin.com/in/balraj-punse-70731435b",
+      "github": "https://github.com/Balrajpunse"
     }
   }
 ];
