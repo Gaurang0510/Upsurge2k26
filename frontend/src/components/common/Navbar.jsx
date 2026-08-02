@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Shield, Calendar, Clock, Users, Code } from "lucide-react";
+import { Home, Shield, Calendar, Clock, Users } from "lucide-react";
 import { cn } from "../../lib/utils.js";
 import { siteConfig } from "../../data/site.js";
 
@@ -10,8 +10,7 @@ const iconMap = {
   'Smackathon': Shield,
   'Events': Calendar,
   'Schedule': Clock,
-  'Team': Users,
-  'Web Team': Code
+  'Team': Users
 };
 
 export default function Navbar({ className }) {
