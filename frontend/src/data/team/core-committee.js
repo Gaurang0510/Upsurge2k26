@@ -11,6 +11,17 @@ export default [
     }
   },
   {
+    "name": "Tiya Banerjee",
+    "role": "ACM Chairperson",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785250693/IMG20260724165026_20260724170714_-_Tiya_Banerjee_km1yl2.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/tiyabanerjee_?igsh=ZzZkcTdzNm14ODkw",
+      "linkedin": "https://www.linkedin.com/in/tiya-banerjee",
+      "github": ""
+    }
+  },
+  {
     "name": "Omair Ahmad Khan",
     "role": "Working President",
     "committee": "Cosmos",
@@ -30,39 +41,6 @@ export default [
       "instagram": "https://www.instagram.com/dishitaghuge_?igsh=MTE1NjFnODM5d3NxeA%3D%3D&utm_source=qr",
       "linkedin": "https://www.linkedin.com/in/dishitaghuge",
       "github": "https://github.com/dishitaghuge01"
-    }
-  },
-  {
-    "name": "Sarthak Chavan",
-    "role": "Secretary",
-    "committee": "Cosmos",
-    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513002/IMG_20260723_173151_-_Sarthak_Chavan_gg2jkq.png",
-    "socials": {
-      "instagram": "https://www.instagram.com/saarthakk7?igsh=MW9ybG1vbGpkaDdxNA==",
-      "linkedin": "https://www.linkedin.com/in/sarthakk-chavan?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-      "github": ""
-    }
-  },
-  {
-    "name": "Saurabh Kulavi",
-    "role": "Treasure",
-    "committee": "Cosmos",
-    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513008/file_000000007aa082068d143383579e3fca_1_-_SAURABH_KULAVI_l1hr4f.png",
-    "socials": {
-      "instagram": "https://www.instagram.com/_saurhubbbb?igsh=b2Rkb2lvaHpmMHcw",
-      "linkedin": "https://www.linkedin.com/in/saurabh-kulavi-b4b871316?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-      "github": "https://github.com/saurabh-kulavi-git"
-    }
-  },
-  {
-    "name": "Tiya Banerjee",
-    "role": "ACM Chairperson",
-    "committee": "ACM",
-    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785250693/IMG20260724165026_20260724170714_-_Tiya_Banerjee_km1yl2.jpg",
-    "socials": {
-      "instagram": "https://www.instagram.com/tiyabanerjee_?igsh=ZzZkcTdzNm14ODkw",
-      "linkedin": "https://www.linkedin.com/in/tiya-banerjee",
-      "github": ""
     }
   },
   {
@@ -88,6 +66,17 @@ export default [
     }
   },
   {
+    "name": "Sarthak Chavan",
+    "role": "Secretary",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513002/IMG_20260723_173151_-_Sarthak_Chavan_gg2jkq.png",
+    "socials": {
+      "instagram": "https://www.instagram.com/saarthakk7?igsh=MW9ybG1vbGpkaDdxNA==",
+      "linkedin": "https://www.linkedin.com/in/sarthakk-chavan?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+      "github": ""
+    }
+  },
+  {
     "name": "Himanshu Chavan",
     "role": "ACM Secretary",
     "committee": "ACM",
@@ -96,6 +85,28 @@ export default [
       "instagram": "",
       "linkedin": "www.linkedin.com/in/chavan-himanshu",
       "github": "https://github.com/Himanshujchavan"
+    }
+  },
+  {
+    "name": "Saurabh Kulavi",
+    "role": "Treasure",
+    "committee": "Cosmos",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785513008/file_000000007aa082068d143383579e3fca_1_-_SAURABH_KULAVI_l1hr4f.png",
+    "socials": {
+      "instagram": "https://www.instagram.com/_saurhubbbb?igsh=b2Rkb2lvaHpmMHcw",
+      "linkedin": "https://www.linkedin.com/in/saurabh-kulavi-b4b871316?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+      "github": "https://github.com/saurabh-kulavi-git"
+    }
+  },
+  {
+    "name": "Aanya Gupta",
+    "role": "Joint Secretary",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785655476/aanya_lxnhhr.jpg",
+    "socials": {
+      "instagram": "https://www.instagram.com/aanya._.gupta_",
+      "linkedin": "https://www.linkedin.com/in/aanya-gupta-99b406341?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+      "github": "https://github.com/aanyag520-gif"
     }
   },
   {

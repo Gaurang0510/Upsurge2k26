@@ -7,15 +7,14 @@
 import operationBreach from './operation-breach.js';
 import syndicatePitch from './syndicate-pitch.js';
 import lockdown from './lockdown.js';
-import theInvestigation from './the-investigation.js';
+import promptSprint from './prompt-sprint.js';
+import algoArena from './algo-arena.js';
 import captureTheFlag from './capture-the-flag.js';
 import turfWars from './turf-wars.js';
 import theGetaway from './the-getaway.js';
 import manhunt from './manhunt.js';
 import theChase from './the-chase.js';
 import cipherHeist from './cipher-heist.js';
-import evidenceLocker from './evidence-locker.js';
-import cageMatch from './cage-match.js';
 import undergroundCircuit from './underground-circuit.js';
 
 export { CATEGORIES } from './categories.js';
@@ -24,15 +23,14 @@ export const events = [
   operationBreach,
   syndicatePitch,
   lockdown,
-  theInvestigation,
+  promptSprint,
+  algoArena,
   captureTheFlag,
   turfWars,
   theGetaway,
   manhunt,
   theChase,
   cipherHeist,
-  evidenceLocker,
-  cageMatch,
   undergroundCircuit,
 ];
 
