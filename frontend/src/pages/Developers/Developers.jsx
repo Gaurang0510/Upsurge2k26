@@ -69,7 +69,7 @@ export default function Developers() {
                   <div className="flex items-center gap-2">
                     <span className="inline-block h-2 w-2 rounded-full bg-red-500 animate-pulse" />
                     <h3 className="font-mono text-xs uppercase tracking-widest text-red-500 font-bold">
-                      // DIRECTORY: CORE DEVELOPERS
+                      {"// DIRECTORY: CORE DEVELOPERS"}
                     </h3>
                   </div>
                   <div className="h-px flex-1 bg-gradient-to-r from-red-600/40 via-red-900/20 to-transparent" />
