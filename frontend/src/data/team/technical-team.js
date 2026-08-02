@@ -86,5 +86,16 @@ export default [
       "linkedin": "https://www.linkedin.com/in/ayush-hade-714750346",
       "github": "https://github.com/Ayush-Hade"
     }
+  },
+  {
+    "name": "Prasanna Lohe",
+    "role": "Member",
+    "committee": "ACM",
+    "photo": "https://res.cloudinary.com/dskwr0u7/image/upload/v1785658735/Prasanna_Lohe_lbqiym.png",
+    "socials": {
+      "instagram": "https://www.instagram.com/happyironn?igsh=MWVrZTFwajlpd2Ez",
+      "linkedin": "https://www.linkedin.com/in/prasanna-lohe-2086ba382",
+      "github": "https://github.com/thehappyiron"
+    }
   }
 ];
