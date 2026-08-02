@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Shield, Calendar, Clock, Users } from "lucide-react";
+import { Home, Shield, Calendar, Clock, Users, Code } from "lucide-react";
 import { cn } from "../../lib/utils.js";
 import { siteConfig } from "../../data/site.js";
 
@@ -10,7 +10,8 @@ const iconMap = {
   'Smackathon': Shield,
   'Events': Calendar,
   'Schedule': Clock,
-  'Team': Users
+  'Team': Users,
+  'Web Team': Code
 };
 
 export default function Navbar({ className }) {
@@ -48,7 +49,7 @@ export default function Navbar({ className }) {
       )}
     >
       <div 
-        className="flex items-center gap-3 bg-transparent py-1 px-1 rounded-full pointer-events-auto"
+        className="flex items-center gap-1 sm:gap-3 bg-transparent py-1 px-1 rounded-full pointer-events-auto"
         onMouseLeave={() => setHoveredTab(null)}
       >
         <AnimatePresence>
@@ -63,7 +64,7 @@ export default function Navbar({ className }) {
                 onClick={() => setActiveTab(item.name)}
                 onMouseEnter={() => setHoveredTab(item.name)}
                 className={cn(
-                  "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors duration-300",
+                  "relative cursor-pointer text-sm font-semibold px-3.5 sm:px-6 py-2 rounded-full transition-colors duration-300",
                   "text-paper/80 hover:text-evidence",
                   isActive && "text-evidence"
                 )}

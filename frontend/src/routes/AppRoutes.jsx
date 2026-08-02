@@ -7,6 +7,7 @@ const EventDetail = lazy(() => import('../pages/EventDetail/EventDetail.jsx'));
 const Hackathon = lazy(() => import('../pages/Hackathon/Hackathon.jsx'));
 const Schedule = lazy(() => import('../pages/Schedule/Schedule.jsx'));
 const Team = lazy(() => import('../pages/Team/Team.jsx'));
+const Developers = lazy(() => import('../pages/Developers/Developers.jsx'));
 const Register = lazy(() => import('../pages/Register/Register.jsx'));
 const NotFound = lazy(() => import('../pages/NotFound/NotFound.jsx'));
 
@@ -20,6 +21,7 @@ export default function AppRoutes() {
       <Route path="/hackathon" element={<Hackathon />} />
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/team" element={<Team />} />
+      <Route path="/web-team" element={<Developers />} />
       <Route path="/register" element={<Register />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -24,5 +24,6 @@ export const siteConfig = {
     { label: 'Events', path: '/events' },
     { label: 'Schedule', path: '/schedule' },
     { label: 'Team', path: '/team' },
+    { label: 'Web Team', path: '/web-team' },
   ],
 };
