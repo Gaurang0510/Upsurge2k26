@@ -11,7 +11,7 @@ export default function ScrollFade({
   duration = 0.6,
   distance = 35,
   once = true, // true = animate once and stay visible (prevents flicker on re-scroll)
-  amount = 0.15,
+  amount = 'some',
   viewportMargin = '0px',
   className = '',
   style = {},

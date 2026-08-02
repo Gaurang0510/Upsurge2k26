@@ -36,7 +36,7 @@ export default function EventDetail() {
         <p className="mt-3 text-lg text-steel">{event.tagline}</p>
       </ScrollFade>
 
-      <ScrollStaggerContainer className="mt-10 grid gap-4 sm:grid-cols-3">
+      <ScrollStaggerContainer className="mt-10 grid gap-4 grid-cols-2 md:grid-cols-5">
         <ScrollStaggerItem direction="up">
           <InfoBlock label="Format" value={event.format} />
         </ScrollStaggerItem>
@@ -45,6 +45,15 @@ export default function EventDetail() {
         </ScrollStaggerItem>
         <ScrollStaggerItem direction="up">
           <InfoBlock label="Duration" value={event.duration} />
+        </ScrollStaggerItem>
+        <ScrollStaggerItem direction="up">
+          <InfoBlock label="Entry Fee" value={event.entryFee || 'Free'} />
+        </ScrollStaggerItem>
+        <ScrollStaggerItem direction="up">
+          <InfoBlock 
+            label="Prize Pool" 
+            value={event.prize ? `${event.prize.currency}${event.prize.total || event.prize.first || 'TBD'}` : 'TBD'} 
+          />
         </ScrollStaggerItem>
       </ScrollStaggerContainer>
 
@@ -89,17 +98,32 @@ export default function EventDetail() {
           >
             Register Now
           </Link>
-        ) : event.whatsappGroup ? (
-          <a
-            href={event.whatsappGroup}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white border-none font-bold shadow-md shadow-green-950/20"
-          >
-            Join WhatsApp Group
-          </a>
         ) : (
-          <span className="font-mono text-xs uppercase tracking-widest text-steel">Registration details available from the event organisers.</span>
+          <>
+            {event.registrationLink && event.registrationLink !== '#' && !event.registrationLink.includes('chat.whatsapp.com') && (
+              <a
+                href={event.registrationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                Register Now
+              </a>
+            )}
+            {event.whatsappGroup && event.whatsappGroup !== '#' && (
+              <a
+                href={event.whatsappGroup}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white border-none font-bold shadow-md shadow-green-950/20"
+              >
+                Join WhatsApp Group
+              </a>
+            )}
+            {(!event.registrationLink || event.registrationLink === '#') && (!event.whatsappGroup || event.whatsappGroup === '#') && (
+              <span className="font-mono text-xs uppercase tracking-widest text-steel">Registration details available from the event organisers.</span>
+            )}
+          </>
         )}
         <div className="font-mono text-xs uppercase tracking-widest text-steel">
           Venue: {event.venue} · Date: {event.date} {event.time && `· Time: ${event.time}`}

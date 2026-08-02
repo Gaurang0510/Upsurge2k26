@@ -1,12 +1,23 @@
+import { useState, useEffect } from 'react';
 import useDocumentTitle from '../../hooks/useDocumentTitle.js';
 import SectionHeading from '../../components/common/SectionHeading.jsx';
 import TeamSection from '../../components/team/TeamSection.jsx';
 import Aurora from '../../components/team/Aurora.jsx';
 import ScrollFade from '../../components/common/ScrollFade.jsx';
 import { teamDepartments } from '../../data/team/index.js';
+import TeamSkeleton from '../../components/team/TeamSkeleton.jsx';
 
 export default function Team() {
   useDocumentTitle('Team');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading of assets / dynamic rendering
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
@@ -37,13 +48,17 @@ export default function Team() {
 
         {/* Team Departments Grid */}
         <div className="mt-20">
-          <div className="space-y-24 sm:space-y-36">
-            {teamDepartments.map((department) => (
-              <ScrollFade key={department.slug} direction="up">
-                <TeamSection department={department} />
-              </ScrollFade>
-            ))}
-          </div>
+          {isLoading ? (
+            <TeamSkeleton />
+          ) : (
+            <div className="space-y-24 sm:space-y-36 animate-[fade-up_0.6s_ease-out_both]">
+              {teamDepartments.map((department) => (
+                <ScrollFade key={department.slug} direction="up">
+                  <TeamSection department={department} />
+                </ScrollFade>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
